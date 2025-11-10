@@ -1,5 +1,6 @@
 class OpenaiService
   MODEL = 'gpt-4o'
+  VISION_MODEL = 'gpt-4o' # GPT-4o supports vision
   MAX_TOKENS = 1000
   TEMPERATURE = 0.7
 

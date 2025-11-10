@@ -445,7 +445,7 @@
         "dependencies": [
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -453,7 +453,7 @@
             "description": "Create a user interface that allows parents to upload front and back images of their insurance card.",
             "dependencies": [],
             "details": "Design and build a UI component for uploading two images (front and back). Ensure clear instructions and progress indicators. Validate file types and sizes before upload.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test uploading valid and invalid image files. Confirm UI feedback for success and error states."
           },
           {
@@ -464,7 +464,7 @@
               1
             ],
             "details": "On image selection, request presigned S3 URLs from the backend. Upload images directly to S3 using these URLs. Handle upload errors and display status to the user.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify images are uploaded to S3 and accessible via presigned URLs. Simulate network and permission errors."
           },
           {
@@ -475,7 +475,7 @@
               2
             ],
             "details": "Convert uploaded images to Base64 or provide S3 URLs as required. Construct API requests with the extraction schema. Handle authentication and parse API responses for extracted fields.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test API calls with various image qualities. Validate correct extraction and error handling for failed or partial responses."
           },
           {
@@ -486,7 +486,7 @@
               3
             ],
             "details": "Create a schema that matches expected insurance card fields (e.g., member ID, group number, name). Map API response data to these fields, including confidence scores.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test mapping logic with sample API responses. Ensure all required fields are populated or flagged if missing."
           },
           {
@@ -497,7 +497,7 @@
               4
             ],
             "details": "Show each field with a badge indicating extraction confidence (e.g., high, medium, low). For medium/low confidence, prompt the user to confirm or correct the value before proceeding.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test UI rendering for all confidence levels. Validate confirmation flow and ensure user edits are saved."
           },
           {
@@ -508,7 +508,7 @@
               5
             ],
             "details": "Build a fallback form for manual entry of all insurance fields. Add tooltips or help text for each field to guide users. Ensure smooth transition from extraction UI to manual entry.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test fallback activation on extraction failure or user rejection. Validate help content and data submission."
           }
         ]
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:35:08.044Z",
+      "updated": "2025-11-10T20:36:58.185Z",
       "description": "Tasks for master context"
     }
   }

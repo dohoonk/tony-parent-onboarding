@@ -9,6 +9,7 @@ import { StudentInfoStep } from '@/components/onboarding/steps/StudentInfoStep';
 import { ConsentStep } from '@/components/onboarding/steps/ConsentStep';
 import { AIIntakeStep } from '@/components/onboarding/steps/AIIntakeStep';
 import { ScreenerStep } from '@/components/onboarding/steps/ScreenerStep';
+import { InsuranceStep } from '@/components/onboarding/steps/InsuranceStep';
 
 const OnboardingContent: React.FC = () => {
   const {
@@ -88,26 +89,14 @@ const OnboardingContent: React.FC = () => {
       
       case 7:
         return (
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">Insurance Step</h3>
-            <p className="mt-2 text-muted-foreground">
-              This step will handle insurance card upload and verification.
-            </p>
-            <div className="mt-6 flex justify-between">
-              <button onClick={prevStep} className="rounded-md bg-muted px-4 py-2">
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  updateData({ insuranceComplete: true });
-                  nextStep();
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
+          <InsuranceStep
+            onNext={() => {
+              updateData({ insuranceComplete: true });
+              nextStep();
+            }}
+            onPrev={prevStep}
+            sessionId={session?.id?.toString()}
+          />
         );
       
       case 8:
