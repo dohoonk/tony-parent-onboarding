@@ -251,7 +251,7 @@
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -259,7 +259,7 @@
             "description": "Create the stepper navigation UI with a visible progress bar and estimated time remaining.",
             "dependencies": [],
             "details": "Use shadcn/ui components to build a horizontal or vertical stepper that visually indicates the current step, completed steps, and remaining steps. Integrate a progress bar and display an ETA countdown based on average completion times. Ensure the stepper is accessible and responsive.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test step transitions, progress updates, and ETA countdown accuracy. Verify keyboard navigation and screen reader support."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:21:39.178Z",
+      "updated": "2025-11-10T20:22:33.506Z",
       "description": "Tasks for master context"
     }
   }
