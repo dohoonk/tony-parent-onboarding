@@ -225,7 +225,7 @@
               4
             ],
             "details": "Use GraphQL::ExecutionError for user-facing errors. Standardize error messages and codes for permission denied, validation failures, and unexpected exceptions. Ensure sensitive information is not leaked in error responses.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Trigger various error scenarios in tests (invalid input, unauthorized access, server errors) and verify error responses are correct and secure."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:19:35.946Z",
+      "updated": "2025-11-10T20:20:15.234Z",
       "description": "Tasks for master context"
     }
   }

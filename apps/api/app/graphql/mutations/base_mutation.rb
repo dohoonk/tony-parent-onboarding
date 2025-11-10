@@ -16,7 +16,7 @@ module Mutations
 
     # Helper method to require authentication
     def require_authentication!
-      raise GraphQL::ExecutionError, "Authentication required" unless authenticated?
+      raise Errors::AuthenticationError.new unless authenticated?
     end
 
     # Helper method for role-based authorization
@@ -24,7 +24,9 @@ module Mutations
       require_authentication!
       
       unless current_user.can?(permission)
-        raise GraphQL::ExecutionError, "Insufficient permissions"
+        raise Errors::AuthorizationError.new(
+          message: "Insufficient permissions: #{permission} required"
+        )
       end
     end
 
@@ -35,7 +37,9 @@ module Mutations
       return if resource.nil?
       
       unless current_user.can_access?(resource)
-        raise GraphQL::ExecutionError, "Unauthorized access to resource"
+        raise Errors::AuthorizationError.new(
+          message: "Unauthorized access to #{resource.class.name}"
+        )
       end
     end
 
