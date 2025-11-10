@@ -691,7 +691,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -699,7 +699,7 @@
             "description": "Set up TLS 1.2 or higher for all inbound and outbound connections to ensure encrypted transmission of PHI.",
             "dependencies": [],
             "details": "Update server and application configurations to enforce TLS 1.2+ for all endpoints, including APIs and web interfaces. Test for downgrade attacks and verify certificate validity.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Use SSL Labs and penetration testing tools to verify TLS enforcement and absence of insecure protocols."
           },
           {
@@ -710,7 +710,7 @@
               1
             ],
             "details": "Identify all PHI fields in the schema. Apply AES-256 encryption at the application or database layer. Ensure encryption keys are rotated and stored securely.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Attempt to access PHI fields directly in the database and verify data is unreadable without decryption keys."
           },
           {
@@ -721,7 +721,7 @@
               2
             ],
             "details": "Set up Vault/Aptible, configure access policies, and migrate all secrets from environment variables or config files. Enforce audit logging for secret access.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Perform access attempts and verify only authorized roles can retrieve secrets. Review audit logs for all secret access events."
           },
           {
@@ -732,7 +732,7 @@
               3
             ],
             "details": "Define roles and permissions for all user types. Integrate RBAC checks in API endpoints and UI components. Regularly review and update role assignments.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test access attempts for each role and verify only permitted actions are allowed. Review access logs for unauthorized attempts."
           },
           {
@@ -743,7 +743,7 @@
               4
             ],
             "details": "Instrument application code to log user ID, timestamp, action, and PHI fields accessed. Store logs in a secure, append-only system. Implement log rotation and retention policies.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate PHI access and verify all events are recorded with correct details. Attempt log tampering and confirm integrity controls."
           },
           {
@@ -754,7 +754,7 @@
               5
             ],
             "details": "Develop middleware to scan and redact PII from prompts before sending to AI services. Generate and map pseudonyms for user identifiers. Validate output for absence of PII.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Submit test prompts containing PII and verify all sensitive data is removed or replaced before processing."
           },
           {
@@ -765,7 +765,7 @@
               5
             ],
             "details": "Draft retention schedules for PHI and logs. Implement automated scripts for data deletion after retention period. Document procedures and ensure auditability.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Review retention schedules and test automated deletion scripts. Verify deleted data is unrecoverable."
           },
           {
@@ -776,7 +776,7 @@
               7
             ],
             "details": "Set up encrypted backups for databases and logs. Schedule regular backup jobs and store backups in secure, access-controlled locations. Test restoration procedures periodically.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Perform backup and restore drills. Verify integrity and completeness of restored data."
           }
         ]
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:45:22.904Z",
+      "updated": "2025-11-10T20:45:56.548Z",
       "description": "Tasks for master context"
     }
   }
