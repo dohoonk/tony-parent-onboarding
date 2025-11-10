@@ -806,11 +806,236 @@
         ],
         "status": "done",
         "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Create Therapists/Clinicians Database Schema and Models",
+        "description": "Create database schema and models for Therapists/Clinicians based on clinicians_anonymized.csv test data.",
+        "details": "Create migration for therapists table with fields: id (UUID), healthie_id, email, first_name, last_name, preferred_name, middle_name, phone, bio (text), specialties (array), languages (array), modalities (array), ethnicity, gender, sexual_orientation, religion, npi_number, licenses (array), licensed_states (array), supervisor_id, capacity_total, capacity_filled, capacity_available, employment_type, clinical_role, profile_data (JSONB), created_at, updated_at. Create Therapist model with validations and associations. Create GraphQL types for Therapist. Add indexes for common queries.",
+        "testStrategy": "Create RSpec tests for Therapist model validations and associations. Test GraphQL queries for therapists. Verify data can be imported from CSV.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Create Organizations Database Schema and Models",
+        "description": "Create database schema and models for Organizations (schools/districts) based on orgs.csv test data.",
+        "details": "Create migration for organizations table with fields: id (UUID), parent_organization_id (self-referential FK for districts/schools), kind (enum: district=1, school=2), slug, name, tzdb (timezone), market_id, internal_name, config (JSONB), enabled_at, created_at, updated_at. Support hierarchical relationships (districts have schools). Create Organization model with validations, associations, and self-referential relationship. Create GraphQL types for Organization. Add seed data import script for orgs.csv.",
+        "testStrategy": "Test organization hierarchy (districts and schools). Verify GraphQL queries work. Test CSV import script.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Create Contracts and OrgContracts Database Schema",
+        "description": "Create database schema for Contracts and OrgContracts based on contracts.csv and org_contracts.csv test data.",
+        "details": "Create contracts table: id (UUID), effective_date, end_date, services (array), terms (JSONB), contract_url, created_at, updated_at. Create org_contracts join table: id, organization_id (FK), contract_id (FK), created_at, updated_at. Create Contract and OrgContract models with validations and associations. Create GraphQL types. Add seed data import scripts for both CSVs.",
+        "testStrategy": "Test contract-organization relationships. Verify JSONB fields store correctly. Test CSV imports.",
+        "priority": "high",
+        "dependencies": [
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Create Insurance Credentialing Database Schema",
+        "description": "Create database schema for Insurance Credentialing based on credentialed_insurances.csv and clinician_credentialed_insurances.csv.",
+        "details": "Create credentialed_insurances table: id (UUID), name, country, state, line_of_business, legacy_names (array), network_status, parent_credentialed_insurance_id (self-referential), open_pm_name, created_at, updated_at. Create clinician_credentialed_insurances join table: id, care_provider_profile_id (therapist_id FK), credentialed_insurance_id (FK), created_at, updated_at. Create CredentialedInsurance and ClinicianCredentialedInsurance models with validations and associations. Create GraphQL types. Add seed data import scripts.",
+        "testStrategy": "Test therapist-insurance relationships. Verify many-to-many associations work. Test CSV imports.",
+        "priority": "high",
+        "dependencies": [
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Update Availability System for Real Data Structure",
+        "description": "Update AvailabilityWindows model to support clinician and patient availabilities based on test data CSV files.",
+        "details": "Current model uses rrule - need to add support for day-based availability blocks. Add availability_json (JSONB) field to store structured day/time blocks format from CSV: [{day: 'Monday', time_blocks: [{start: '08:00:00', duration: 60}]}]. Update model to handle both rrule and JSON formats. Create migration. Update TherapistMatchingService to use real availability data. Add seed data import scripts for clinician_availabilities.csv and patient_availabilities.csv.",
+        "testStrategy": "Test availability JSON parsing and storage. Verify matching service uses availability correctly. Test CSV imports.",
+        "priority": "high",
+        "dependencies": [
+          16,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Create Referrals System Database Schema",
+        "description": "Create database schema for Referrals system based on referrals.csv and referral_members.csv test data.",
+        "details": "Create referrals table: id (UUID), submitter_id (parent_id FK), organization_id (FK), service_kind, concerns, data (JSONB), contract_id (FK), terms_kind, appointment_kind, planned_sessions, collect_coverage, allowed_coverage (array), collection_rule, self_responsibility_required, care_provider_requirements (array), referred_at, ready_for_scheduling_at, scheduled_at, onboarding_completed_at, enrolled_at, disenrolled_at, intake_id, tzdb, system_labels (array), created_at, updated_at. Create referral_members join table: id, referral_id (FK), user_id (FK), role, data (JSONB), created_at, updated_at. Create Referral and ReferralMember models with validations and associations. Create GraphQL types. Add seed data import scripts.",
+        "testStrategy": "Test referral creation and member associations. Verify status transitions. Test CSV imports.",
+        "priority": "medium",
+        "dependencies": [
+          17,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Create Kinships Database Schema for User Relationships",
+        "description": "Create database schema for Kinships (parent-child relationships) based on kinships.csv test data.",
+        "details": "Create kinships table: id (UUID), user_0_id (FK to users/parents), user_1_id (FK to users/students), kind (enum for relationship type), user_0_label, user_1_label, guardian_can_be_contacted (boolean), created_at, updated_at. Create Kinship model with validations and associations. Update Parent and Student models to use kinship relationships. Create GraphQL types. Add seed data import script.",
+        "testStrategy": "Test kinship relationships between parents and students. Verify associations work correctly. Test CSV import.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Create Memberships Database Schema",
+        "description": "Create database schema for Memberships (user-organization relationships) based on memberships.csv test data.",
+        "details": "Create memberships table: id (UUID), user_id (FK to users/parents/students), organization_id (FK to organizations), census_person_id, profile_data (JSONB), created_at, updated_at. Create Membership model with validations and associations. Links users (parents/students) to organizations (schools). Create GraphQL types. Add seed data import script.",
+        "testStrategy": "Test user-organization relationships. Verify many-to-many associations. Test CSV import.",
+        "priority": "medium",
+        "dependencies": [
+          17,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Create Documents Database Schema for Consent Forms",
+        "description": "Create database schema for Documents (consent forms, policies) based on documents.csv test data.",
+        "details": "Create documents table: id (UUID), version, label, checkboxes, version_date, urls (JSONB for multi-language URLs), names (JSONB for multi-language names), created_at, updated_at. Create Document model with validations. Update ConsentStep component to fetch real documents from database instead of hardcoded links. Create GraphQL query for documents. Add seed data import script.",
+        "testStrategy": "Test document retrieval by label and version. Verify multi-language support. Update ConsentStep to use real data. Test CSV import.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Integrate Questionnaires with Screeners System",
+        "description": "Integrate Questionnaires data with existing Screeners system based on questionnaires.csv test data.",
+        "details": "Create questionnaires table: id (UUID), subject_id (student_id FK), respondent_id (parent_id FK), score, started_at, completed_at, question_answers (JSONB), type, language_of_completion, created_at, updated_at. Map questionnaire types to screener keys. Update ScreenerResponse model to optionally link to questionnaires. Create Questionnaire model with validations and associations. Create GraphQL types. Add seed data import script.",
+        "testStrategy": "Test questionnaire creation and linking to screeners. Verify question_answers JSONB storage. Test CSV import.",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Update TherapistMatchingService to Use Real Data",
+        "description": "Replace mock data in TherapistMatchingService with real database queries using Therapists, ClinicianCredentialedInsurances, and AvailabilityWindows.",
+        "details": "Update TherapistMatchingService to query Therapists table. Match based on: insurance credentialing (via ClinicianCredentialedInsurances), availability windows, specialties, languages, capacity (available > 0). Return real therapist data with bios, match scores, and rationale. Update SchedulingStep component to use real therapist data from GraphQL query. Create GraphQL query for therapist matches with filtering by insurance, availability, and other criteria.",
+        "testStrategy": "Test matching logic with real data. Verify therapists are matched correctly based on criteria. Test GraphQL query in frontend.",
+        "priority": "high",
+        "dependencies": [
+          16,
+          19,
+          20,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Create CSV Import Rake Tasks for All Test Data",
+        "description": "Create comprehensive rake tasks to import all test data CSV files from devdocs directory.",
+        "details": "Create rake tasks in lib/tasks/import_data.rake for: clinicians (clinicians_anonymized.csv), organizations (orgs.csv), contracts (contracts.csv), org_contracts (org_contracts.csv), credentialed_insurances (credentialed_insurances.csv), clinician_credentialed_insurances (clinician_credentialed_insurances.csv), clinician_availabilities (clinician_availabilities.csv), patient_availabilities (patient_availabilities.csv), referrals (referrals.csv), referral_members (referral_members.csv), kinships (kinships.csv), memberships (memberships.csv), documents (documents.csv), questionnaires (questionnaires.csv), insurance_coverages (insurance_coverages.csv), patients_and_guardians (patients_and_guardians_anonymized.csv). Each task should: parse CSV, validate data, create records, handle errors gracefully, provide progress feedback, and be idempotent (skip existing records).",
+        "testStrategy": "Run each import task and verify data is correctly imported. Test idempotency by running twice. Verify referential integrity.",
+        "priority": "high",
+        "dependencies": [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Update Insurance Models to Match Test Data Structure",
+        "description": "Update InsuranceStep and InsurancePolicy model to match insurance_coverages.csv structure.",
+        "details": "Add fields to insurance_policies table: member_id, group_id, front_card_url, back_card_url, plan_holder_first_name, plan_holder_last_name, plan_holder_dob, plan_holder_country, plan_holder_state, plan_holder_city, plan_holder_street_address, plan_holder_zip_code, plan_holder_legal_gender, insurance_company_name, kind, level, eligibility, openpm_insurance_organization_id, openpm_coverage_id, openpm_insurance_organization_name. Update InsurancePolicy model. Update OCR extraction service to populate these fields. Create migration to add missing fields.",
+        "testStrategy": "Test insurance data storage with new fields. Verify OCR extraction populates all fields. Test CSV import.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Update Parent and Student Models for Test Data Compatibility",
+        "description": "Review and update Parent and Student models to match patients_and_guardians_anonymized.csv structure.",
+        "details": "Review CSV fields and add missing fields to Parent model: preferred_name, middle_name, title, preferred_language, preferred_pronoun, legal_gender, birthdate, address fields, healthie_id, account_status, system_labels (array). Add missing fields to Student model as needed. Create migrations. Update models with validations. Create seed data import script for patients_and_guardians_anonymized.csv.",
+        "testStrategy": "Test model validations with new fields. Verify CSV import creates correct Parent and Student records. Test associations.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Update Appointment Model to Link to Therapists Table",
+        "description": "Update Appointment model to use foreign key relationship to Therapists table instead of UUID therapist_id.",
+        "details": "Create migration to add therapist_id foreign key to appointments table, linking to therapists table. Update Appointment model with belongs_to :therapist association. Update BookAppointment mutation to validate therapist exists and check availability. Update SchedulingStep to show real therapist information from database. Update GraphQL AppointmentType to include therapist details.",
+        "testStrategy": "Test appointment creation with therapist foreign key. Verify therapist association works. Test booking flow with real therapists.",
+        "priority": "high",
+        "dependencies": [
+          16,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Create Data Validation and Testing Suite for Imported Data",
+        "description": "Create comprehensive validation and testing suite for all imported test data to ensure data integrity.",
+        "details": "Create RSpec test suite to verify: referential integrity (all foreign keys valid), data types correct, required fields present, relationships work (therapists to insurances, organizations to contracts, etc.), JSONB fields parse correctly, arrays store correctly, enums use valid values. Create data validation rake task to check all imported data. Fix any data integrity issues found.",
+        "testStrategy": "Run validation suite after imports. Fix any failures. Verify all relationships are correct. Test edge cases.",
+        "priority": "medium",
+        "dependencies": [
+          27
+        ],
+        "status": "pending",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:48:53.011Z",
+      "updated": "2025-11-10T21:20:00.000Z",
       "description": "Tasks for master context"
     }
   }
