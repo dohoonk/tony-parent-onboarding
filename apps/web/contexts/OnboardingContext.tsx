@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { ParentInfoData } from '@/components/onboarding/steps/ParentInfoStep';
 import { StudentInfoData } from '@/components/onboarding/steps/StudentInfoStep';
+import { analytics } from '@/lib/analytics';
 
 export interface OnboardingData {
   parentInfo?: ParentInfoData;
@@ -67,6 +68,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
+  const stepStartTime = useRef<Record<number, number>>({});
+  const onboardingStartTime = useRef<number | null>(null);
 
   // Calculate remaining time based on current step
   const estimatedSecondsRemaining = STEPS
@@ -76,7 +79,20 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Load progress from localStorage on mount
   useEffect(() => {
     loadProgress();
+    // Track onboarding start
+    onboardingStartTime.current = Date.now();
+    analytics.trackOnboardingStart('session_' + Date.now());
   }, []);
+
+  // Track step changes
+  useEffect(() => {
+    const step = STEPS.find(s => s.id === currentStep);
+    if (step) {
+      // Track step start
+      stepStartTime.current[currentStep] = Date.now();
+      analytics.trackStepStart(currentStep, step.title);
+    }
+  }, [currentStep]);
 
   // Auto-save progress whenever data changes
   useEffect(() => {
@@ -126,7 +142,24 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const nextStep = useCallback(() => {
     if (currentStep < STEPS.length) {
-      setCurrentStep((prev) => prev + 1);
+      // Track step completion
+      const step = STEPS.find(s => s.id === currentStep);
+      if (step && stepStartTime.current[currentStep]) {
+        const timeSpent = (Date.now() - stepStartTime.current[currentStep]) / 1000;
+        analytics.trackStepComplete(currentStep, step.title, timeSpent);
+      }
+      
+      setCurrentStep((prev) => {
+        const next = prev + 1;
+        
+        // Track onboarding completion if this is the last step
+        if (next > STEPS.length && onboardingStartTime.current) {
+          const totalTime = (Date.now() - onboardingStartTime.current) / 1000;
+          analytics.trackOnboardingComplete('session_' + Date.now(), totalTime, STEPS.length);
+        }
+        
+        return next;
+      });
     }
   }, [currentStep]);
 
