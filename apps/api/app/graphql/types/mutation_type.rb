@@ -15,6 +15,8 @@ module Types
     field :book_appointment, mutation: Mutations::BookAppointment
     field :support_chat_message, mutation: Mutations::SupportChatMessage
     field :send_onboarding_summary, mutation: Mutations::SendOnboardingSummary
+    field :create_referral, mutation: Mutations::CreateReferral
+    field :update_referral_status, mutation: Mutations::UpdateReferralStatus
   end
 end
 

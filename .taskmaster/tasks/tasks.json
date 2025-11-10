@@ -1032,7 +1032,7 @@
               2
             ],
             "details": "Create ReferralType and ReferralMemberType. Add mutations for create_referral, update_referral_status. Add queries for listing referrals.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test GraphQL mutations and queries. Verify status updates work."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:26:27.861Z",
+      "updated": "2025-11-10T22:28:16.405Z",
       "description": "Tasks for master context"
     }
   }
