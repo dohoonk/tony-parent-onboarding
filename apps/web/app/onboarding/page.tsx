@@ -73,7 +73,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={session?.id?.toString()}
+            sessionId={undefined}
           />
         );
       
@@ -85,7 +85,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={session?.id?.toString()}
+            sessionId={undefined}
           />
         );
       
@@ -97,7 +97,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={session?.id?.toString()}
+            sessionId={undefined}
           />
         );
       
@@ -109,7 +109,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={session?.id?.toString()}
+            sessionId={undefined}
           />
         );
       
@@ -120,7 +120,7 @@ const OnboardingContent: React.FC = () => {
               updateData({ onboardingComplete: true });
               // TODO: Redirect to completion page or dashboard
             }}
-            sessionId={session?.id?.toString()}
+            sessionId={undefined}
           />
         );
       
