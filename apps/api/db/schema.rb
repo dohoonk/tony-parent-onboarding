@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000016) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000016) do
   create_enum "appointment_status", ["scheduled", "confirmed", "completed", "cancelled", "no_show"]
   create_enum "message_role", ["user", "assistant", "system"]
   create_enum "onboarding_status", ["draft", "active", "completed", "abandoned"]
+  create_enum "organization_kind", ["district", "school"]
 
   create_table "appointments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "onboarding_session_id", null: false
@@ -130,6 +131,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000016) do
     t.index ["parent_id"], name: "index_onboarding_sessions_on_parent_id"
     t.index ["status"], name: "index_onboarding_sessions_on_status"
     t.index ["student_id"], name: "index_onboarding_sessions_on_student_id"
+  end
+
+  create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "parent_organization_id"
+    t.enum "kind", null: false, enum_type: "organization_kind"
+    t.string "slug", null: false
+    t.string "name", null: false
+    t.string "internal_name"
+    t.string "tzdb"
+    t.uuid "market_id"
+    t.jsonb "config", default: {}
+    t.datetime "enabled_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["config"], name: "index_organizations_on_config", using: :gin
+    t.index ["created_at"], name: "index_organizations_on_created_at"
+    t.index ["enabled_at"], name: "index_organizations_on_enabled_at"
+    t.index ["kind", "parent_organization_id"], name: "index_organizations_on_kind_and_parent_organization_id"
+    t.index ["kind"], name: "index_organizations_on_kind"
+    t.index ["market_id"], name: "index_organizations_on_market_id"
+    t.index ["parent_organization_id", "enabled_at"], name: "index_organizations_on_parent_organization_id_and_enabled_at"
+    t.index ["parent_organization_id"], name: "index_organizations_on_parent_organization_id"
+    t.index ["slug"], name: "index_organizations_on_slug", unique: true
   end
 
   create_table "parents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -265,6 +289,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000016) do
   add_foreign_key "intake_summaries", "onboarding_sessions"
   add_foreign_key "onboarding_sessions", "parents"
   add_foreign_key "onboarding_sessions", "students"
+  add_foreign_key "organizations", "organizations", column: "parent_organization_id"
   add_foreign_key "screener_responses", "onboarding_sessions"
   add_foreign_key "screener_responses", "screeners"
   add_foreign_key "students", "parents"

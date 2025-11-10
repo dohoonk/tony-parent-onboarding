@@ -14,6 +14,8 @@ module Types
     field :reassurance_message, resolver: Queries::ReassuranceMessage
     field :therapist, resolver: Queries::Therapist
     field :therapists, resolver: Queries::Therapists
+    field :organization, resolver: Queries::Organization
+    field :organizations, resolver: Queries::Organizations
 
     def health_check
       "OK"

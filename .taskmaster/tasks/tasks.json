@@ -873,7 +873,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -881,7 +881,7 @@
             "description": "Write Rails migration to create organizations table with self-referential parent relationship.",
             "dependencies": [],
             "details": "Create migration with UUID primary key, parent_organization_id (self-referential FK), kind enum, slug, name, tzdb, market_id, internal_name, config JSONB, enabled_at. Add indexes for parent_organization_id and kind.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run migration and verify self-referential relationship works. Test hierarchy queries."
           },
           {
@@ -892,7 +892,7 @@
               1
             ],
             "details": "Add belongs_to :parent_organization, has_many :child_organizations. Add scopes for districts (kind=1) and schools (kind=2). Add helper methods for hierarchy navigation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test parent-child relationships. Verify scopes work correctly."
           },
           {
@@ -903,7 +903,7 @@
               2
             ],
             "details": "Create OrganizationType with parent and children fields. Add queries for listing organizations, finding by slug, and querying hierarchy.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test GraphQL queries including hierarchy traversal. Verify nested queries work."
           }
         ]
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T21:53:37.271Z",
+      "updated": "2025-11-10T21:55:18.896Z",
       "description": "Tasks for master context"
     }
   }
