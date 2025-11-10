@@ -14,6 +14,7 @@ module Types
     field :match_therapists, mutation: Mutations::MatchTherapists
     field :book_appointment, mutation: Mutations::BookAppointment
     field :support_chat_message, mutation: Mutations::SupportChatMessage
+    field :send_onboarding_summary, mutation: Mutations::SendOnboardingSummary
   end
 end
 

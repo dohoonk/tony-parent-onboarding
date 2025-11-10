@@ -11,6 +11,7 @@ import { AIIntakeStep } from '@/components/onboarding/steps/AIIntakeStep';
 import { ScreenerStep } from '@/components/onboarding/steps/ScreenerStep';
 import { InsuranceStep } from '@/components/onboarding/steps/InsuranceStep';
 import { SchedulingStep } from '@/components/onboarding/steps/SchedulingStep';
+import { SummaryStep } from '@/components/onboarding/steps/SummaryStep';
 
 const OnboardingContent: React.FC = () => {
   const {
@@ -108,6 +109,17 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
+            sessionId={session?.id?.toString()}
+          />
+        );
+      
+      case 9:
+        return (
+          <SummaryStep
+            onComplete={() => {
+              updateData({ onboardingComplete: true });
+              // TODO: Redirect to completion page or dashboard
+            }}
             sessionId={session?.id?.toString()}
           />
         );
