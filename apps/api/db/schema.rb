@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000019) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -67,6 +67,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000019) do
     t.index ["start_date"], name: "index_availability_windows_on_start_date"
   end
 
+  create_table "clinician_credentialed_insurances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "care_provider_profile_id", null: false
+    t.uuid "credentialed_insurance_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["care_provider_profile_id", "credentialed_insurance_id"], name: "index_clinician_cred_ins_on_therapist_and_insurance", unique: true
+    t.index ["care_provider_profile_id"], name: "index_clinician_cred_ins_on_therapist_id"
+    t.index ["created_at"], name: "index_clinician_credentialed_insurances_on_created_at"
+    t.index ["credentialed_insurance_id"], name: "idx_on_credentialed_insurance_id_3668f7d2e3"
+  end
+
   create_table "contracts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.date "effective_date", null: false
     t.date "end_date"
@@ -90,6 +101,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000019) do
     t.string "basis"
     t.datetime "created_at", precision: nil, null: false
     t.index ["onboarding_session_id"], name: "index_cost_estimates_on_onboarding_session_id", unique: true
+  end
+
+  create_table "credentialed_insurances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "parent_credentialed_insurance_id"
+    t.string "name", null: false
+    t.string "country", default: "US"
+    t.string "state"
+    t.string "line_of_business"
+    t.text "legacy_names", default: [], array: true
+    t.string "open_pm_name"
+    t.integer "network_status", default: 0
+    t.boolean "associates_allowed", default: false
+    t.string "legacy_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country", "state"], name: "index_credentialed_insurances_on_country_and_state"
+    t.index ["created_at"], name: "index_credentialed_insurances_on_created_at"
+    t.index ["legacy_names"], name: "index_credentialed_insurances_on_legacy_names", using: :gin
+    t.index ["name", "state"], name: "index_credentialed_insurances_on_name_and_state"
+    t.index ["name"], name: "index_credentialed_insurances_on_name"
+    t.index ["network_status"], name: "index_credentialed_insurances_on_network_status"
+    t.index ["parent_credentialed_insurance_id", "network_status"], name: "idx_on_parent_credentialed_insurance_id_network_sta_1b073221cf"
+    t.index ["parent_credentialed_insurance_id"], name: "idx_on_parent_credentialed_insurance_id_1bfe213fc2"
   end
 
   create_table "insurance_cards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -309,7 +343,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000019) do
 
   add_foreign_key "appointments", "onboarding_sessions"
   add_foreign_key "appointments", "students"
+  add_foreign_key "clinician_credentialed_insurances", "credentialed_insurances"
+  add_foreign_key "clinician_credentialed_insurances", "therapists", column: "care_provider_profile_id"
   add_foreign_key "cost_estimates", "onboarding_sessions"
+  add_foreign_key "credentialed_insurances", "credentialed_insurances", column: "parent_credentialed_insurance_id"
   add_foreign_key "insurance_cards", "onboarding_sessions"
   add_foreign_key "insurance_policies", "onboarding_sessions"
   add_foreign_key "intake_messages", "onboarding_sessions"

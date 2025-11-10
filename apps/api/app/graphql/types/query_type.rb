@@ -18,6 +18,8 @@ module Types
     field :organizations, resolver: Queries::Organizations
     field :contract, resolver: Queries::Contract
     field :contracts, resolver: Queries::Contracts
+    field :credentialed_insurance, resolver: Queries::CredentialedInsurance
+    field :credentialed_insurances, resolver: Queries::CredentialedInsurances
 
     def health_check
       "OK"

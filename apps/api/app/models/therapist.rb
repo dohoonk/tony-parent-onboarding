@@ -5,8 +5,11 @@ class Therapist < ApplicationRecord
   has_many :supervisees, class_name: 'Therapist', foreign_key: 'supervisor_id', dependent: :nullify
   has_many :associate_supervisees, class_name: 'Therapist', foreign_key: 'associate_supervisor_id', dependent: :nullify
   
+  # Associations
+  has_many :clinician_credentialed_insurances, dependent: :destroy, foreign_key: 'care_provider_profile_id'
+  has_many :credentialed_insurances, through: :clinician_credentialed_insurances
+
   # Future associations (to be added when other models are created)
-  # has_many :clinician_credentialed_insurances, dependent: :destroy
   # has_many :availability_windows, dependent: :destroy
   # has_many :appointments, dependent: :destroy
 
