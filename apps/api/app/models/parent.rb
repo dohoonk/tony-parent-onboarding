@@ -23,15 +23,77 @@ class Parent < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :auth_provider, presence: true, inclusion: { in: %w[magic_link] }
+  validates :preferred_language, inclusion: { in: %w[eng es fr zh ja ko] }, allow_nil: true
+  validate :birthdate_is_valid
+
+  # Scopes
+  scope :by_account_status, ->(status) { where(account_status: status) }
+  scope :by_preferred_language, ->(lang) { where(preferred_language: lang) }
+  scope :with_system_label, ->(label) { where('? = ANY(system_labels)', label) }
+  scope :active, -> { where(account_status: 'active') }
+  scope :inactive, -> { where.not(account_status: 'active') }
 
   # Callbacks
   before_validation :normalize_email
+  before_validation :normalize_arrays
   after_initialize :set_default_role, if: :new_record?
+
+  # Helper methods
+
+  def full_name
+    [first_name, middle_name, last_name].compact.join(' ')
+  end
+
+  def display_name
+    preferred_name.presence || full_name
+  end
+
+  def age
+    return nil unless birthdate.present?
+    ((Date.today - birthdate) / 365.25).floor
+  end
+
+  def active?
+    account_status == 'active'
+  end
+
+  def has_system_label?(label)
+    system_labels.include?(label)
+  end
+
+  def address_string
+    return nil unless address.present?
+    if address.is_a?(Hash)
+      parts = [
+        address['street'],
+        address['city'],
+        address['state'],
+        address['zip_code']
+      ].compact.reject(&:blank?)
+      parts.join(', ')
+    else
+      address.to_s
+    end
+  end
 
   private
 
   def normalize_email
     self.email = email&.downcase&.strip
+  end
+
+  def normalize_arrays
+    self.system_labels = Array(system_labels).compact if system_labels.present?
+  end
+
+  def birthdate_is_valid
+    if birthdate.present? && birthdate > Date.today
+      errors.add(:birthdate, "cannot be in the future")
+    end
+
+    if birthdate.present? && birthdate < 150.years.ago
+      errors.add(:birthdate, "is too far in the past")
+    end
   end
 
   def set_default_role

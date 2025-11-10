@@ -27,6 +27,14 @@ class Student < ApplicationRecord
   scope :by_age_range, ->(min_age, max_age) {
     where(date_of_birth: (Date.today - max_age.years)..(Date.today - min_age.years))
   }
+  scope :by_account_status, ->(status) { where(account_status: status) }
+  scope :by_legal_gender, ->(gender) { where(legal_gender: gender) }
+  scope :with_system_label, ->(label) { where('? = ANY(system_labels)', label) }
+  scope :active, -> { where(account_status: 'active') }
+  scope :inactive, -> { where.not(account_status: 'active') }
+
+  # Callbacks
+  before_validation :normalize_arrays
 
   # Instance methods
   def age
@@ -34,7 +42,27 @@ class Student < ApplicationRecord
     ((Date.today - date_of_birth) / 365.25).floor
   end
 
+  def full_name
+    [first_name, middle_name, last_name].compact.join(' ')
+  end
+
+  def display_name
+    preferred_name.presence || full_name
+  end
+
+  def active?
+    account_status == 'active'
+  end
+
+  def has_system_label?(label)
+    system_labels.include?(label)
+  end
+
   private
+
+  def normalize_arrays
+    self.system_labels = Array(system_labels).compact if system_labels.present?
+  end
 
   def date_of_birth_is_valid
     if date_of_birth.present? && date_of_birth > Date.today

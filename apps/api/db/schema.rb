@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_231211) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_231926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -329,9 +329,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_231211) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "role", default: "parent", null: false
+    t.string "preferred_name"
+    t.string "middle_name"
+    t.string "title"
+    t.string "preferred_language", default: "eng"
+    t.string "preferred_pronoun"
+    t.string "legal_gender"
+    t.date "birthdate"
+    t.string "healthie_id"
+    t.string "account_status"
+    t.text "system_labels", default: [], array: true
+    t.jsonb "address", default: {}
+    t.jsonb "profile_data", default: {}
+    t.jsonb "migration_details", default: {}
+    t.jsonb "supabase_metadata", default: {}
+    t.index ["account_status"], name: "index_parents_on_account_status"
+    t.index ["address"], name: "index_parents_on_address", using: :gin
+    t.index ["birthdate"], name: "index_parents_on_birthdate"
     t.index ["created_at"], name: "index_parents_on_created_at"
     t.index ["email"], name: "index_parents_on_email", unique: true
+    t.index ["healthie_id"], name: "index_parents_on_healthie_id"
+    t.index ["migration_details"], name: "index_parents_on_migration_details", using: :gin
+    t.index ["preferred_language"], name: "index_parents_on_preferred_language"
+    t.index ["profile_data"], name: "index_parents_on_profile_data", using: :gin
     t.index ["role"], name: "index_parents_on_role"
+    t.index ["supabase_metadata"], name: "index_parents_on_supabase_metadata", using: :gin
+    t.index ["system_labels"], name: "index_parents_on_system_labels", using: :gin
   end
 
   create_table "questionnaires", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -459,8 +482,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_231211) do
     t.string "language", default: "en", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "middle_name"
+    t.string "preferred_name"
+    t.string "legal_gender"
+    t.string "healthie_id"
+    t.string "account_status"
+    t.text "system_labels", default: [], array: true
+    t.jsonb "profile_data", default: {}
+    t.jsonb "migration_details", default: {}
+    t.jsonb "supabase_metadata", default: {}
+    t.index ["account_status"], name: "index_students_on_account_status"
     t.index ["date_of_birth"], name: "index_students_on_date_of_birth"
+    t.index ["healthie_id"], name: "index_students_on_healthie_id"
+    t.index ["legal_gender"], name: "index_students_on_legal_gender"
+    t.index ["migration_details"], name: "index_students_on_migration_details", using: :gin
     t.index ["parent_id"], name: "index_students_on_parent_id"
+    t.index ["profile_data"], name: "index_students_on_profile_data", using: :gin
+    t.index ["supabase_metadata"], name: "index_students_on_supabase_metadata", using: :gin
+    t.index ["system_labels"], name: "index_students_on_system_labels", using: :gin
   end
 
   create_table "therapists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
