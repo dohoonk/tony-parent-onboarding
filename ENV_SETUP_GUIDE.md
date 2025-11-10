@@ -44,19 +44,24 @@ OPENAI_API_KEY=sk-proj-your-actual-key-here
    - Or go to: https://console.aws.amazon.com/iam/
 4. Click **"Users"** in the left sidebar
 5. Click **"Create user"**
-   - Username: `parent-onboarding-s3-uploader` (or your choice)
+   - Username: `parent-onboarding-s3-uploader-tony` (or your choice)
    - Access type: **Programmatic access** (check this box)
    - Click **"Next: Permissions"**
-6. Attach permissions:
+6. **On the "Access key best practices & alternatives" page:**
+   - **Select: "Local code"** - This option says: "You plan to use this access key to enable application code in a local development environment to access your AWS account."
+   - This is the correct choice for local Rails development
+   - Click **"Next"** to continue
+7. Attach permissions:
    - Click **"Attach existing policies directly"**
    - Search for and select: **"AmazonS3FullAccess"** (or create a more restrictive policy)
    - Click **"Next: Tags"** (optional)
    - Click **"Next: Review"**
    - Click **"Create user"**
-7. **IMPORTANT:** Copy both keys immediately:
+8. **IMPORTANT:** Copy both keys immediately:
    - **Access key ID**: e.g., `AKIAIOSFODNN7EXAMPLE`
    - **Secret access key**: e.g., `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
    - You can download a CSV file with both keys
+   - ⚠️ **You won't be able to see the secret key again after this step!**
 
 **How to set it:**
 ```bash
