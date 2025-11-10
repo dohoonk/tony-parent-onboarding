@@ -61,7 +61,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
         <h4 className="font-semibold">What to expect:</h4>
         <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
           <li>• Share basic information about you and your child</li>
-          <li>• Tell us about your child's needs through a guided conversation</li>
+          <li>• Tell us about your child&apos;s needs through a guided conversation</li>
           <li>• Complete a brief assessment to help match with the right therapist</li>
           <li>• Provide insurance information (if applicable)</li>
           <li>• Schedule your first session</li>

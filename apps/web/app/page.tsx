@@ -8,7 +8,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle>Parent Onboarding AI</CardTitle>
           <CardDescription>
-            Welcome to Daybreak Health's AI-powered onboarding experience
+            Welcome to Daybreak Health&apos;s AI-powered onboarding experience
           </CardDescription>
         </CardHeader>
         <CardContent>
