@@ -1,7 +1,16 @@
+'use client';
+
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Home() {
+  const router = useRouter()
+
+  const handleBeginOnboarding = () => {
+    router.push('/onboarding')
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <Card className="w-[600px]">
@@ -17,7 +26,7 @@ export default function Home() {
               We&apos;re here to guide you through understanding your child&apos;s mental health needs 
               and connecting you with the right support.
             </p>
-            <Button className="w-full" size="lg">
+            <Button className="w-full" size="lg" onClick={handleBeginOnboarding}>
               Begin Onboarding
             </Button>
           </div>
