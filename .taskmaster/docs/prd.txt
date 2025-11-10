@@ -151,7 +151,7 @@ Step 5 — Scheduling + Clear "What Happens Next" Summary
 ```
 root/
 ├─ apps/
-│  ├─ api/                # Rails 7, API‑only, GraphQL (graphql‑ruby), Sidekiq
+│  ├─ api/                # Rails 8, API‑only, GraphQL (graphql‑ruby), Sidekiq
 │  └─ web/                # Next.js 15 (App Router), React 18, Tailwind, shadcn/ui
 ├─ packages/
 │  ├─ shared-types/       # Zod/TypeScript schemas mirroring GraphQL types

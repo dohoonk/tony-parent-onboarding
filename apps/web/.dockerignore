@@ -1,0 +1,30 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+
+# Ignore git directory.
+/.git/
+/.gitignore
+
+# Ignore all environment files.
+/.env*
+!/.env.example
+
+# Ignore node_modules (will be installed in container)
+/node_modules/
+
+# Ignore Next.js build output
+/.next/
+/out/
+
+# Ignore build artifacts
+/build/
+/.vercel/
+
+# Ignore logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore OS files
+.DS_Store
+*.pem
+

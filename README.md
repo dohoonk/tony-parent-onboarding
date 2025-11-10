@@ -16,7 +16,7 @@ This project transforms Daybreak Health's clinical onboarding process into a war
 ```
 root/
 ├── apps/
-│   ├── api/           # Rails 7 API-only (GraphQL, Sidekiq, Redis, PostgreSQL)
+│   ├── api/           # Rails 8 API-only (GraphQL, Sidekiq, Redis, PostgreSQL)
 │   └── web/           # Next.js 15 (App Router, React 18, Tailwind, shadcn/ui)
 ├── packages/
 │   ├── shared-types/  # Zod/TypeScript schemas
@@ -32,7 +32,7 @@ root/
 ## Technology Stack
 
 **Backend:**
-- Rails 7 (API-only)
+- Rails 8 (API-only)
 - GraphQL (graphql-ruby)
 - PostgreSQL
 - Redis + Sidekiq
@@ -56,7 +56,124 @@ root/
 
 ### Development Setup
 
-Detailed setup instructions coming soon as we complete the infrastructure setup.
+#### Option 1: Docker (Recommended)
+
+The easiest way to get started is with Docker:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd parent-onboarding
+
+# Start all services (API, Web, PostgreSQL, Redis, Sidekiq)
+docker-compose up
+
+# The services will be available at:
+# - Rails API: http://localhost:3000
+# - GraphiQL: http://localhost:3000/graphiql
+# - Next.js Web: http://localhost:3001
+# - PostgreSQL: localhost:5432
+# - Redis: localhost:6379
+```
+
+#### Option 2: Local Development
+
+**1. Set up the API (Rails):**
+
+```bash
+cd apps/api
+
+# Install dependencies
+bundle install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Create and migrate database
+rails db:create
+rails db:migrate
+rails db:seed
+
+# Start the server
+rails server
+```
+
+**2. Set up the Web App (Next.js):**
+
+```bash
+cd apps/web
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
+
+# Start the development server
+npm run dev
+```
+
+**3. Set up Background Jobs (Sidekiq):**
+
+```bash
+cd apps/api
+
+# Start Sidekiq worker
+bundle exec sidekiq -C config/sidekiq.yml
+```
+
+### Environment Variables
+
+**API (.env):**
+```
+DATABASE_URL=postgresql://localhost/parent_onboarding_development
+REDIS_URL=redis://localhost:6379/0
+OPENAI_API_KEY=sk-your-key-here
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_S3_BUCKET=parent-onboarding-uploads
+SECRET_KEY_BASE=your-secret-key-base-here
+```
+
+**Web (.env.local):**
+```
+NEXT_PUBLIC_GRAPHQL_URL=http://localhost:3000/graphql
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+### Common Commands
+
+**API:**
+```bash
+# Run tests
+bundle exec rspec
+
+# Run console
+rails console
+
+# Generate migration
+rails generate migration AddFieldToModel field:type
+
+# Run linter
+rubocop
+```
+
+**Web:**
+```bash
+# Run tests
+npm test
+
+# Type check
+npm run type-check
+
+# Build for production
+npm run build
+
+# Run linter
+npm run lint
+```
 
 ## Project Goals
 

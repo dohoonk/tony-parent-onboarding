@@ -1,0 +1,53 @@
+source "https://rubygems.org"
+
+ruby "3.3.5"
+
+# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "rails", "~> 8.0.0"
+
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.1"
+
+# Use the Puma web server [https://github.com/puma/puma]
+gem "puma", ">= 5.0"
+
+# Use Redis adapter to run Action Cable in production
+gem "redis", ">= 4.0.1"
+
+# Use Sidekiq for background jobs
+gem "sidekiq", "~> 7.0"
+
+# GraphQL for API
+gem "graphql", "~> 2.0"
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
+
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS)
+gem "rack-cors"
+
+# OpenAI for AI features
+gem "ruby-openai", "~> 7.0"
+
+# AWS SDK for S3 storage
+gem "aws-sdk-s3", "~> 1.0"
+
+# Authentication
+gem "jwt", "~> 2.7"
+
+group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "debug", platforms: %i[ mri windows ]
+  gem "rspec-rails", "~> 6.0"
+  gem "factory_bot_rails", "~> 6.0"
+  gem "faker", "~> 3.0"
+  gem "shoulda-matchers", "~> 6.0"
+end
+
+group :development do
+  # Speed up commands on slow machines / big apps
+  # gem "spring"
+end
