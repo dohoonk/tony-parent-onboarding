@@ -203,7 +203,7 @@
               2
             ],
             "details": "Inject authentication details (e.g., current_user) into the GraphQL context. Use before_action hooks or resolver guards to enforce authentication. Support parent and staff login flows. Return appropriate errors for unauthenticated requests.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test authenticated and unauthenticated requests for all endpoints. Confirm correct error responses and access control."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:16:54.752Z",
+      "updated": "2025-11-10T20:18:15.832Z",
       "description": "Tasks for master context"
     }
   }

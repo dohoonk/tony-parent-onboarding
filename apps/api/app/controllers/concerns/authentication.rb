@@ -1,0 +1,64 @@
+module Authentication
+  extend ActiveSupport::Concern
+
+  included do
+    before_action :authenticate_request
+  end
+
+  private
+
+  def authenticate_request
+    @current_user = authenticate_from_token
+  end
+
+  def authenticate_from_token
+    token = extract_token_from_header
+    return nil unless token
+
+    begin
+      decoded = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256')
+      payload = decoded.first
+      
+      parent_id = payload['parent_id']
+      return nil unless parent_id
+
+      parent = Parent.find_by(id: parent_id)
+      
+      if parent
+        # Log successful authentication
+        AuditLog.log_access(
+          actor: parent,
+          action: 'authenticate',
+          entity: parent
+        )
+      end
+
+      parent
+    rescue JWT::DecodeError, JWT::ExpiredSignature => e
+      Rails.logger.warn("JWT authentication failed: #{e.message}")
+      nil
+    end
+  end
+
+  def extract_token_from_header
+    auth_header = request.headers['Authorization']
+    return nil unless auth_header
+
+    # Expected format: "Bearer <token>"
+    parts = auth_header.split(' ')
+    return nil unless parts.length == 2 && parts[0] == 'Bearer'
+
+    parts[1]
+  end
+
+  def current_user
+    @current_user
+  end
+
+  def require_authentication!
+    unless current_user
+      render json: { errors: ['Authentication required'] }, status: :unauthorized
+    end
+  end
+end
+
