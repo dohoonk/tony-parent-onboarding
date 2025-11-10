@@ -102,26 +102,14 @@ const OnboardingContent: React.FC = () => {
       
       case 8:
         return (
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">Scheduling Step</h3>
-            <p className="mt-2 text-muted-foreground">
-              This step will allow booking the first therapy session.
-            </p>
-            <div className="mt-6 flex justify-between">
-              <button onClick={prevStep} className="rounded-md bg-muted px-4 py-2">
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  updateData({ schedulingComplete: true });
-                  alert('Onboarding complete!');
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-              >
-                Complete
-              </button>
-            </div>
-          </div>
+          <SchedulingStep
+            onNext={() => {
+              updateData({ schedulingComplete: true });
+              nextStep();
+            }}
+            onPrev={prevStep}
+            sessionId={session?.id?.toString()}
+          />
         );
       
       default:
