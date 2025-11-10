@@ -1,6 +1,6 @@
 # Task ID: 10
 # Title: Implement Inline AI FAQ and Emotional Support Prompts
-# Status: pending
+# Status: done
 # Dependencies: 4
 # Priority: medium
 # Description: Surface real-time AI-powered FAQs and micro-reassurance messages at stress points throughout onboarding.
@@ -11,25 +11,25 @@ Integrate small LLM for contextual FAQ and supportive microcopy. Trigger prompts
 Test FAQ triggering, accuracy, and tone. Validate that microcopy appears at appropriate moments.
 
 # Subtasks:
-## 1. Integrate Small LLM for Contextual FAQ and Microcopy [pending]
+## 1. Integrate Small LLM for Contextual FAQ and Microcopy [done]
 ### Dependencies: 10.3
 ### Description: Select and integrate a small LLM into the onboarding flow to generate real-time, context-aware FAQ answers and supportive microcopy.
 ### Details:
 Evaluate and choose an LLM (open-source or API-based) that fits the use case. Set up API authentication, rate limits, and cost controls. Implement pre-processing (data cleaning, anonymization) and post-processing for responses. Ensure the LLM can be called programmatically from the onboarding UI.
 
-## 2. Implement FAQ and Microcopy Trigger Logic [pending]
+## 2. Implement FAQ and Microcopy Trigger Logic [done]
 ### Dependencies: 10.1, 10.3
 ### Description: Develop logic to surface FAQ answers and micro-reassurance messages at specific stress points during onboarding.
 ### Details:
 Define user actions and onboarding steps that should trigger prompts. Implement event listeners or hooks in the UI to detect these moments. Route context (user action, step, previous inputs) to the LLM for personalized responses. Ensure prompts are only shown when relevant to reduce noise.
 
-## 3. Validate and Enforce 'Reassuring Parenting Coach' Tone [pending]
+## 3. Validate and Enforce 'Reassuring Parenting Coach' Tone [done]
 ### Dependencies: 10.1
 ### Description: Ensure all LLM-generated FAQ answers and microcopy consistently match the desired supportive, reassuring tone.
 ### Details:
 Develop tone guidelines and example prompts. Fine-tune the LLM (via prompt engineering or few-shot examples) to align outputs with the 'Reassuring Parenting Coach' voice. Implement a validation layer to screen responses for tone compliance before displaying to users.
 
-## 4. Implement and Test UI Placement for AI Prompts [pending]
+## 4. Implement and Test UI Placement for AI Prompts [done]
 ### Dependencies: 10.2, 10.3
 ### Description: Design and test the placement of inline FAQ and micro-reassurance messages within the onboarding UI.
 ### Details:

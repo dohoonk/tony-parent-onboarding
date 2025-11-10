@@ -1,6 +1,6 @@
 # Task ID: 3
 # Title: Define GraphQL Schema and API Endpoints
-# Status: pending
+# Status: done
 # Dependencies: 2
 # Priority: high
 # Description: Expose all required GraphQL mutations and queries for onboarding, AI intake, insurance, scheduling, and support.
@@ -11,37 +11,37 @@ Implement GraphQL types, inputs, and mutations as listed (startOnboarding, aiInt
 Write GraphQL integration tests for each mutation/query. Validate correct data shape, permissions, and error handling.
 
 # Subtasks:
-## 1. Define GraphQL Object, Input, and Enum Types for Onboarding, AI Intake, Insurance, Scheduling, and Support [pending]
+## 1. Define GraphQL Object, Input, and Enum Types for Onboarding, AI Intake, Insurance, Scheduling, and Support [done]
 ### Dependencies: None
 ### Description: Create all necessary GraphQL object, input, and enum types to represent onboarding, AI intake, insurance, scheduling, and support domain models.
 ### Details:
 Implement Ruby classes for each GraphQL type (e.g., OnboardingSessionType, IntakeMessageType, InsuranceCardType, etc.) using graphql-ruby best practices. Ensure fields are properly typed, nested where appropriate, and enums are used for status/role fields. Follow naming conventions (camelCase for fields, PascalCase for types) and design for future extensibility.
 
-## 2. Implement GraphQL Mutations and Queries for All Required Operations [pending]
+## 2. Implement GraphQL Mutations and Queries for All Required Operations [done]
 ### Dependencies: 3.1
 ### Description: Develop GraphQL mutations and queries for startOnboarding, aiIntakeMessage, submitScreener, uploadInsuranceCard, confirmInsurance, estimateCost, suggestedSlots, book, and onboardingSession.
 ### Details:
 Define mutation and query classes in app/graphql/mutations and app/graphql/queries. Use input objects for mutation arguments and return affected objects. Ensure queries support necessary filtering and pagination. Adhere to consistent naming and input/output patterns.
 
-## 3. Integrate Authentication into GraphQL Context and Resolvers [pending]
+## 3. Integrate Authentication into GraphQL Context and Resolvers [done]
 ### Dependencies: 3.2
 ### Description: Add authentication logic to the GraphQL API, ensuring only authenticated users can access mutations and queries.
 ### Details:
 Inject authentication details (e.g., current_user) into the GraphQL context. Use before_action hooks or resolver guards to enforce authentication. Support parent and staff login flows. Return appropriate errors for unauthenticated requests.
 
-## 4. Implement Role-Based Access Control (RBAC) for Parent and Staff Roles [pending]
+## 4. Implement Role-Based Access Control (RBAC) for Parent and Staff Roles [done]
 ### Dependencies: 3.3
 ### Description: Restrict access to GraphQL operations based on user roles (parent, staff) using RBAC patterns.
 ### Details:
 Define role checks in resolvers or use a policy layer (e.g., Pundit or custom logic) to enforce permissions. Ensure only authorized roles can perform sensitive actions (e.g., staff-only queries, parent-only mutations). Document permission matrix.
 
-## 5. Add Comprehensive Error Handling and Permission Error Responses [pending]
+## 5. Add Comprehensive Error Handling and Permission Error Responses [done]
 ### Dependencies: 3.4
 ### Description: Implement robust error handling for validation, authentication, and permission errors in GraphQL responses.
 ### Details:
 Use GraphQL::ExecutionError for user-facing errors. Standardize error messages and codes for permission denied, validation failures, and unexpected exceptions. Ensure sensitive information is not leaked in error responses.
 
-## 6. Develop Integration Tests for End-to-End GraphQL API Validation [pending]
+## 6. Develop Integration Tests for End-to-End GraphQL API Validation [done]
 ### Dependencies: 3.5
 ### Description: Write integration tests covering all GraphQL queries and mutations, including authentication, RBAC, and error handling.
 ### Details:

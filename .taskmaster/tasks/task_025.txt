@@ -1,0 +1,11 @@
+# Task ID: 25
+# Title: Integrate Questionnaires with Screeners System
+# Status: pending
+# Dependencies: 6, 2
+# Priority: medium
+# Description: Integrate Questionnaires data with existing Screeners system based on questionnaires.csv test data.
+# Details:
+Create questionnaires table: id (UUID), subject_id (student_id FK), respondent_id (parent_id FK), score, started_at, completed_at, question_answers (JSONB), type, language_of_completion, created_at, updated_at. Map questionnaire types to screener keys. Update ScreenerResponse model to optionally link to questionnaires. Create Questionnaire model with validations and associations. Create GraphQL types. Add seed data import script.
+
+# Test Strategy:
+Test questionnaire creation and linking to screeners. Verify question_answers JSONB storage. Test CSV import.

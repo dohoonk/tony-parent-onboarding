@@ -1,0 +1,37 @@
+# Task ID: 21
+# Title: Create Referrals System Database Schema
+# Status: pending
+# Dependencies: 17, 2
+# Priority: medium
+# Description: Create database schema for Referrals system based on referrals.csv and referral_members.csv test data.
+# Details:
+Create referrals table: id (UUID), submitter_id (parent_id FK), organization_id (FK), service_kind, concerns, data (JSONB), contract_id (FK), terms_kind, appointment_kind, planned_sessions, collect_coverage, allowed_coverage (array), collection_rule, self_responsibility_required, care_provider_requirements (array), referred_at, ready_for_scheduling_at, scheduled_at, onboarding_completed_at, enrolled_at, disenrolled_at, intake_id, tzdb, system_labels (array), created_at, updated_at. Create referral_members join table: id, referral_id (FK), user_id (FK), role, data (JSONB), created_at, updated_at. Create Referral and ReferralMember models with validations and associations. Create GraphQL types. Add seed data import scripts.
+
+# Test Strategy:
+Test referral creation and member associations. Verify status transitions. Test CSV imports.
+
+# Subtasks:
+## 1. Create Referrals and ReferralMembers Table Migrations [pending]
+### Dependencies: None
+### Description: Write migrations for referrals and referral_members tables with all required fields.
+### Details:
+Create referrals table with all status fields, JSONB data field, arrays for allowed_coverage and care_provider_requirements. Create referral_members join table. Add appropriate indexes and foreign keys.
+
+## 2. Create Referral and ReferralMember Models [pending]
+### Dependencies: 21.1
+### Description: Create models with validations, associations, and status transition logic.
+### Details:
+Add validations for required fields. Add associations (belongs_to :submitter, :organization, :contract, has_many :referral_members). Add state machine or methods for status transitions.
+
+## 3. Create GraphQL Types and Mutations for Referrals [pending]
+### Dependencies: 21.2
+### Description: Create GraphQL types and mutations for creating and managing referrals.
+### Details:
+Create ReferralType and ReferralMemberType. Add mutations for create_referral, update_referral_status. Add queries for listing referrals.
+
+## 4. Create CSV Import Scripts for Referrals [pending]
+### Dependencies: 21.2
+### Description: Create rake tasks to import referrals.csv and referral_members.csv.
+### Details:
+Parse CSV files, handle JSONB fields, create referrals and members. Handle status field mappings. Make idempotent.
+

@@ -1,0 +1,11 @@
+# Task ID: 29
+# Title: Update Parent and Student Models for Test Data Compatibility
+# Status: pending
+# Dependencies: 2
+# Priority: medium
+# Description: Review and update Parent and Student models to match patients_and_guardians_anonymized.csv structure.
+# Details:
+Review CSV fields and add missing fields to Parent model: preferred_name, middle_name, title, preferred_language, preferred_pronoun, legal_gender, birthdate, address fields, healthie_id, account_status, system_labels (array). Add missing fields to Student model as needed. Create migrations. Update models with validations. Create seed data import script for patients_and_guardians_anonymized.csv.
+
+# Test Strategy:
+Test model validations with new fields. Verify CSV import creates correct Parent and Student records. Test associations.

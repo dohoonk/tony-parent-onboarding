@@ -1,6 +1,6 @@
 # Task ID: 6
 # Title: Implement Custom Clinical Screener Module with AI Interpretation
-# Status: pending
+# Status: done
 # Dependencies: 5
 # Priority: high
 # Description: Render custom PHQ/GAD-style screeners with supportive framing and real-time AI plain-language interpretation.

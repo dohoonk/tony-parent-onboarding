@@ -1,0 +1,55 @@
+# Task ID: 27
+# Title: Create CSV Import Rake Tasks for All Test Data
+# Status: pending
+# Dependencies: 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+# Priority: high
+# Description: Create comprehensive rake tasks to import all test data CSV files from devdocs directory.
+# Details:
+Create rake tasks in lib/tasks/import_data.rake for: clinicians (clinicians_anonymized.csv), organizations (orgs.csv), contracts (contracts.csv), org_contracts (org_contracts.csv), credentialed_insurances (credentialed_insurances.csv), clinician_credentialed_insurances (clinician_credentialed_insurances.csv), clinician_availabilities (clinician_availabilities.csv), patient_availabilities (patient_availabilities.csv), referrals (referrals.csv), referral_members (referral_members.csv), kinships (kinships.csv), memberships (memberships.csv), documents (documents.csv), questionnaires (questionnaires.csv), insurance_coverages (insurance_coverages.csv), patients_and_guardians (patients_and_guardians_anonymized.csv). Each task should: parse CSV, validate data, create records, handle errors gracefully, provide progress feedback, and be idempotent (skip existing records).
+
+# Test Strategy:
+Run each import task and verify data is correctly imported. Test idempotency by running twice. Verify referential integrity.
+
+# Subtasks:
+## 1. Create Base CSV Import Infrastructure [pending]
+### Dependencies: None
+### Description: Create shared infrastructure for CSV parsing, validation, and error handling.
+### Details:
+Create base class or module for CSV imports with common methods: CSV parsing, progress tracking, error logging, idempotency checks. Add helper methods for data transformation.
+
+## 2. Create Import Tasks for Core Entities [pending]
+### Dependencies: 27.1
+### Description: Create rake tasks for importing clinicians, organizations, contracts, and org_contracts.
+### Details:
+Create tasks: import:clinicians, import:organizations, import:contracts, import:org_contracts. Handle relationships and foreign keys. Make idempotent.
+
+## 3. Create Import Tasks for Insurance and Credentialing [pending]
+### Dependencies: 27.1
+### Description: Create rake tasks for importing insurance-related data.
+### Details:
+Create tasks: import:credentialed_insurances, import:clinician_credentialed_insurances, import:insurance_coverages. Handle many-to-many relationships.
+
+## 4. Create Import Tasks for Availability Data [pending]
+### Dependencies: 27.1
+### Description: Create rake tasks for importing clinician and patient availabilities.
+### Details:
+Create tasks: import:clinician_availabilities, import:patient_availabilities. Convert CSV format to availability_json. Handle timezone conversions.
+
+## 5. Create Import Tasks for Referrals and Relationships [pending]
+### Dependencies: 27.1
+### Description: Create rake tasks for importing referrals, kinships, and memberships.
+### Details:
+Create tasks: import:referrals, import:referral_members, import:kinships, import:memberships. Handle complex relationships and JSONB fields.
+
+## 6. Create Import Tasks for Documents, Questionnaires, and Patients [pending]
+### Dependencies: 27.1
+### Description: Create rake tasks for remaining data imports.
+### Details:
+Create tasks: import:documents, import:questionnaires, import:patients_and_guardians. Handle multi-language JSONB fields for documents.
+
+## 7. Create Master Import Task and Documentation [pending]
+### Dependencies: 27.2, 27.3, 27.4, 27.5, 27.6
+### Description: Create master task to run all imports in correct order and add documentation.
+### Details:
+Create import:all task that runs imports in dependency order. Add README documentation for import process. Add error recovery instructions.
+

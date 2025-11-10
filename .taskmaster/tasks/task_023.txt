@@ -1,0 +1,11 @@
+# Task ID: 23
+# Title: Create Memberships Database Schema
+# Status: pending
+# Dependencies: 17, 2
+# Priority: medium
+# Description: Create database schema for Memberships (user-organization relationships) based on memberships.csv test data.
+# Details:
+Create memberships table: id (UUID), user_id (FK to users/parents/students), organization_id (FK to organizations), census_person_id, profile_data (JSONB), created_at, updated_at. Create Membership model with validations and associations. Links users (parents/students) to organizations (schools). Create GraphQL types. Add seed data import script.
+
+# Test Strategy:
+Test user-organization relationships. Verify many-to-many associations. Test CSV import.

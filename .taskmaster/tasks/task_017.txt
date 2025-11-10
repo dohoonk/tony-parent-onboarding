@@ -1,0 +1,31 @@
+# Task ID: 17
+# Title: Create Organizations Database Schema and Models
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Create database schema and models for Organizations (schools/districts) based on orgs.csv test data.
+# Details:
+Create migration for organizations table with fields: id (UUID), parent_organization_id (self-referential FK for districts/schools), kind (enum: district=1, school=2), slug, name, tzdb (timezone), market_id, internal_name, config (JSONB), enabled_at, created_at, updated_at. Support hierarchical relationships (districts have schools). Create Organization model with validations, associations, and self-referential relationship. Create GraphQL types for Organization. Add seed data import script for orgs.csv.
+
+# Test Strategy:
+Test organization hierarchy (districts and schools). Verify GraphQL queries work. Test CSV import script.
+
+# Subtasks:
+## 1. Create Organizations Table Migration [pending]
+### Dependencies: None
+### Description: Write Rails migration to create organizations table with self-referential parent relationship.
+### Details:
+Create migration with UUID primary key, parent_organization_id (self-referential FK), kind enum, slug, name, tzdb, market_id, internal_name, config JSONB, enabled_at. Add indexes for parent_organization_id and kind.
+
+## 2. Create Organization Model with Hierarchical Associations [pending]
+### Dependencies: 17.1
+### Description: Create Organization model with self-referential associations for districts and schools.
+### Details:
+Add belongs_to :parent_organization, has_many :child_organizations. Add scopes for districts (kind=1) and schools (kind=2). Add helper methods for hierarchy navigation.
+
+## 3. Create GraphQL Types for Organization [pending]
+### Dependencies: 17.2
+### Description: Create GraphQL object type and queries for Organization with hierarchy support.
+### Details:
+Create OrganizationType with parent and children fields. Add queries for listing organizations, finding by slug, and querying hierarchy.
+

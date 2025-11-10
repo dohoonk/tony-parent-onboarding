@@ -1,6 +1,6 @@
 # Task ID: 7
 # Title: Integrate Insurance Card Upload with Vision OCR Extraction
-# Status: pending
+# Status: done
 # Dependencies: 6
 # Priority: high
 # Description: Enable parents to upload insurance card images, extract data using OpenAI Vision, and handle manual fallback.
@@ -11,37 +11,37 @@ Implement file upload UI for front/back images (presigned S3). Send images to Op
 Test successful OCR extraction, confidence handling, and manual fallback. Validate data is correctly stored and editable.
 
 # Subtasks:
-## 1. Implement File Upload UI for Insurance Card Images [pending]
+## 1. Implement File Upload UI for Insurance Card Images [done]
 ### Dependencies: None
 ### Description: Create a user interface that allows parents to upload front and back images of their insurance card.
 ### Details:
 Design and build a UI component for uploading two images (front and back). Ensure clear instructions and progress indicators. Validate file types and sizes before upload.
 
-## 2. Integrate Presigned S3 Uploads for Image Storage [pending]
+## 2. Integrate Presigned S3 Uploads for Image Storage [done]
 ### Dependencies: 7.1
 ### Description: Connect the file upload UI to backend logic that generates presigned S3 URLs and uploads images securely.
 ### Details:
 On image selection, request presigned S3 URLs from the backend. Upload images directly to S3 using these URLs. Handle upload errors and display status to the user.
 
-## 3. Integrate OpenAI Vision API for OCR Extraction [pending]
+## 3. Integrate OpenAI Vision API for OCR Extraction [done]
 ### Dependencies: 7.2
 ### Description: Send uploaded insurance card images to the OpenAI Vision API and receive extracted data.
 ### Details:
 Convert uploaded images to Base64 or provide S3 URLs as required. Construct API requests with the extraction schema. Handle authentication and parse API responses for extracted fields.
 
-## 4. Map Extraction Schema to Insurance Data Fields [pending]
+## 4. Map Extraction Schema to Insurance Data Fields [done]
 ### Dependencies: 7.3
 ### Description: Define and implement a mapping from OpenAI Vision API output to structured insurance card fields.
 ### Details:
 Create a schema that matches expected insurance card fields (e.g., member ID, group number, name). Map API response data to these fields, including confidence scores.
 
-## 5. Render Extracted Fields with Confidence Badges and Confirmation UI [pending]
+## 5. Render Extracted Fields with Confidence Badges and Confirmation UI [done]
 ### Dependencies: 7.4
 ### Description: Display extracted fields with visual confidence indicators and require user confirmation for medium/low confidence data.
 ### Details:
 Show each field with a badge indicating extraction confidence (e.g., high, medium, low). For medium/low confidence, prompt the user to confirm or correct the value before proceeding.
 
-## 6. Implement Manual Fallback UI with Field-Level Help [pending]
+## 6. Implement Manual Fallback UI with Field-Level Help [done]
 ### Dependencies: 7.5
 ### Description: Provide a manual entry form for insurance data with contextual help if extraction fails or user rejects extracted values.
 ### Details:

@@ -1,6 +1,6 @@
 # Task ID: 12
 # Title: Create Post-Onboarding Summary and Notification System
-# Status: pending
+# Status: done
 # Dependencies: 9
 # Priority: medium
 # Description: Display clear 'What Happens Next' page and send SMS/email summary after onboarding completion.

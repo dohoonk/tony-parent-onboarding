@@ -1,0 +1,37 @@
+# Task ID: 20
+# Title: Update Availability System for Real Data Structure
+# Status: pending
+# Dependencies: 16, 9
+# Priority: high
+# Description: Update AvailabilityWindows model to support clinician and patient availabilities based on test data CSV files.
+# Details:
+Current model uses rrule - need to add support for day-based availability blocks. Add availability_json (JSONB) field to store structured day/time blocks format from CSV: [{day: 'Monday', time_blocks: [{start: '08:00:00', duration: 60}]}]. Update model to handle both rrule and JSON formats. Create migration. Update TherapistMatchingService to use real availability data. Add seed data import scripts for clinician_availabilities.csv and patient_availabilities.csv.
+
+# Test Strategy:
+Test availability JSON parsing and storage. Verify matching service uses availability correctly. Test CSV imports.
+
+# Subtasks:
+## 1. Add availability_json Field to AvailabilityWindows [pending]
+### Dependencies: None
+### Description: Create migration to add availability_json JSONB field to existing availability_windows table.
+### Details:
+Add column availability_json (JSONB) to store day-based time blocks. Keep existing rrule field for backward compatibility. Add index on availability_json for querying.
+
+## 2. Update AvailabilityWindow Model for Dual Format Support [pending]
+### Dependencies: 20.1
+### Description: Update model to handle both rrule and JSON formats with helper methods.
+### Details:
+Add methods to parse and format availability_json. Add methods to convert between rrule and JSON formats. Add validation for JSON structure.
+
+## 3. Update TherapistMatchingService for Availability Queries [pending]
+### Dependencies: 20.2
+### Description: Update matching service to query availability_json for day/time matching.
+### Details:
+Add logic to match therapist availability_json with patient availability. Handle day-of-week and time block matching. Consider timezone conversions.
+
+## 4. Create CSV Import Scripts for Availabilities [pending]
+### Dependencies: 20.2
+### Description: Create rake tasks to import clinician_availabilities.csv and patient_availabilities.csv.
+### Details:
+Parse CSV and convert to availability_json format. Handle timezone conversions. Link to therapists and patients. Make idempotent.
+

@@ -1,0 +1,11 @@
+# Task ID: 22
+# Title: Create Kinships Database Schema for User Relationships
+# Status: pending
+# Dependencies: 2
+# Priority: medium
+# Description: Create database schema for Kinships (parent-child relationships) based on kinships.csv test data.
+# Details:
+Create kinships table: id (UUID), user_0_id (FK to users/parents), user_1_id (FK to users/students), kind (enum for relationship type), user_0_label, user_1_label, guardian_can_be_contacted (boolean), created_at, updated_at. Create Kinship model with validations and associations. Update Parent and Student models to use kinship relationships. Create GraphQL types. Add seed data import script.
+
+# Test Strategy:
+Test kinship relationships between parents and students. Verify associations work correctly. Test CSV import.

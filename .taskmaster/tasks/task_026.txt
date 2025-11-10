@@ -1,0 +1,37 @@
+# Task ID: 26
+# Title: Update TherapistMatchingService to Use Real Data
+# Status: pending
+# Dependencies: 16, 19, 20, 9
+# Priority: high
+# Description: Replace mock data in TherapistMatchingService with real database queries using Therapists, ClinicianCredentialedInsurances, and AvailabilityWindows.
+# Details:
+Update TherapistMatchingService to query Therapists table. Match based on: insurance credentialing (via ClinicianCredentialedInsurances), availability windows, specialties, languages, capacity (available > 0). Return real therapist data with bios, match scores, and rationale. Update SchedulingStep component to use real therapist data from GraphQL query. Create GraphQL query for therapist matches with filtering by insurance, availability, and other criteria.
+
+# Test Strategy:
+Test matching logic with real data. Verify therapists are matched correctly based on criteria. Test GraphQL query in frontend.
+
+# Subtasks:
+## 1. Update TherapistMatchingService Database Queries [pending]
+### Dependencies: None
+### Description: Replace mock data with real database queries for therapists, insurances, and availability.
+### Details:
+Query Therapists table with joins to ClinicianCredentialedInsurances and AvailabilityWindows. Filter by insurance, availability, specialties, languages, and capacity. Calculate match scores.
+
+## 2. Create GraphQL Query for Therapist Matches [pending]
+### Dependencies: 26.1
+### Description: Create GraphQL query with filtering for therapist matching.
+### Details:
+Create query type with arguments for insurance_id, availability, specialties, languages. Return matched therapists with scores and rationale.
+
+## 3. Update SchedulingStep Component for Real Data [pending]
+### Dependencies: 26.2
+### Description: Update frontend component to use real therapist data from GraphQL query.
+### Details:
+Replace mock therapist data with GraphQL query. Display real therapist bios, specialties, and match rationale. Handle loading and error states.
+
+## 4. Add Match Rationale and Scoring Display [pending]
+### Dependencies: 26.3
+### Description: Display match scores and rationale to help parents understand therapist recommendations.
+### Details:
+Show match score percentage, reasons for match (insurance, availability, specialties), and therapist capacity status.
+

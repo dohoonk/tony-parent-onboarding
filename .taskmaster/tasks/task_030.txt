@@ -1,0 +1,11 @@
+# Task ID: 30
+# Title: Update Appointment Model to Link to Therapists Table
+# Status: pending
+# Dependencies: 16, 9
+# Priority: high
+# Description: Update Appointment model to use foreign key relationship to Therapists table instead of UUID therapist_id.
+# Details:
+Create migration to add therapist_id foreign key to appointments table, linking to therapists table. Update Appointment model with belongs_to :therapist association. Update BookAppointment mutation to validate therapist exists and check availability. Update SchedulingStep to show real therapist information from database. Update GraphQL AppointmentType to include therapist details.
+
+# Test Strategy:
+Test appointment creation with therapist foreign key. Verify therapist association works. Test booking flow with real therapists.

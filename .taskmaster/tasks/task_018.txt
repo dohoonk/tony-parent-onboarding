@@ -1,0 +1,11 @@
+# Task ID: 18
+# Title: Create Contracts and OrgContracts Database Schema
+# Status: pending
+# Dependencies: 17
+# Priority: high
+# Description: Create database schema for Contracts and OrgContracts based on contracts.csv and org_contracts.csv test data.
+# Details:
+Create contracts table: id (UUID), effective_date, end_date, services (array), terms (JSONB), contract_url, created_at, updated_at. Create org_contracts join table: id, organization_id (FK), contract_id (FK), created_at, updated_at. Create Contract and OrgContract models with validations and associations. Create GraphQL types. Add seed data import scripts for both CSVs.
+
+# Test Strategy:
+Test contract-organization relationships. Verify JSONB fields store correctly. Test CSV imports.

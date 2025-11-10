@@ -1,0 +1,37 @@
+# Task ID: 28
+# Title: Update Insurance Models to Match Test Data Structure
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Update InsuranceStep and InsurancePolicy model to match insurance_coverages.csv structure.
+# Details:
+Add fields to insurance_policies table: member_id, group_id, front_card_url, back_card_url, plan_holder_first_name, plan_holder_last_name, plan_holder_dob, plan_holder_country, plan_holder_state, plan_holder_city, plan_holder_street_address, plan_holder_zip_code, plan_holder_legal_gender, insurance_company_name, kind, level, eligibility, openpm_insurance_organization_id, openpm_coverage_id, openpm_insurance_organization_name. Update InsurancePolicy model. Update OCR extraction service to populate these fields. Create migration to add missing fields.
+
+# Test Strategy:
+Test insurance data storage with new fields. Verify OCR extraction populates all fields. Test CSV import.
+
+# Subtasks:
+## 1. Create Migration to Add Insurance Fields [pending]
+### Dependencies: None
+### Description: Add all missing fields from insurance_coverages.csv to insurance_policies table.
+### Details:
+Add columns: member_id, group_id, front_card_url, back_card_url, plan_holder fields (first_name, last_name, dob, address fields), insurance_company_name, kind, level, eligibility, openpm fields. Add indexes as needed.
+
+## 2. Update InsurancePolicy Model [pending]
+### Dependencies: 28.1
+### Description: Update model to include new fields with validations.
+### Details:
+Add validations for new fields. Update associations if needed. Add helper methods for plan holder information.
+
+## 3. Update OCR Extraction Service [pending]
+### Dependencies: 28.2
+### Description: Update OCR service to populate all new insurance fields from card images.
+### Details:
+Update OpenAI Vision OCR prompt to extract all new fields. Map OCR results to model fields. Handle missing or low-confidence fields.
+
+## 4. Update InsuranceStep Component [pending]
+### Dependencies: 28.2
+### Description: Update frontend component to display and handle new insurance fields.
+### Details:
+Update form to include new fields. Update confirmation UI to show plan holder information. Handle field validation.
+

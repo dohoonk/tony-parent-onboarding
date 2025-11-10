@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Implement Core Database Schema and Migrations
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Define and migrate all core tables for onboarding, intake, insurance, scheduling, and audit logging.
@@ -11,31 +11,31 @@ Write Rails migrations for all tables listed in the PRD (parents, students, onbo
 Run migrations and verify schema matches PRD. Write model tests for associations and validations. Confirm encryption for PHI fields.
 
 # Subtasks:
-## 1. Design Core Database Schema for All Domains [pending]
+## 1. Design Core Database Schema for All Domains [done]
 ### Dependencies: None
 ### Description: Define the structure, relationships, and data types for all core tables (onboarding, intake, insurance, scheduling, audit logging) based on the PRD.
 ### Details:
 Review the PRD to enumerate all required tables and their fields. Establish primary/foreign keys, data types, and relationships (one-to-many, many-to-many). Document the schema design for review. Ensure normalization, scalability, and data integrity as per best practices.
 
-## 2. Write Rails Migration Scripts for Core Tables [pending]
+## 2. Write Rails Migration Scripts for Core Tables [done]
 ### Dependencies: 2.1
 ### Description: Implement Rails migration files to create all core tables and relationships as defined in the schema design.
 ### Details:
 For each table (parents, students, onboarding_sessions, etc.), write a Rails migration that creates the table with appropriate columns, indexes, and foreign keys. Use reversible migrations and ensure all migrations can be rolled back cleanly.
 
-## 3. Implement Row-Level Encryption for Sensitive Columns [pending]
+## 3. Implement Row-Level Encryption for Sensitive Columns [done]
 ### Dependencies: 2.2
 ### Description: Apply encryption to PHI/PII columns in relevant tables to ensure HIPAA-grade data protection.
 ### Details:
 Identify sensitive columns (e.g., insurance numbers, personal info) and use Rails encryption features or gems (e.g., attr_encrypted, Lockbox) to enable row-level encryption. Update migrations and models to support encrypted fields.
 
-## 4. Add Model Validations and Associations [pending]
+## 4. Add Model Validations and Associations [done]
 ### Dependencies: 2.2
 ### Description: Define ActiveRecord model validations and associations to enforce data integrity and relationships.
 ### Details:
 For each model, add validations (presence, uniqueness, format, etc.) and associations (belongs_to, has_many, etc.) according to the schema and business rules. Ensure associations reflect foreign keys and join tables.
 
-## 5. Test Migrations and Models for Correctness and Security [pending]
+## 5. Test Migrations and Models for Correctness and Security [done]
 ### Dependencies: 2.3, 2.4
 ### Description: Verify that all migrations, schema, encryption, validations, and associations work as intended and meet requirements.
 ### Details:

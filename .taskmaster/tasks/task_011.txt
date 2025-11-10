@@ -1,6 +1,6 @@
 # Task ID: 11
 # Title: Add Support Chat with AI and Human Escalation
-# Status: pending
+# Status: done
 # Dependencies: 10
 # Priority: medium
 # Description: Provide a floating 'Need help?' chat entry point with AI FAQ and escalation to human staff.
@@ -11,31 +11,31 @@ Implement chat widget accessible throughout onboarding. Route initial queries to
 Test chat widget, AI FAQ responses, and escalation flow. Validate audit logging.
 
 # Subtasks:
-## 1. Design and Implement Floating Chat Widget UI [pending]
+## 1. Design and Implement Floating Chat Widget UI [done]
 ### Dependencies: None
 ### Description: Create a floating 'Need help?' chat button and chat window accessible throughout onboarding.
 ### Details:
 Develop a responsive floating chat widget using React or similar framework. Ensure the widget is always visible, styled to match branding, and supports hover and click interactions. The chat window should open on button click and support real-time messaging UI.
 
-## 2. Implement AI FAQ Routing Logic [pending]
+## 2. Implement AI FAQ Routing Logic [done]
 ### Dependencies: 11.1
 ### Description: Route initial user queries to an AI-powered FAQ system for automated responses.
 ### Details:
 Integrate an AI FAQ backend (e.g., LLM or FAQ API) with the chat widget. On user message, send query to AI FAQ and display response in chat. Ensure fallback for unrecognized questions.
 
-## 3. Develop Escalation Logic to Human Staff [pending]
+## 3. Develop Escalation Logic to Human Staff [done]
 ### Dependencies: 11.2
 ### Description: Escalate unresolved or complex queries from AI FAQ to human support staff inbox.
 ### Details:
 Detect when AI FAQ cannot resolve a query and trigger escalation. Implement logic to forward chat transcript and user context to staff inbox. Provide user feedback on escalation status.
 
-## 4. Integrate Staff Inbox for Human Support [pending]
+## 4. Integrate Staff Inbox for Human Support [done]
 ### Dependencies: 11.3
 ### Description: Connect chat escalation flow to staff inbox, enabling staff to respond to escalated chats.
 ### Details:
 Integrate with existing staff inbox or build a new interface for support staff. Ensure staff can view chat history, respond to users, and resolve tickets. Support notifications for new escalations.
 
-## 5. Implement Audit Logging for All Chat Interactions [pending]
+## 5. Implement Audit Logging for All Chat Interactions [done]
 ### Dependencies: 11.2, 11.3, 11.4
 ### Description: Log all chat interactions, including AI responses and human escalations, for audit and compliance.
 ### Details:

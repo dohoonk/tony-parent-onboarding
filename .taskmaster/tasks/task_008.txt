@@ -1,6 +1,6 @@
 # Task ID: 8
 # Title: Build Cost Estimation Tool Based on Insurance Data
-# Status: pending
+# Status: done
 # Dependencies: 7
 # Priority: medium
 # Description: Estimate out-of-pocket costs using rule-based config table after insurance data is confirmed.

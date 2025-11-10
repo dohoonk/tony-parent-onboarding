@@ -1,0 +1,11 @@
+# Task ID: 19
+# Title: Create Insurance Credentialing Database Schema
+# Status: pending
+# Dependencies: 16
+# Priority: high
+# Description: Create database schema for Insurance Credentialing based on credentialed_insurances.csv and clinician_credentialed_insurances.csv.
+# Details:
+Create credentialed_insurances table: id (UUID), name, country, state, line_of_business, legacy_names (array), network_status, parent_credentialed_insurance_id (self-referential), open_pm_name, created_at, updated_at. Create clinician_credentialed_insurances join table: id, care_provider_profile_id (therapist_id FK), credentialed_insurance_id (FK), created_at, updated_at. Create CredentialedInsurance and ClinicianCredentialedInsurance models with validations and associations. Create GraphQL types. Add seed data import scripts.
+
+# Test Strategy:
+Test therapist-insurance relationships. Verify many-to-many associations work. Test CSV imports.

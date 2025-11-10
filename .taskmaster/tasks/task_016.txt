@@ -1,0 +1,37 @@
+# Task ID: 16
+# Title: Create Therapists/Clinicians Database Schema and Models
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Create database schema and models for Therapists/Clinicians based on clinicians_anonymized.csv test data.
+# Details:
+Create migration for therapists table with fields: id (UUID), healthie_id, email, first_name, last_name, preferred_name, middle_name, phone, bio (text), specialties (array), languages (array), modalities (array), ethnicity, gender, sexual_orientation, religion, npi_number, licenses (array), licensed_states (array), supervisor_id, capacity_total, capacity_filled, capacity_available, employment_type, clinical_role, profile_data (JSONB), created_at, updated_at. Create Therapist model with validations and associations. Create GraphQL types for Therapist. Add indexes for common queries.
+
+# Test Strategy:
+Create RSpec tests for Therapist model validations and associations. Test GraphQL queries for therapists. Verify data can be imported from CSV.
+
+# Subtasks:
+## 1. Create Therapists Table Migration [pending]
+### Dependencies: None
+### Description: Write Rails migration to create therapists table with all required fields including arrays and JSONB.
+### Details:
+Create migration with UUID primary key, all string/text fields, array fields (specialties, languages, modalities, licenses, licensed_states), JSONB profile_data, numeric fields for capacity, and foreign key for supervisor_id. Add appropriate indexes.
+
+## 2. Create Therapist Model with Validations [pending]
+### Dependencies: 16.1
+### Description: Create Therapist ActiveRecord model with validations, associations, and helper methods.
+### Details:
+Add validations for required fields, email format, array validations. Add associations (has_many :supervisees, belongs_to :supervisor). Add helper methods for capacity calculations.
+
+## 3. Create GraphQL Types for Therapist [pending]
+### Dependencies: 16.2
+### Description: Create GraphQL object type, input types, and queries for Therapist.
+### Details:
+Create TherapistType with all fields. Create input types for filtering and searching. Add queries for listing and finding therapists.
+
+## 4. Add Indexes and Optimize Queries [pending]
+### Dependencies: 16.1
+### Description: Add database indexes for common query patterns and optimize performance.
+### Details:
+Add indexes on email, supervisor_id, employment_type, clinical_role. Consider composite indexes for common filter combinations.
+

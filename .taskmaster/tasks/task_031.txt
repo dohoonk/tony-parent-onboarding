@@ -1,0 +1,11 @@
+# Task ID: 31
+# Title: Create Data Validation and Testing Suite for Imported Data
+# Status: pending
+# Dependencies: 27
+# Priority: medium
+# Description: Create comprehensive validation and testing suite for all imported test data to ensure data integrity.
+# Details:
+Create RSpec test suite to verify: referential integrity (all foreign keys valid), data types correct, required fields present, relationships work (therapists to insurances, organizations to contracts, etc.), JSONB fields parse correctly, arrays store correctly, enums use valid values. Create data validation rake task to check all imported data. Fix any data integrity issues found.
+
+# Test Strategy:
+Run validation suite after imports. Fix any failures. Verify all relationships are correct. Test edge cases.

@@ -1,0 +1,11 @@
+# Task ID: 24
+# Title: Create Documents Database Schema for Consent Forms
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Create database schema for Documents (consent forms, policies) based on documents.csv test data.
+# Details:
+Create documents table: id (UUID), version, label, checkboxes, version_date, urls (JSONB for multi-language URLs), names (JSONB for multi-language names), created_at, updated_at. Create Document model with validations. Update ConsentStep component to fetch real documents from database instead of hardcoded links. Create GraphQL query for documents. Add seed data import script.
+
+# Test Strategy:
+Test document retrieval by label and version. Verify multi-language support. Update ConsentStep to use real data. Test CSV import.

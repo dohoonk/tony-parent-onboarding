@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: Build Step-by-Step Onboarding Flow UI
-# Status: pending
+# Status: done
 # Dependencies: 3
 # Priority: high
 # Description: Implement the multi-step onboarding wizard in Next.js with progress indicator, ETA, and save/resume support.
@@ -11,43 +11,43 @@ Use shadcn/ui components for each step: Welcome, Parent/Student Info, Consent, A
 Manual and automated UI tests for step transitions, progress indicator, and save/resume. Accessibility audit.
 
 # Subtasks:
-## 1. Design and Implement Stepper UI with Progress Bar and ETA [pending]
+## 1. Design and Implement Stepper UI with Progress Bar and ETA [done]
 ### Dependencies: None
 ### Description: Create the stepper navigation UI with a visible progress bar and estimated time remaining.
 ### Details:
 Use shadcn/ui components to build a horizontal or vertical stepper that visually indicates the current step, completed steps, and remaining steps. Integrate a progress bar and display an ETA countdown based on average completion times. Ensure the stepper is accessible and responsive.
 
-## 2. Develop Individual Step Components for Onboarding Flow [pending]
+## 2. Develop Individual Step Components for Onboarding Flow [done]
 ### Dependencies: 4.1
 ### Description: Implement each onboarding step as a modular, reusable component.
 ### Details:
 Create components for Welcome, Parent/Student Info, Consent, AI Intake, Screeners, Insurance, Scheduling, and Summary using shadcn/ui. Each should handle its own form state, validation, and error display. Ensure consistent styling and mobile-first layout.
 
-## 3. Implement Progress and ETA Logic with State Management [pending]
+## 3. Implement Progress and ETA Logic with State Management [done]
 ### Dependencies: 4.2
 ### Description: Manage onboarding state, progress calculation, and ETA updates across steps.
 ### Details:
 Use React context or a state management library to track current step, completed steps, and time estimates. Update progress bar and ETA dynamically as the user advances. Persist state for save/resume functionality.
 
-## 4. Build Save/Resume Functionality with Persistent Storage [pending]
+## 4. Build Save/Resume Functionality with Persistent Storage [done]
 ### Dependencies: 4.3
 ### Description: Allow users to save onboarding progress and resume later using persistent storage.
 ### Details:
 Implement logic to save form state to backend or local storage at each step. Provide a clear UI for users to save progress and instructions for resuming. Ensure data integrity and privacy.
 
-## 5. Integrate Magic Link Authentication for Resume via Email/SMS [pending]
+## 5. Integrate Magic Link Authentication for Resume via Email/SMS [done]
 ### Dependencies: 4.4
 ### Description: Enable users to resume onboarding via secure magic link sent to email or SMS.
 ### Details:
 Generate and send magic links for resuming onboarding using email/SMS APIs. Validate link security, expiration, and user identification. Ensure seamless resume experience on both desktop and mobile.
 
-## 6. Ensure Mobile-First and Responsive Design for All Steps [pending]
+## 6. Ensure Mobile-First and Responsive Design for All Steps [done]
 ### Dependencies: 4.2
 ### Description: Optimize the onboarding UI for mobile devices and various screen sizes.
 ### Details:
 Apply responsive design principles and test layouts on multiple devices. Use shadcn/ui's responsive utilities and custom CSS as needed. Prioritize touch targets and mobile usability.
 
-## 7. Conduct Accessibility (WCAG AA) Testing and Remediation [pending]
+## 7. Conduct Accessibility (WCAG AA) Testing and Remediation [done]
 ### Dependencies: 4.1, 4.2, 4.6
 ### Description: Audit and remediate the onboarding flow for WCAG AA accessibility compliance.
 ### Details:
