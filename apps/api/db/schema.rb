@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000021) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000022) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -63,8 +63,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000021) do
     t.date "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "availability_json", default: {}
+    t.string "timezone"
+    t.index ["availability_json"], name: "index_availability_windows_on_availability_json", using: :gin
     t.index ["owner_type", "owner_id"], name: "index_availability_windows_on_owner_type_and_owner_id"
     t.index ["start_date"], name: "index_availability_windows_on_start_date"
+    t.index ["timezone"], name: "index_availability_windows_on_timezone"
   end
 
   create_table "clinician_credentialed_insurances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

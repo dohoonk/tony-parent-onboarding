@@ -1,149 +1,239 @@
 class TherapistMatchingService
   # Matching heuristic based on:
+  # - Insurance credentialing
   # - Language preference
-  # - Student grade/age
-  # - Availability windows
-  # - Current clinician load
+  # - Availability windows (day/time matching)
+  # - Current clinician capacity
+  # - Geographic location (state)
+  # - Specialties
 
   # Match therapists for a student
   # @param student [Student] The student seeking therapy
-  # @param availability_window [AvailabilityWindow] Preferred time slot
+  # @param availability_window [AvailabilityWindow] Preferred time slot (patient availability)
+  # @param insurance_policy [InsurancePolicy] Optional insurance policy for network matching
   # @param limit [Integer] Maximum number of matches to return
   # @return [Array<Hash>] Array of matched therapists with scores and rationale
-  def self.match(student:, availability_window:, limit: 4)
-    # In a real implementation, this would query a therapists/clinicians table
-    # For now, we'll return mock data with matching logic
-    
-    # Mock therapist data - in production, this comes from database
-    all_therapists = [
-      {
-        id: 1,
-        name: 'Dr. Sarah Johnson',
-        languages: ['English', 'Spanish'],
-        specialties: ['Anxiety', 'Depression', 'ADHD'],
-        grade_range: [5, 12],
-        bio: 'Experienced child therapist specializing in anxiety and depression.',
-        current_load: 0.7
-      },
-      {
-        id: 2,
-        name: 'Dr. Michael Chen',
-        languages: ['English', 'Mandarin'],
-        specialties: ['Anxiety', 'Trauma'],
-        grade_range: [3, 10],
-        bio: 'Bilingual therapist with expertise in trauma-informed care.',
-        current_load: 0.5
-      },
-      {
-        id: 3,
-        name: 'Dr. Emily Rodriguez',
-        languages: ['English', 'Spanish'],
-        specialties: ['ADHD', 'Behavioral Issues'],
-        grade_range: [1, 8],
-        bio: 'Specialist in ADHD and behavioral interventions for younger children.',
-        current_load: 0.6
-      },
-      {
-        id: 4,
-        name: 'Dr. James Wilson',
-        languages: ['English'],
-        specialties: ['Depression', 'Anxiety', 'Trauma'],
-        grade_range: [6, 12],
-        bio: 'Teen-focused therapist with expertise in depression and trauma.',
-        current_load: 0.8
-      }
-    ]
+  def self.match(student:, availability_window:, insurance_policy: nil, limit: 4)
+    # Start with active therapists with capacity
+    base_scope = Therapist.active.with_capacity
 
-    # Calculate student grade (approximate from age/DOB)
-    student_grade = estimate_grade(student.date_of_birth)
+    # Filter by state if student has location info
+    # (Assuming student or parent has state info - may need to add this)
     
+    # Filter by insurance network if insurance provided
+    if insurance_policy&.insurance_company.present?
+      insurance_name = insurance_policy.insurance_company
+      # Find credentialed insurance by name
+      credentialed_insurance = CredentialedInsurance.find_by(name: insurance_name)
+      
+      if credentialed_insurance&.in_network?
+        # Only match therapists credentialed with this insurance
+        therapist_ids = ClinicianCredentialedInsurance
+          .where(credentialed_insurance: credentialed_insurance)
+          .pluck(:care_provider_profile_id)
+        base_scope = base_scope.where(id: therapist_ids)
+      end
+    end
+
+    # Get all candidate therapists
+    candidates = base_scope.limit(50) # Limit initial candidates for performance
+
     # Score each therapist
-    scored_therapists = all_therapists.map do |therapist|
+    scored_therapists = candidates.map do |therapist|
       score = calculate_match_score(
         therapist: therapist,
         student: student,
-        student_grade: student_grade,
-        availability_window: availability_window
+        availability_window: availability_window,
+        insurance_policy: insurance_policy
       )
       
       {
         therapist: therapist,
         score: score[:total],
-        rationale: score[:rationale]
+        rationale: score[:rationale],
+        match_details: score[:details]
       }
     end
 
     # Sort by score and return top matches
     scored_therapists
+      .select { |t| t[:score] > 0 } # Only return therapists with some match
       .sort_by { |t| -t[:score] }
       .first(limit)
       .map do |match|
+        therapist = match[:therapist]
         {
-          id: match[:therapist][:id],
-          name: match[:therapist][:name],
-          languages: match[:therapist][:languages],
-          specialties: match[:therapist][:specialties],
-          bio: match[:therapist][:bio],
+          id: therapist.id,
+          name: therapist.display_name,
+          email: therapist.email,
+          phone: therapist.phone,
+          languages: therapist.care_languages,
+          specialties: therapist.specialties,
+          modalities: therapist.modalities,
+          bio: therapist.bio,
+          capacity_available: therapist.capacity_available,
+          capacity_utilization: therapist.capacity_utilization_percentage,
           match_score: match[:score],
-          match_rationale: match[:rationale]
+          match_rationale: match[:rationale],
+          match_details: match[:match_details]
         }
       end
   end
 
   private
 
-  def self.estimate_grade(date_of_birth)
-    return 5 unless date_of_birth # Default to middle school
-
-    age = ((Time.current - date_of_birth.to_time) / 1.year).floor
-    
-    # Rough grade estimation (US system)
-    case age
-    when 5..6 then 0  # Kindergarten
-    when 7..8 then 2  # 2nd grade
-    when 9..10 then 4 # 4th grade
-    when 11..12 then 6 # 6th grade
-    when 13..14 then 8 # 8th grade
-    when 15..16 then 10 # 10th grade
-    when 17..18 then 12 # 12th grade
-    else 5 # Default to middle school
-    end
-  end
-
-  def self.calculate_match_score(therapist:, student:, student_grade:, availability_window:)
+  def self.calculate_match_score(therapist:, student:, availability_window:, insurance_policy:)
     score = 0
     rationale_parts = []
+    details = {}
 
-    # Language match (40 points max)
-    # In production, check student's preferred language
-    if therapist[:languages].include?('English')
-      score += 40
-      rationale_parts << "Language match: English"
-    end
-
-    # Grade/age match (30 points max)
-    if student_grade.between?(therapist[:grade_range][0], therapist[:grade_range][1])
-      score += 30
-      rationale_parts << "Age-appropriate: Grade #{student_grade} within range"
+    # Insurance network match (50 points max) - highest priority
+    if insurance_policy&.insurance_company.present?
+      insurance_name = insurance_policy.insurance_company
+      credentialed_insurance = CredentialedInsurance.find_by(name: insurance_name)
+      
+      if credentialed_insurance
+        is_credentialed = therapist.credentialed_insurances.include?(credentialed_insurance)
+        if is_credentialed && credentialed_insurance.in_network?
+          score += 50
+          rationale_parts << "In-network with #{insurance_name}"
+          details[:insurance_match] = true
+        elsif is_credentialed && credentialed_insurance.out_of_network?
+          score += 25
+          rationale_parts << "Out-of-network with #{insurance_name}"
+          details[:insurance_match] = 'out_of_network'
+        else
+          details[:insurance_match] = false
+        end
+      else
+        details[:insurance_match] = 'unknown_insurance'
+      end
     else
-      score += 10 # Partial match
-      rationale_parts << "Age range: Close match"
+      details[:insurance_match] = 'no_insurance_provided'
     end
 
-    # Availability match (20 points max)
-    # In production, check therapist's actual availability
-    score += 20
-    rationale_parts << "Available during requested time"
+    # Availability match (30 points max)
+    availability_score = calculate_availability_match(therapist, availability_window)
+    score += availability_score[:points]
+    rationale_parts << availability_score[:rationale]
+    details[:availability_match] = availability_score[:details]
 
-    # Load factor (10 points max) - prefer therapists with lower load
-    load_score = ((1 - therapist[:current_load]) * 10).round
-    score += load_score
-    rationale_parts << "Current availability: #{((1 - therapist[:current_load]) * 100).round}%"
+    # Language match (10 points max)
+    # Check if therapist speaks student's preferred language (if available)
+    # For now, give points for English (most common)
+    if therapist.care_languages.include?('en') || therapist.care_languages.include?('eng')
+      score += 10
+      rationale_parts << "Language: English"
+      details[:language_match] = true
+    else
+      details[:language_match] = false
+    end
+
+    # Capacity match (10 points max) - prefer therapists with more availability
+    if therapist.has_capacity?
+      capacity_score = ((therapist.capacity_available.to_f / [therapist.capacity_total, 1].max) * 10).round
+      score += capacity_score
+      rationale_parts << "Capacity: #{therapist.capacity_available} slots available"
+      details[:capacity_available] = therapist.capacity_available
+    else
+      details[:capacity_available] = 0
+    end
 
     {
       total: score,
-      rationale: rationale_parts.join('; ')
+      rationale: rationale_parts.join('; '),
+      details: details
     }
   end
-end
 
+  def self.calculate_availability_match(therapist, patient_availability_window)
+    # Get therapist's availability windows
+    therapist_availabilities = AvailabilityWindow
+      .where(owner_type: 'Therapist', owner_id: therapist.id)
+      .active
+      .with_json_format
+
+    return { points: 0, rationale: 'No availability data', details: {} } if therapist_availabilities.empty?
+
+    # Extract patient's preferred days and times from availability_window
+    patient_days = []
+    patient_time_blocks = []
+
+    if patient_availability_window.uses_json_format?
+      patient_days = patient_availability_window.availability_days.map { |d| d['day'] }
+      patient_availability_window.availability_days.each do |day|
+        day['time_blocks']&.each do |block|
+          patient_time_blocks << {
+            day: day['day'],
+            start: block['start'],
+            duration: block['duration'] || 60
+          }
+        end
+      end
+    end
+
+    return { points: 0, rationale: 'No patient availability specified', details: {} } if patient_days.empty?
+
+    # Check for overlapping availability
+    matches = []
+    therapist_availabilities.each do |therapist_avail|
+      next unless therapist_avail.uses_json_format?
+
+      therapist_avail.availability_days.each do |therapist_day|
+        day_name = therapist_day['day']
+        next unless patient_days.include?(day_name)
+
+        therapist_day['time_blocks']&.each do |therapist_block|
+          patient_time_blocks.each do |patient_block|
+            next unless patient_block[:day] == day_name
+
+            # Check if time blocks overlap
+            if time_blocks_overlap?(
+              therapist_block['start'],
+              therapist_block['duration'] || 60,
+              patient_block[:start],
+              patient_block[:duration]
+            )
+              matches << {
+                day: day_name,
+                therapist_start: therapist_block['start'],
+                patient_start: patient_block[:start]
+              }
+            end
+          end
+        end
+      end
+    end
+
+    if matches.any?
+      match_count = matches.length
+      points = [match_count * 5, 30].min # 5 points per match, max 30
+      {
+        points: points,
+        rationale: "Available on #{matches.map { |m| m[:day] }.uniq.join(', ')} (#{match_count} time slots)",
+        details: { matches: matches, match_count: match_count }
+      }
+    else
+      {
+        points: 0,
+        rationale: 'No overlapping availability',
+        details: { matches: [] }
+      }
+    end
+  end
+
+  def self.time_blocks_overlap?(start1, duration1, start2, duration2)
+    time1_start = parse_time_to_seconds(start1)
+    time1_end = time1_start + duration1 * 60
+    time2_start = parse_time_to_seconds(start2)
+    time2_end = time2_start + duration2 * 60
+
+    # Check if blocks overlap
+    time1_start < time2_end && time2_start < time1_end
+  end
+
+  def self.parse_time_to_seconds(time_string)
+    parts = time_string.split(':').map(&:to_i)
+    parts[0] * 3600 + parts[1] * 60 + (parts[2] || 0)
+  end
+end

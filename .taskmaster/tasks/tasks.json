@@ -945,7 +945,7 @@
           16,
           9
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -953,7 +953,7 @@
             "description": "Create migration to add availability_json JSONB field to existing availability_windows table.",
             "dependencies": [],
             "details": "Add column availability_json (JSONB) to store day-based time blocks. Keep existing rrule field for backward compatibility. Add index on availability_json for querying.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run migration and verify field is added. Test JSONB storage and retrieval."
           },
           {
@@ -964,7 +964,7 @@
               1
             ],
             "details": "Add methods to parse and format availability_json. Add methods to convert between rrule and JSON formats. Add validation for JSON structure.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test parsing both formats. Test conversion between formats. Verify validations."
           },
           {
@@ -975,7 +975,7 @@
               2
             ],
             "details": "Add logic to match therapist availability_json with patient availability. Handle day-of-week and time block matching. Consider timezone conversions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test matching logic with various availability patterns. Verify timezone handling."
           },
           {
@@ -986,7 +986,7 @@
               2
             ],
             "details": "Parse CSV and convert to availability_json format. Handle timezone conversions. Link to therapists and patients. Make idempotent.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run imports and verify data is correctly stored. Test idempotency."
           }
         ]
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:05:29.514Z",
+      "updated": "2025-11-10T22:10:43.230Z",
       "description": "Tasks for master context"
     }
   }
