@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Develop Scheduling and Therapist Matching Module
+# Status: pending
+# Dependencies: 8
+# Priority: high
+# Description: Allow parents to select availability, match with clinicians, and book appointments.
+# Details:
+Implement availability selection UI. Use matching heuristic (language, grade, availability, load) to suggest 2–4 clinicians. Display bios and rationale. Allow booking and confirmation. Store appointments and send notifications.
+
+# Test Strategy:
+Test matching logic, slot selection, booking, and confirmation flows. Validate notifications are sent.

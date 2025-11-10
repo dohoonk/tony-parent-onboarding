@@ -1,0 +1,11 @@
+# Task ID: 15
+# Title: Deploy Analytics and Funnel Tracking
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Track onboarding funnel metrics, drop-off points, and time to completion for continuous improvement.
+# Details:
+Instrument onboarding steps with analytics events. Build basic dashboard for funnel (start→finish, insurance drop-off, completion time). Use data to inform future iterations.
+
+# Test Strategy:
+Validate event tracking, dashboard accuracy, and data export. Test with simulated user flows.

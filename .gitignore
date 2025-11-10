@@ -1,0 +1,87 @@
+# General
+.DS_Store
+.env
+.env.*
+*.log
+*.tmp
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# Node / Next.js
+node_modules/
+.npm/
+.pnpm-store/
+.next/
+.vercel/
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+coverage/
+.next-static/
+
+# Rails / Ruby
+.bundle/
+log/
+tmp/
+storage/
+public/assets/
+public/packs/
+public/packs-test/
+node_modules/
+vendor/bundle/
+.byebug_history
+config/master.key
+config/credentials.yml.enc
+coverage/
+.ruby-version
+.rbenv-vars
+.sass-cache/
+
+# Tests & Reports
+coverage/
+reports/
+
+# Docker
+*.pid
+/.docker/**
+
+# MacOS
+Icon?
+
+# Misc
+*.sqlite3
+*.sqlite3-journal
+
+#cursor
+.cursor/
+.cursor/mcp.json
+
+#memeorybank
+memory-bank/
+
+#devdocs
+devdocs/
+
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

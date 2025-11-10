@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Implement Custom Clinical Screener Module with AI Interpretation
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Render custom PHQ/GAD-style screeners with supportive framing and real-time AI plain-language interpretation.
+# Details:
+Create screener forms based on items_json. After submission, call AI service to generate plain-English interpretation and risk level. Store responses and interpretations. Display supportive feedback to user.
+
+# Test Strategy:
+Test screener rendering, submission, and AI interpretation. Validate that clinical language is softened and feedback is accurate.

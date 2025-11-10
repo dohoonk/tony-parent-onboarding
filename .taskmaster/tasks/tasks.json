@@ -1,0 +1,817 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Monorepo and Core Infrastructure",
+        "description": "Set up the monorepo structure with Rails API (GraphQL), Next.js web app, shared packages, and local development environment.",
+        "details": "Create the directory structure as specified in the PRD. Scaffold Rails 7 API-only app with graphql-ruby, Sidekiq, Redis, and Postgres. Scaffold Next.js 15 app with App Router, React 18, Tailwind, and shadcn/ui. Add Dockerfiles and docker-compose for local dev. Set up shared-types (Zod/TypeScript), prompts, and optional shared UI packages. Add initial README and .mcp.json for MCP integration.",
+        "testStrategy": "Verify that both API and web apps start successfully in Docker. Confirm GraphQL endpoint is reachable and Next.js renders a basic page. Ensure shared packages are importable in both apps.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Monorepo Directory Structure",
+            "description": "Establish the top-level directory layout for the monorepo, including folders for Rails API, Next.js app, shared packages, and configuration files.",
+            "dependencies": [],
+            "details": "Follow the PRD to define and create directories for /api, /web, /packages/shared-types, /packages/prompts, and /packages/ui (optional). Include root-level files such as README.md and .mcp.json.",
+            "status": "done",
+            "testStrategy": "Verify all directories and files exist as specified. Check for correct nesting and naming."
+          },
+          {
+            "id": 2,
+            "title": "Scaffold Rails 7 API-Only App with GraphQL, Sidekiq, Redis, and Postgres",
+            "description": "Initialize a Rails 7 API-only application with required gems and integrations for GraphQL, background jobs, and database.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use `rails new api --api -d postgresql` to scaffold. Add gems: graphql, graphql-ruby, sidekiq, redis, pg. Run `rails generate graphql:install`. Configure Sidekiq and Redis. Ensure Postgres connection. Set up initial GraphQL endpoint and test with GraphiQL IDE.",
+            "status": "pending",
+            "testStrategy": "Start Rails server, confirm /graphql endpoint responds, and GraphiQL IDE loads. Validate Sidekiq and Redis integration."
+          },
+          {
+            "id": 3,
+            "title": "Scaffold Next.js 15 Web App with App Router, React 18, Tailwind, and shadcn/ui",
+            "description": "Create a Next.js 15 application with modern routing, styling, and UI component library.",
+            "dependencies": [
+              1
+            ],
+            "details": "Run `npx create-next-app web --experimental-app` or equivalent. Install React 18, Tailwind CSS, and shadcn/ui. Set up basic routing using App Router. Add a sample page using shadcn/ui components and Tailwind styles.",
+            "status": "pending",
+            "testStrategy": "Start Next.js dev server, verify basic page renders with shadcn/ui and Tailwind. Confirm App Router navigation works."
+          },
+          {
+            "id": 4,
+            "title": "Set Up Dockerfiles and docker-compose for Local Development",
+            "description": "Configure Dockerfiles for Rails and Next.js apps, and a docker-compose file to orchestrate local development environment.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Write Dockerfiles for /api and /web with appropriate build steps. Create docker-compose.yml to run Rails, Next.js, Postgres, and Redis containers. Expose necessary ports and set up environment variables for local development.",
+            "status": "pending",
+            "testStrategy": "Run `docker-compose up` and verify all services start. Confirm Rails and Next.js are accessible, and containers communicate as expected."
+          },
+          {
+            "id": 5,
+            "title": "Initialize Shared Packages: shared-types, prompts, and UI",
+            "description": "Set up TypeScript-based shared packages for types (Zod), prompts, and optionally shared UI components.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Create /packages/shared-types with Zod schemas and TypeScript config. Add /packages/prompts for shared prompt logic. Optionally scaffold /packages/ui for reusable UI components. Configure package.json and tsconfig for each package. Set up local linking or workspace references.",
+            "status": "pending",
+            "testStrategy": "Import shared-types and prompts in both Rails (via TypeScript bridge if needed) and Next.js apps. Validate type safety and package resolution."
+          },
+          {
+            "id": 6,
+            "title": "Add Initial Documentation: README and Setup Instructions",
+            "description": "Draft a comprehensive README.md covering monorepo structure, setup steps, and development workflow.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Write README.md at root with sections for project overview, directory structure, setup (Docker, local dev), package usage, and troubleshooting. Include instructions for onboarding new contributors and MCP integration.",
+            "status": "pending",
+            "testStrategy": "Review documentation for completeness and clarity. Have a new developer follow setup steps and report any issues."
+          },
+          {
+            "id": 7,
+            "title": "Integrate MCP: Add .mcp.json and Validate Monorepo Registration",
+            "description": "Configure MCP integration by adding .mcp.json and ensuring the monorepo is recognized and registered with MCP tooling.",
+            "dependencies": [
+              1,
+              6
+            ],
+            "details": "Create .mcp.json at root with required metadata. Run MCP CLI or integration checks to confirm the monorepo is registered and all packages are detected. Update documentation with MCP usage notes.",
+            "status": "pending",
+            "testStrategy": "Run MCP validation commands and confirm successful registration. Check that all packages are listed and accessible via MCP."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Implement Core Database Schema and Migrations",
+        "description": "Define and migrate all core tables for onboarding, intake, insurance, scheduling, and audit logging.",
+        "details": "Write Rails migrations for all tables listed in the PRD (parents, students, onboarding_sessions, intake_messages, intake_summaries, screeners, screener_responses, insurance_cards, insurance_policies, cost_estimates, availability_windows, appointments, audit_logs). Apply row-level encryption for sensitive columns. Add model validations and associations.",
+        "testStrategy": "Run migrations and verify schema matches PRD. Write model tests for associations and validations. Confirm encryption for PHI fields.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Core Database Schema for All Domains",
+            "description": "Define the structure, relationships, and data types for all core tables (onboarding, intake, insurance, scheduling, audit logging) based on the PRD.",
+            "dependencies": [],
+            "details": "Review the PRD to enumerate all required tables and their fields. Establish primary/foreign keys, data types, and relationships (one-to-many, many-to-many). Document the schema design for review. Ensure normalization, scalability, and data integrity as per best practices.",
+            "status": "pending",
+            "testStrategy": "Peer review schema diagrams and field definitions for completeness and alignment with requirements."
+          },
+          {
+            "id": 2,
+            "title": "Write Rails Migration Scripts for Core Tables",
+            "description": "Implement Rails migration files to create all core tables and relationships as defined in the schema design.",
+            "dependencies": [
+              1
+            ],
+            "details": "For each table (parents, students, onboarding_sessions, etc.), write a Rails migration that creates the table with appropriate columns, indexes, and foreign keys. Use reversible migrations and ensure all migrations can be rolled back cleanly.",
+            "status": "pending",
+            "testStrategy": "Run migrations locally and in CI; verify schema.rb matches design and migrations are reversible."
+          },
+          {
+            "id": 3,
+            "title": "Implement Row-Level Encryption for Sensitive Columns",
+            "description": "Apply encryption to PHI/PII columns in relevant tables to ensure HIPAA-grade data protection.",
+            "dependencies": [
+              2
+            ],
+            "details": "Identify sensitive columns (e.g., insurance numbers, personal info) and use Rails encryption features or gems (e.g., attr_encrypted, Lockbox) to enable row-level encryption. Update migrations and models to support encrypted fields.",
+            "status": "pending",
+            "testStrategy": "Insert and retrieve encrypted data; confirm ciphertext in DB and plaintext in app. Write tests for encryption/decryption."
+          },
+          {
+            "id": 4,
+            "title": "Add Model Validations and Associations",
+            "description": "Define ActiveRecord model validations and associations to enforce data integrity and relationships.",
+            "dependencies": [
+              2
+            ],
+            "details": "For each model, add validations (presence, uniqueness, format, etc.) and associations (belongs_to, has_many, etc.) according to the schema and business rules. Ensure associations reflect foreign keys and join tables.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for validations and associations. Attempt invalid records to confirm errors are raised."
+          },
+          {
+            "id": 5,
+            "title": "Test Migrations and Models for Correctness and Security",
+            "description": "Verify that all migrations, schema, encryption, validations, and associations work as intended and meet requirements.",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Run full migration cycle (up/down) in local and CI environments. Write and execute model tests for validations, associations, and encrypted fields. Confirm schema matches PRD and sensitive data is protected.",
+            "status": "pending",
+            "testStrategy": "Automated test suite covering migrations, model logic, and encryption. Manual DB inspection for schema and encryption verification."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Define GraphQL Schema and API Endpoints",
+        "description": "Expose all required GraphQL mutations and queries for onboarding, AI intake, insurance, scheduling, and support.",
+        "details": "Implement GraphQL types, inputs, and mutations as listed (startOnboarding, aiIntakeMessage, submitScreener, uploadInsuranceCard, confirmInsurance, estimateCost, suggestedSlots, book, onboardingSession). Use graphql-ruby best practices. Add authentication and RBAC for parent/staff roles.",
+        "testStrategy": "Write GraphQL integration tests for each mutation/query. Validate correct data shape, permissions, and error handling.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define GraphQL Object, Input, and Enum Types for Onboarding, AI Intake, Insurance, Scheduling, and Support",
+            "description": "Create all necessary GraphQL object, input, and enum types to represent onboarding, AI intake, insurance, scheduling, and support domain models.",
+            "dependencies": [],
+            "details": "Implement Ruby classes for each GraphQL type (e.g., OnboardingSessionType, IntakeMessageType, InsuranceCardType, etc.) using graphql-ruby best practices. Ensure fields are properly typed, nested where appropriate, and enums are used for status/role fields. Follow naming conventions (camelCase for fields, PascalCase for types) and design for future extensibility.",
+            "status": "pending",
+            "testStrategy": "Unit test each type definition to ensure correct fields, nullability, and nesting. Validate schema generation."
+          },
+          {
+            "id": 2,
+            "title": "Implement GraphQL Mutations and Queries for All Required Operations",
+            "description": "Develop GraphQL mutations and queries for startOnboarding, aiIntakeMessage, submitScreener, uploadInsuranceCard, confirmInsurance, estimateCost, suggestedSlots, book, and onboardingSession.",
+            "dependencies": [
+              1
+            ],
+            "details": "Define mutation and query classes in app/graphql/mutations and app/graphql/queries. Use input objects for mutation arguments and return affected objects. Ensure queries support necessary filtering and pagination. Adhere to consistent naming and input/output patterns.",
+            "status": "pending",
+            "testStrategy": "Write integration tests for each mutation and query, verifying correct data shape and resolver logic."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Authentication into GraphQL Context and Resolvers",
+            "description": "Add authentication logic to the GraphQL API, ensuring only authenticated users can access mutations and queries.",
+            "dependencies": [
+              2
+            ],
+            "details": "Inject authentication details (e.g., current_user) into the GraphQL context. Use before_action hooks or resolver guards to enforce authentication. Support parent and staff login flows. Return appropriate errors for unauthenticated requests.",
+            "status": "pending",
+            "testStrategy": "Test authenticated and unauthenticated requests for all endpoints. Confirm correct error responses and access control."
+          },
+          {
+            "id": 4,
+            "title": "Implement Role-Based Access Control (RBAC) for Parent and Staff Roles",
+            "description": "Restrict access to GraphQL operations based on user roles (parent, staff) using RBAC patterns.",
+            "dependencies": [
+              3
+            ],
+            "details": "Define role checks in resolvers or use a policy layer (e.g., Pundit or custom logic) to enforce permissions. Ensure only authorized roles can perform sensitive actions (e.g., staff-only queries, parent-only mutations). Document permission matrix.",
+            "status": "pending",
+            "testStrategy": "Write tests for each operation to verify access is correctly restricted by role. Attempt unauthorized actions and confirm expected errors."
+          },
+          {
+            "id": 5,
+            "title": "Add Comprehensive Error Handling and Permission Error Responses",
+            "description": "Implement robust error handling for validation, authentication, and permission errors in GraphQL responses.",
+            "dependencies": [
+              4
+            ],
+            "details": "Use GraphQL::ExecutionError for user-facing errors. Standardize error messages and codes for permission denied, validation failures, and unexpected exceptions. Ensure sensitive information is not leaked in error responses.",
+            "status": "pending",
+            "testStrategy": "Trigger various error scenarios in tests (invalid input, unauthorized access, server errors) and verify error responses are correct and secure."
+          },
+          {
+            "id": 6,
+            "title": "Develop Integration Tests for End-to-End GraphQL API Validation",
+            "description": "Write integration tests covering all GraphQL queries and mutations, including authentication, RBAC, and error handling.",
+            "dependencies": [
+              5
+            ],
+            "details": "Use RSpec or similar to simulate real-world API usage: valid and invalid requests, different user roles, and edge cases. Validate data shape, permissions, and error responses. Ensure tests cover all business logic branches.",
+            "status": "pending",
+            "testStrategy": "Run full test suite and require 100% coverage for GraphQL API endpoints, including negative and edge cases."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Build Step-by-Step Onboarding Flow UI",
+        "description": "Implement the multi-step onboarding wizard in Next.js with progress indicator, ETA, and save/resume support.",
+        "details": "Use shadcn/ui components for each step: Welcome, Parent/Student Info, Consent, AI Intake, Screeners, Insurance, Scheduling, Summary. Add progress bar, ETA countdown, and save/resume via magic link (email/SMS). Ensure mobile-first, WCAG AA compliance.",
+        "testStrategy": "Manual and automated UI tests for step transitions, progress indicator, and save/resume. Accessibility audit.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Stepper UI with Progress Bar and ETA",
+            "description": "Create the stepper navigation UI with a visible progress bar and estimated time remaining.",
+            "dependencies": [],
+            "details": "Use shadcn/ui components to build a horizontal or vertical stepper that visually indicates the current step, completed steps, and remaining steps. Integrate a progress bar and display an ETA countdown based on average completion times. Ensure the stepper is accessible and responsive.",
+            "status": "pending",
+            "testStrategy": "Test step transitions, progress updates, and ETA countdown accuracy. Verify keyboard navigation and screen reader support."
+          },
+          {
+            "id": 2,
+            "title": "Develop Individual Step Components for Onboarding Flow",
+            "description": "Implement each onboarding step as a modular, reusable component.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create components for Welcome, Parent/Student Info, Consent, AI Intake, Screeners, Insurance, Scheduling, and Summary using shadcn/ui. Each should handle its own form state, validation, and error display. Ensure consistent styling and mobile-first layout.",
+            "status": "pending",
+            "testStrategy": "Unit test each step for rendering, validation, and error handling. Manually verify transitions and data persistence between steps."
+          },
+          {
+            "id": 3,
+            "title": "Implement Progress and ETA Logic with State Management",
+            "description": "Manage onboarding state, progress calculation, and ETA updates across steps.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use React context or a state management library to track current step, completed steps, and time estimates. Update progress bar and ETA dynamically as the user advances. Persist state for save/resume functionality.",
+            "status": "pending",
+            "testStrategy": "Test state updates on step navigation, progress bar accuracy, and ETA recalculation. Simulate mid-flow interruptions and resumes."
+          },
+          {
+            "id": 4,
+            "title": "Build Save/Resume Functionality with Persistent Storage",
+            "description": "Allow users to save onboarding progress and resume later using persistent storage.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement logic to save form state to backend or local storage at each step. Provide a clear UI for users to save progress and instructions for resuming. Ensure data integrity and privacy.",
+            "status": "pending",
+            "testStrategy": "Test save/resume at various steps, data restoration accuracy, and handling of incomplete sessions."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Magic Link Authentication for Resume via Email/SMS",
+            "description": "Enable users to resume onboarding via secure magic link sent to email or SMS.",
+            "dependencies": [
+              4
+            ],
+            "details": "Generate and send magic links for resuming onboarding using email/SMS APIs. Validate link security, expiration, and user identification. Ensure seamless resume experience on both desktop and mobile.",
+            "status": "pending",
+            "testStrategy": "Test magic link generation, delivery, expiration, and resume flow. Validate security and user experience."
+          },
+          {
+            "id": 6,
+            "title": "Ensure Mobile-First and Responsive Design for All Steps",
+            "description": "Optimize the onboarding UI for mobile devices and various screen sizes.",
+            "dependencies": [
+              2
+            ],
+            "details": "Apply responsive design principles and test layouts on multiple devices. Use shadcn/ui's responsive utilities and custom CSS as needed. Prioritize touch targets and mobile usability.",
+            "status": "pending",
+            "testStrategy": "Manually test on real devices and emulators. Use browser dev tools to verify responsiveness and usability."
+          },
+          {
+            "id": 7,
+            "title": "Conduct Accessibility (WCAG AA) Testing and Remediation",
+            "description": "Audit and remediate the onboarding flow for WCAG AA accessibility compliance.",
+            "dependencies": [
+              1,
+              2,
+              6
+            ],
+            "details": "Perform accessibility audits using automated tools and manual testing. Address issues with keyboard navigation, color contrast, ARIA roles, and screen reader support. Document compliance and outstanding issues.",
+            "status": "pending",
+            "testStrategy": "Run automated accessibility tests (axe, Lighthouse). Manually test with screen readers and keyboard navigation. Validate against WCAG AA criteria."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Develop AI-Powered Conversational Intake Module",
+        "description": "Integrate OpenAI GPT-4o for warm, supportive AI intake with real-time streaming and summary extraction.",
+        "details": "Implement a chat UI panel for the intake step. Use OpenAI SDK to stream assistant messages in the 'Reassuring Parenting Coach' tone. Extract structured summary (concerns, goals, risk flags) and store in intake_summaries. Ensure prompt hygiene: de-identify PHI, use pseudonyms, and store only necessary data.",
+        "testStrategy": "Unit and integration tests for prompt templates, streaming, and summary extraction. Validate tone and de-identification in outputs.",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Chat UI Panel for Intake",
+            "description": "Create a user-friendly chat interface for the intake step, enabling real-time conversation with the AI assistant.",
+            "dependencies": [],
+            "details": "Develop a responsive chat panel using React or a similar framework. Ensure support for message streaming, user input, and displaying assistant responses. Include accessibility features and error handling.",
+            "status": "pending",
+            "testStrategy": "UI component unit tests, accessibility checks, and user interaction simulations."
+          },
+          {
+            "id": 2,
+            "title": "Integrate OpenAI GPT-4o SDK for Conversational AI",
+            "description": "Set up and authenticate the OpenAI SDK to enable GPT-4o-powered chat functionality within the intake module.",
+            "dependencies": [
+              1
+            ],
+            "details": "Obtain API keys, install the OpenAI SDK, and configure secure environment variables. Implement backend service to handle chat requests and responses using GPT-4o model[1][2][7][8].",
+            "status": "pending",
+            "testStrategy": "Mock API calls, verify authentication, and validate correct model usage."
+          },
+          {
+            "id": 3,
+            "title": "Implement Real-Time Streaming of Assistant Messages",
+            "description": "Enable real-time streaming of AI-generated messages to provide a seamless conversational experience.",
+            "dependencies": [
+              2
+            ],
+            "details": "Utilize OpenAI's streaming API endpoints to deliver partial message updates as they are generated. Update the chat UI to display streaming content incrementally.",
+            "status": "pending",
+            "testStrategy": "Integration tests for streaming endpoints, latency measurement, and UI responsiveness validation."
+          },
+          {
+            "id": 4,
+            "title": "Develop Prompt Engineering for 'Reassuring Parenting Coach' Tone",
+            "description": "Craft and maintain prompt templates that ensure the AI responds in a warm, supportive, and reassuring manner.",
+            "dependencies": [
+              2
+            ],
+            "details": "Design system and user prompts that consistently guide GPT-4o to use the desired tone. Test and iterate prompt templates for reliability and effectiveness.",
+            "status": "pending",
+            "testStrategy": "Unit tests for prompt templates, tone validation via sample outputs, and user feedback review."
+          },
+          {
+            "id": 5,
+            "title": "Extract Structured Summary from Intake Conversation",
+            "description": "Automatically extract and structure key information (concerns, goals, risk flags) from the chat for downstream use.",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Implement logic to parse AI responses and summarize relevant data points. Store extracted summaries in a dedicated intake_summaries table.",
+            "status": "pending",
+            "testStrategy": "Unit and integration tests for summary extraction logic, accuracy checks against sample conversations."
+          },
+          {
+            "id": 6,
+            "title": "Implement PHI De-Identification and Pseudonymization",
+            "description": "Ensure all personally identifiable health information is de-identified and replaced with pseudonyms before storage.",
+            "dependencies": [
+              5
+            ],
+            "details": "Develop middleware or utility functions to scan and redact PHI from chat transcripts and summaries. Apply pseudonyms where necessary and validate compliance with privacy standards.",
+            "status": "pending",
+            "testStrategy": "Automated tests for PHI detection and redaction, manual review of sample outputs for compliance."
+          },
+          {
+            "id": 7,
+            "title": "Store Intake Summaries and Necessary Data Securely",
+            "description": "Persist structured summaries and required data in the database, ensuring only necessary information is stored.",
+            "dependencies": [
+              6
+            ],
+            "details": "Implement secure database operations to save intake summaries. Enforce data minimization and encryption for sensitive fields. Validate schema alignment with privacy requirements.",
+            "status": "pending",
+            "testStrategy": "Database integration tests, encryption validation, and schema compliance checks."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Implement Custom Clinical Screener Module with AI Interpretation",
+        "description": "Render custom PHQ/GAD-style screeners with supportive framing and real-time AI plain-language interpretation.",
+        "details": "Create screener forms based on items_json. After submission, call AI service to generate plain-English interpretation and risk level. Store responses and interpretations. Display supportive feedback to user.",
+        "testStrategy": "Test screener rendering, submission, and AI interpretation. Validate that clinical language is softened and feedback is accurate.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Integrate Insurance Card Upload with Vision OCR Extraction",
+        "description": "Enable parents to upload insurance card images, extract data using OpenAI Vision, and handle manual fallback.",
+        "details": "Implement file upload UI for front/back images (presigned S3). Send images to OpenAI Vision API with extraction schema. Render extracted fields with confidence badges. Require confirmation for medium/low confidence; fallback to manual entry with field-level help.",
+        "testStrategy": "Test successful OCR extraction, confidence handling, and manual fallback. Validate data is correctly stored and editable.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement File Upload UI for Insurance Card Images",
+            "description": "Create a user interface that allows parents to upload front and back images of their insurance card.",
+            "dependencies": [],
+            "details": "Design and build a UI component for uploading two images (front and back). Ensure clear instructions and progress indicators. Validate file types and sizes before upload.",
+            "status": "pending",
+            "testStrategy": "Test uploading valid and invalid image files. Confirm UI feedback for success and error states."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Presigned S3 Uploads for Image Storage",
+            "description": "Connect the file upload UI to backend logic that generates presigned S3 URLs and uploads images securely.",
+            "dependencies": [
+              1
+            ],
+            "details": "On image selection, request presigned S3 URLs from the backend. Upload images directly to S3 using these URLs. Handle upload errors and display status to the user.",
+            "status": "pending",
+            "testStrategy": "Verify images are uploaded to S3 and accessible via presigned URLs. Simulate network and permission errors."
+          },
+          {
+            "id": 3,
+            "title": "Integrate OpenAI Vision API for OCR Extraction",
+            "description": "Send uploaded insurance card images to the OpenAI Vision API and receive extracted data.",
+            "dependencies": [
+              2
+            ],
+            "details": "Convert uploaded images to Base64 or provide S3 URLs as required. Construct API requests with the extraction schema. Handle authentication and parse API responses for extracted fields.",
+            "status": "pending",
+            "testStrategy": "Test API calls with various image qualities. Validate correct extraction and error handling for failed or partial responses."
+          },
+          {
+            "id": 4,
+            "title": "Map Extraction Schema to Insurance Data Fields",
+            "description": "Define and implement a mapping from OpenAI Vision API output to structured insurance card fields.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create a schema that matches expected insurance card fields (e.g., member ID, group number, name). Map API response data to these fields, including confidence scores.",
+            "status": "pending",
+            "testStrategy": "Test mapping logic with sample API responses. Ensure all required fields are populated or flagged if missing."
+          },
+          {
+            "id": 5,
+            "title": "Render Extracted Fields with Confidence Badges and Confirmation UI",
+            "description": "Display extracted fields with visual confidence indicators and require user confirmation for medium/low confidence data.",
+            "dependencies": [
+              4
+            ],
+            "details": "Show each field with a badge indicating extraction confidence (e.g., high, medium, low). For medium/low confidence, prompt the user to confirm or correct the value before proceeding.",
+            "status": "pending",
+            "testStrategy": "Test UI rendering for all confidence levels. Validate confirmation flow and ensure user edits are saved."
+          },
+          {
+            "id": 6,
+            "title": "Implement Manual Fallback UI with Field-Level Help",
+            "description": "Provide a manual entry form for insurance data with contextual help if extraction fails or user rejects extracted values.",
+            "dependencies": [
+              5
+            ],
+            "details": "Build a fallback form for manual entry of all insurance fields. Add tooltips or help text for each field to guide users. Ensure smooth transition from extraction UI to manual entry.",
+            "status": "pending",
+            "testStrategy": "Test fallback activation on extraction failure or user rejection. Validate help content and data submission."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Build Cost Estimation Tool Based on Insurance Data",
+        "description": "Estimate out-of-pocket costs using rule-based config table after insurance data is confirmed.",
+        "details": "After insurance confirmation, use payer_name, plan_type, state, and session_type to look up min/max cost range. Display estimate with clear copy about its provisional nature. Store estimate in cost_estimates table.",
+        "testStrategy": "Test cost estimation logic with various insurance scenarios. Validate UI copy and data accuracy.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Develop Scheduling and Therapist Matching Module",
+        "description": "Allow parents to select availability, match with clinicians, and book appointments.",
+        "details": "Implement availability selection UI. Use matching heuristic (language, grade, availability, load) to suggest 2–4 clinicians. Display bios and rationale. Allow booking and confirmation. Store appointments and send notifications.",
+        "testStrategy": "Test matching logic, slot selection, booking, and confirmation flows. Validate notifications are sent.",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Inline AI FAQ and Emotional Support Prompts",
+        "description": "Surface real-time AI-powered FAQs and micro-reassurance messages at stress points throughout onboarding.",
+        "details": "Integrate small LLM for contextual FAQ and supportive microcopy. Trigger prompts based on user actions and onboarding step. Ensure tone matches 'Reassuring Parenting Coach'.",
+        "testStrategy": "Test FAQ triggering, accuracy, and tone. Validate that microcopy appears at appropriate moments.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integrate Small LLM for Contextual FAQ and Microcopy",
+            "description": "Select and integrate a small LLM into the onboarding flow to generate real-time, context-aware FAQ answers and supportive microcopy.",
+            "dependencies": [
+              3
+            ],
+            "details": "Evaluate and choose an LLM (open-source or API-based) that fits the use case. Set up API authentication, rate limits, and cost controls. Implement pre-processing (data cleaning, anonymization) and post-processing for responses. Ensure the LLM can be called programmatically from the onboarding UI.",
+            "status": "pending",
+            "testStrategy": "Test API connectivity, response latency, and basic FAQ accuracy. Validate that the LLM returns coherent, relevant answers to sample onboarding questions."
+          },
+          {
+            "id": 2,
+            "title": "Implement FAQ and Microcopy Trigger Logic",
+            "description": "Develop logic to surface FAQ answers and micro-reassurance messages at specific stress points during onboarding.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Define user actions and onboarding steps that should trigger prompts. Implement event listeners or hooks in the UI to detect these moments. Route context (user action, step, previous inputs) to the LLM for personalized responses. Ensure prompts are only shown when relevant to reduce noise.",
+            "status": "pending",
+            "testStrategy": "Simulate user journeys to verify prompts appear at correct stress points. Check that irrelevant actions do not trigger prompts. Validate contextual accuracy of responses."
+          },
+          {
+            "id": 3,
+            "title": "Validate and Enforce 'Reassuring Parenting Coach' Tone",
+            "description": "Ensure all LLM-generated FAQ answers and microcopy consistently match the desired supportive, reassuring tone.",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop tone guidelines and example prompts. Fine-tune the LLM (via prompt engineering or few-shot examples) to align outputs with the 'Reassuring Parenting Coach' voice. Implement a validation layer to screen responses for tone compliance before displaying to users.",
+            "status": "pending",
+            "testStrategy": "Sample outputs across various scenarios and assess tone using human review and/or automated sentiment analysis. Iterate on prompts and validation rules until tone is consistently matched."
+          },
+          {
+            "id": 4,
+            "title": "Implement and Test UI Placement for AI Prompts",
+            "description": "Design and test the placement of inline FAQ and micro-reassurance messages within the onboarding UI.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Collaborate with UX/UI to determine optimal placement (e.g., tooltips, inline banners, modals) for prompts. Implement the rendering logic in the frontend. Ensure prompts are non-disruptive, accessible, and visually consistent with the rest of the app.",
+            "status": "pending",
+            "testStrategy": "Conduct usability testing to ensure prompts are noticeable but not intrusive. Verify accessibility compliance and cross-browser/device rendering. Gather user feedback on prompt placement and clarity."
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Add Support Chat with AI and Human Escalation",
+        "description": "Provide a floating 'Need help?' chat entry point with AI FAQ and escalation to human staff.",
+        "details": "Implement chat widget accessible throughout onboarding. Route initial queries to AI FAQ; escalate to staff inbox if unresolved. Log all interactions for audit.",
+        "testStrategy": "Test chat widget, AI FAQ responses, and escalation flow. Validate audit logging.",
+        "priority": "medium",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Floating Chat Widget UI",
+            "description": "Create a floating 'Need help?' chat button and chat window accessible throughout onboarding.",
+            "dependencies": [],
+            "details": "Develop a responsive floating chat widget using React or similar framework. Ensure the widget is always visible, styled to match branding, and supports hover and click interactions. The chat window should open on button click and support real-time messaging UI.",
+            "status": "pending",
+            "testStrategy": "Verify widget visibility, responsiveness, and interaction on all onboarding screens. Test UI on multiple devices and browsers."
+          },
+          {
+            "id": 2,
+            "title": "Implement AI FAQ Routing Logic",
+            "description": "Route initial user queries to an AI-powered FAQ system for automated responses.",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate an AI FAQ backend (e.g., LLM or FAQ API) with the chat widget. On user message, send query to AI FAQ and display response in chat. Ensure fallback for unrecognized questions.",
+            "status": "pending",
+            "testStrategy": "Test AI FAQ response accuracy and latency. Validate fallback handling for unsupported queries."
+          },
+          {
+            "id": 3,
+            "title": "Develop Escalation Logic to Human Staff",
+            "description": "Escalate unresolved or complex queries from AI FAQ to human support staff inbox.",
+            "dependencies": [
+              2
+            ],
+            "details": "Detect when AI FAQ cannot resolve a query and trigger escalation. Implement logic to forward chat transcript and user context to staff inbox. Provide user feedback on escalation status.",
+            "status": "pending",
+            "testStrategy": "Simulate unresolved queries and verify escalation triggers. Confirm staff inbox receives full context and transcript."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Staff Inbox for Human Support",
+            "description": "Connect chat escalation flow to staff inbox, enabling staff to respond to escalated chats.",
+            "dependencies": [
+              3
+            ],
+            "details": "Integrate with existing staff inbox or build a new interface for support staff. Ensure staff can view chat history, respond to users, and resolve tickets. Support notifications for new escalations.",
+            "status": "pending",
+            "testStrategy": "Test end-to-end chat escalation and staff response. Validate staff interface usability and notification reliability."
+          },
+          {
+            "id": 5,
+            "title": "Implement Audit Logging for All Chat Interactions",
+            "description": "Log all chat interactions, including AI responses and human escalations, for audit and compliance.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Capture and store chat transcripts, timestamps, user actions, and escalation events in a secure audit log. Ensure logs are tamper-resistant and accessible for compliance review.",
+            "status": "pending",
+            "testStrategy": "Verify that all chat events are logged accurately. Test log retrieval and integrity for audit scenarios."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Create Post-Onboarding Summary and Notification System",
+        "description": "Display clear 'What Happens Next' page and send SMS/email summary after onboarding completion.",
+        "details": "After final step, show summary with next steps and timeline. Trigger SMS/email via Sidekiq worker using Postmark/Twilio. Store notifications in audit log.",
+        "testStrategy": "Test summary display, notification delivery, and audit logging. Validate content accuracy.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Security, Privacy, and Audit Logging Features",
+        "description": "Ensure HIPAA-grade security: encryption, access controls, prompt hygiene, and full audit logging.",
+        "details": "Apply TLS 1.2+, encrypt PHI fields, use Vault/Aptible for secrets, enforce RBAC, and log all PHI access in audit_logs. Strip PII from AI prompts and use pseudonyms. Add data retention and backup scripts.",
+        "testStrategy": "Penetration testing, audit log review, and verification of encryption/access controls. Test prompt de-identification.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure TLS 1.2+ for All Data Transmission",
+            "description": "Set up TLS 1.2 or higher for all inbound and outbound connections to ensure encrypted transmission of PHI.",
+            "dependencies": [],
+            "details": "Update server and application configurations to enforce TLS 1.2+ for all endpoints, including APIs and web interfaces. Test for downgrade attacks and verify certificate validity.",
+            "status": "pending",
+            "testStrategy": "Use SSL Labs and penetration testing tools to verify TLS enforcement and absence of insecure protocols."
+          },
+          {
+            "id": 2,
+            "title": "Implement PHI Field-Level Encryption in Database",
+            "description": "Encrypt all database fields containing PHI using strong cryptographic algorithms to meet HIPAA requirements.",
+            "dependencies": [
+              1
+            ],
+            "details": "Identify all PHI fields in the schema. Apply AES-256 encryption at the application or database layer. Ensure encryption keys are rotated and stored securely.",
+            "status": "pending",
+            "testStrategy": "Attempt to access PHI fields directly in the database and verify data is unreadable without decryption keys."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Vault/Aptible for Secrets Management",
+            "description": "Use Vault or Aptible to securely store and manage encryption keys, API credentials, and other sensitive secrets.",
+            "dependencies": [
+              2
+            ],
+            "details": "Set up Vault/Aptible, configure access policies, and migrate all secrets from environment variables or config files. Enforce audit logging for secret access.",
+            "status": "pending",
+            "testStrategy": "Perform access attempts and verify only authorized roles can retrieve secrets. Review audit logs for all secret access events."
+          },
+          {
+            "id": 4,
+            "title": "Enforce Role-Based Access Control (RBAC)",
+            "description": "Implement RBAC to restrict PHI access based on user roles and responsibilities.",
+            "dependencies": [
+              3
+            ],
+            "details": "Define roles and permissions for all user types. Integrate RBAC checks in API endpoints and UI components. Regularly review and update role assignments.",
+            "status": "pending",
+            "testStrategy": "Test access attempts for each role and verify only permitted actions are allowed. Review access logs for unauthorized attempts."
+          },
+          {
+            "id": 5,
+            "title": "Develop Comprehensive Audit Logging for PHI Access",
+            "description": "Log all access, modification, and transmission events involving PHI in a secure, tamper-evident audit log.",
+            "dependencies": [
+              4
+            ],
+            "details": "Instrument application code to log user ID, timestamp, action, and PHI fields accessed. Store logs in a secure, append-only system. Implement log rotation and retention policies.",
+            "status": "pending",
+            "testStrategy": "Simulate PHI access and verify all events are recorded with correct details. Attempt log tampering and confirm integrity controls."
+          },
+          {
+            "id": 6,
+            "title": "Implement Prompt De-Identification and Pseudonymization",
+            "description": "Strip PII from AI prompts and replace identifiers with pseudonyms to prevent exposure during AI processing.",
+            "dependencies": [
+              5
+            ],
+            "details": "Develop middleware to scan and redact PII from prompts before sending to AI services. Generate and map pseudonyms for user identifiers. Validate output for absence of PII.",
+            "status": "pending",
+            "testStrategy": "Submit test prompts containing PII and verify all sensitive data is removed or replaced before processing."
+          },
+          {
+            "id": 7,
+            "title": "Create Data Retention and Deletion Policies",
+            "description": "Define and enforce policies for retaining and securely deleting PHI and audit logs in compliance with HIPAA.",
+            "dependencies": [
+              5
+            ],
+            "details": "Draft retention schedules for PHI and logs. Implement automated scripts for data deletion after retention period. Document procedures and ensure auditability.",
+            "status": "pending",
+            "testStrategy": "Review retention schedules and test automated deletion scripts. Verify deleted data is unrecoverable."
+          },
+          {
+            "id": 8,
+            "title": "Develop Automated Backup and Recovery Scripts",
+            "description": "Implement secure, regular backups for all PHI and audit logs, with tested recovery procedures.",
+            "dependencies": [
+              7
+            ],
+            "details": "Set up encrypted backups for databases and logs. Schedule regular backup jobs and store backups in secure, access-controlled locations. Test restoration procedures periodically.",
+            "status": "pending",
+            "testStrategy": "Perform backup and restore drills. Verify integrity and completeness of restored data."
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Integrate MCP (Model Context Protocol) for Agent-Aware UI",
+        "description": "Enable MCP hooks in onboarding steps for future AI-driven personalization and UI transitions.",
+        "details": "Add .mcp.json to project root. Expose introspection hooks in onboarding UI for agent access to state and transitions. Ensure onboarding works with and without active agents.",
+        "testStrategy": "Test onboarding flow with and without MCP agent. Validate hooks and UI transitions.",
+        "priority": "low",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Deploy Analytics and Funnel Tracking",
+        "description": "Track onboarding funnel metrics, drop-off points, and time to completion for continuous improvement.",
+        "details": "Instrument onboarding steps with analytics events. Build basic dashboard for funnel (start→finish, insurance drop-off, completion time). Use data to inform future iterations.",
+        "testStrategy": "Validate event tracking, dashboard accuracy, and data export. Test with simulated user flows.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-10T19:15:26.704Z",
+      "updated": "2025-11-10T19:28:58.323Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

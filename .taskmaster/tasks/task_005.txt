@@ -1,0 +1,55 @@
+# Task ID: 5
+# Title: Develop AI-Powered Conversational Intake Module
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Integrate OpenAI GPT-4o for warm, supportive AI intake with real-time streaming and summary extraction.
+# Details:
+Implement a chat UI panel for the intake step. Use OpenAI SDK to stream assistant messages in the 'Reassuring Parenting Coach' tone. Extract structured summary (concerns, goals, risk flags) and store in intake_summaries. Ensure prompt hygiene: de-identify PHI, use pseudonyms, and store only necessary data.
+
+# Test Strategy:
+Unit and integration tests for prompt templates, streaming, and summary extraction. Validate tone and de-identification in outputs.
+
+# Subtasks:
+## 1. Design and Implement Chat UI Panel for Intake [pending]
+### Dependencies: None
+### Description: Create a user-friendly chat interface for the intake step, enabling real-time conversation with the AI assistant.
+### Details:
+Develop a responsive chat panel using React or a similar framework. Ensure support for message streaming, user input, and displaying assistant responses. Include accessibility features and error handling.
+
+## 2. Integrate OpenAI GPT-4o SDK for Conversational AI [pending]
+### Dependencies: 5.1
+### Description: Set up and authenticate the OpenAI SDK to enable GPT-4o-powered chat functionality within the intake module.
+### Details:
+Obtain API keys, install the OpenAI SDK, and configure secure environment variables. Implement backend service to handle chat requests and responses using GPT-4o model[1][2][7][8].
+
+## 3. Implement Real-Time Streaming of Assistant Messages [pending]
+### Dependencies: 5.2
+### Description: Enable real-time streaming of AI-generated messages to provide a seamless conversational experience.
+### Details:
+Utilize OpenAI's streaming API endpoints to deliver partial message updates as they are generated. Update the chat UI to display streaming content incrementally.
+
+## 4. Develop Prompt Engineering for 'Reassuring Parenting Coach' Tone [pending]
+### Dependencies: 5.2
+### Description: Craft and maintain prompt templates that ensure the AI responds in a warm, supportive, and reassuring manner.
+### Details:
+Design system and user prompts that consistently guide GPT-4o to use the desired tone. Test and iterate prompt templates for reliability and effectiveness.
+
+## 5. Extract Structured Summary from Intake Conversation [pending]
+### Dependencies: 5.3, 5.4
+### Description: Automatically extract and structure key information (concerns, goals, risk flags) from the chat for downstream use.
+### Details:
+Implement logic to parse AI responses and summarize relevant data points. Store extracted summaries in a dedicated intake_summaries table.
+
+## 6. Implement PHI De-Identification and Pseudonymization [pending]
+### Dependencies: 5.5
+### Description: Ensure all personally identifiable health information is de-identified and replaced with pseudonyms before storage.
+### Details:
+Develop middleware or utility functions to scan and redact PHI from chat transcripts and summaries. Apply pseudonyms where necessary and validate compliance with privacy standards.
+
+## 7. Store Intake Summaries and Necessary Data Securely [pending]
+### Dependencies: 5.6
+### Description: Persist structured summaries and required data in the database, ensuring only necessary information is stored.
+### Details:
+Implement secure database operations to save intake summaries. Enforce data minimization and encryption for sensitive fields. Validate schema alignment with privacy requirements.
+

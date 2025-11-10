@@ -1,0 +1,56 @@
+{
+  "name": "parent-onboarding-ai",
+  "version": "0.1.0",
+  "description": "AI-powered onboarding for parents seeking mental health services",
+  "type": "monorepo",
+  "packages": {
+    "api": {
+      "path": "apps/api",
+      "type": "rails-api",
+      "main": "config.ru",
+      "scripts": {
+        "dev": "rails server",
+        "test": "bundle exec rspec"
+      }
+    },
+    "web": {
+      "path": "apps/web",
+      "type": "nextjs",
+      "main": "package.json",
+      "scripts": {
+        "dev": "npm run dev",
+        "build": "npm run build",
+        "test": "npm run test"
+      }
+    },
+    "shared-types": {
+      "path": "packages/shared-types",
+      "type": "typescript-package"
+    },
+    "prompts": {
+      "path": "packages/prompts",
+      "type": "typescript-package"
+    },
+    "ui": {
+      "path": "packages/ui",
+      "type": "react-components"
+    }
+  },
+  "metadata": {
+    "author": "Daybreak Health",
+    "repository": "private",
+    "documentation": "memory-bank/",
+    "aiIntegration": {
+      "enabled": true,
+      "provider": "openai",
+      "features": [
+        "conversational-intake",
+        "clinical-screener-interpretation",
+        "insurance-ocr",
+        "therapist-matching",
+        "cost-estimation"
+      ]
+    }
+  }
+}
+

@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Build Cost Estimation Tool Based on Insurance Data
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Estimate out-of-pocket costs using rule-based config table after insurance data is confirmed.
+# Details:
+After insurance confirmation, use payer_name, plan_type, state, and session_type to look up min/max cost range. Display estimate with clear copy about its provisional nature. Store estimate in cost_estimates table.
+
+# Test Strategy:
+Test cost estimation logic with various insurance scenarios. Validate UI copy and data accuracy.

@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Create Post-Onboarding Summary and Notification System
+# Status: pending
+# Dependencies: 9
+# Priority: medium
+# Description: Display clear 'What Happens Next' page and send SMS/email summary after onboarding completion.
+# Details:
+After final step, show summary with next steps and timeline. Trigger SMS/email via Sidekiq worker using Postmark/Twilio. Store notifications in audit log.
+
+# Test Strategy:
+Test summary display, notification delivery, and audit logging. Validate content accuracy.

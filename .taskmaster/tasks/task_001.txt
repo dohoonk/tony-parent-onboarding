@@ -1,0 +1,55 @@
+# Task ID: 1
+# Title: Initialize Monorepo and Core Infrastructure
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Set up the monorepo structure with Rails API (GraphQL), Next.js web app, shared packages, and local development environment.
+# Details:
+Create the directory structure as specified in the PRD. Scaffold Rails 7 API-only app with graphql-ruby, Sidekiq, Redis, and Postgres. Scaffold Next.js 15 app with App Router, React 18, Tailwind, and shadcn/ui. Add Dockerfiles and docker-compose for local dev. Set up shared-types (Zod/TypeScript), prompts, and optional shared UI packages. Add initial README and .mcp.json for MCP integration.
+
+# Test Strategy:
+Verify that both API and web apps start successfully in Docker. Confirm GraphQL endpoint is reachable and Next.js renders a basic page. Ensure shared packages are importable in both apps.
+
+# Subtasks:
+## 1. Create Monorepo Directory Structure [pending]
+### Dependencies: None
+### Description: Establish the top-level directory layout for the monorepo, including folders for Rails API, Next.js app, shared packages, and configuration files.
+### Details:
+Follow the PRD to define and create directories for /api, /web, /packages/shared-types, /packages/prompts, and /packages/ui (optional). Include root-level files such as README.md and .mcp.json.
+
+## 2. Scaffold Rails 7 API-Only App with GraphQL, Sidekiq, Redis, and Postgres [pending]
+### Dependencies: 1.1
+### Description: Initialize a Rails 7 API-only application with required gems and integrations for GraphQL, background jobs, and database.
+### Details:
+Use `rails new api --api -d postgresql` to scaffold. Add gems: graphql, graphql-ruby, sidekiq, redis, pg. Run `rails generate graphql:install`. Configure Sidekiq and Redis. Ensure Postgres connection. Set up initial GraphQL endpoint and test with GraphiQL IDE.
+
+## 3. Scaffold Next.js 15 Web App with App Router, React 18, Tailwind, and shadcn/ui [pending]
+### Dependencies: 1.1
+### Description: Create a Next.js 15 application with modern routing, styling, and UI component library.
+### Details:
+Run `npx create-next-app web --experimental-app` or equivalent. Install React 18, Tailwind CSS, and shadcn/ui. Set up basic routing using App Router. Add a sample page using shadcn/ui components and Tailwind styles.
+
+## 4. Set Up Dockerfiles and docker-compose for Local Development [pending]
+### Dependencies: 1.2, 1.3
+### Description: Configure Dockerfiles for Rails and Next.js apps, and a docker-compose file to orchestrate local development environment.
+### Details:
+Write Dockerfiles for /api and /web with appropriate build steps. Create docker-compose.yml to run Rails, Next.js, Postgres, and Redis containers. Expose necessary ports and set up environment variables for local development.
+
+## 5. Initialize Shared Packages: shared-types, prompts, and UI [pending]
+### Dependencies: 1.1, 1.3
+### Description: Set up TypeScript-based shared packages for types (Zod), prompts, and optionally shared UI components.
+### Details:
+Create /packages/shared-types with Zod schemas and TypeScript config. Add /packages/prompts for shared prompt logic. Optionally scaffold /packages/ui for reusable UI components. Configure package.json and tsconfig for each package. Set up local linking or workspace references.
+
+## 6. Add Initial Documentation: README and Setup Instructions [pending]
+### Dependencies: 1.1, 1.2, 1.3, 1.4, 1.5
+### Description: Draft a comprehensive README.md covering monorepo structure, setup steps, and development workflow.
+### Details:
+Write README.md at root with sections for project overview, directory structure, setup (Docker, local dev), package usage, and troubleshooting. Include instructions for onboarding new contributors and MCP integration.
+
+## 7. Integrate MCP: Add .mcp.json and Validate Monorepo Registration [pending]
+### Dependencies: 1.1, 1.6
+### Description: Configure MCP integration by adding .mcp.json and ensuring the monorepo is recognized and registered with MCP tooling.
+### Details:
+Create .mcp.json at root with required metadata. Run MCP CLI or integration checks to confirm the monorepo is registered and all packages are detected. Update documentation with MCP usage notes.
+

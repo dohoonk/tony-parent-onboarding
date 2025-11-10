@@ -1,0 +1,336 @@
+# Parent Onboarding AI — Discovery Notes
+
+## 1. Current Onboarding Flow (Observed)
+1. Website CTA → Parent enters onboarding
+2. Parent + Student demographic input
+3. Consent & agreements
+4. Insurance card upload / manual entry
+5. Intake narrative questions (family history, goals, relationships)
+6. Clinical screeners (PHQ/GAD style questions)
+7. Scheduling availability selection
+
+**Primary structure:** Linear multi-step flow, but emotionally and cognitively heavy.
+
+---
+
+## 2. Key Pain Points
+| Area | Pain | Impact |
+|------|------|--------|
+| Emotional overwhelm | Parent must articulate sensitive concerns early | Causes hesitation, emotional shutdown
+| Clinical language / diagnostic tone | PHQ/GAD questions feel medical and intimidating | Increases stress + defensiveness
+| Insurance submission | Manual data entry, unclear cost expectations | **50%+ drop-off point**
+| Lack of reassurance | No tone or guidance that parent is doing the right thing | Reduces confidence + follow-through
+| No progress context | Parent doesn't know how long the process is | Increases perceived effort time
+| End state unclear | No clear “what happens next” | Parent leaves feeling unsure, reduces show-up rate
+
+---
+
+## 3. Emotional Experience (User Perspective)
+- Felt **no warmth** or emotional support in the interface
+- Intake questions felt **clinical and cold**
+- Would have benefited from **small reassurances** along the way
+- Unsure after finishing: *"Did I do it right? What happens now?"
+
+---
+
+## 4. Opportunities (Where AI Should Intervene)
+| Moment | AI Function | Outcome |
+|--------|-------------|---------|
+| Early intake | AI-guided conversational reflection | Parent feels heard and supported
+| Clinical screener interpretation | AI translates scores → plain language | Reduces fear, increases understanding
+| Insurance upload | OCR extraction + cost preview | Removes friction + drop-off
+| Contextual FAQ | Inline reassurance and explanations | Builds confidence while filling forms
+| Final summary | Clear next steps + timeline | Improves follow-through + trust
+
+---
+
+## 5. Desired Tone for AI
+**Tone Selected:** B. Reassuring Parenting Coach
+
+**Voice characteristics:**
+- Warm
+- Supportive
+- Non-medical
+- Validating, not diagnosing
+
+Example tone:
+> "Thank you for sharing that.  we’ll guide you through it together."
+
+---
+
+## 6. Proposed New Flow (High Level)
+```
+Step 1 — Warm Welcome + Orientation (sets expectations + reassurance)
+Step 2 — Parent Story Intake (AI conversation)
+Step 3 — Clinical Screener (with emotional framing + interpretation)
+Step 4 — Insurance Upload + Auto-Extraction + Cost Transparency
+Step 5 — Scheduling + Clear "What Happens Next" Summary
+```
+
+---
+
+## 7. Next Steps
+- Create UX Flow diagram (Mermaid)
+- Define AI conversation prompts and transitions
+- Design insurance OCR + validation workflow
+- Write final PRD + architecture.md
+- Generate task breakdown for Rails + Next.js
+
+
+## 6. Functional Requirements — Implementation Plan
+
+## 7. Feature-to-Metric Impact Mapping
+
+| Feature | What It Does | Which Goal It Moves | Why It Works |
+|--------|--------------|--------------------|--------------|
+| **AI-Powered Assessment (Reassuring Parenting Coach tone)** | Guides parents through describing concerns and emotional context in a conversational way | **Increase Service Requests**, **Higher NPS**, **Retention** | Parents feel understood → Less shame and overwhelm → They *continue* the process and are more confident therapy will help. |
+| **Streamlined Multi-Step Flow with Progress Indicator** | Breaks the experience into small, predictable steps | **Onboarding Completion Rate +40%**, **Time Efficiency** | Reduces cognitive load. Parents know where they are and how much is left, lowering "I’ll finish this later" abandonment. |
+| **Insurance Card OCR + Auto-Fill** | Auto-extracts carrier, member ID, group # | **Reduce Drop-Off at Insurance by 50%** | Removes the highest friction point—manual form entry requiring lookup and mental effort. |
+| **Cost Estimation Tool** | Shows expected coverage + out-of-pocket costs range | **Increase Completion + Reduce Anxiety** | Parents fear surprise costs → transparent preview builds trust → fewer abandon before scheduling. |
+| **AI Emotional Support Prompts & Inline FAQ** | Gives reassurance, normalizes experience, answers questions | **Higher NPS**, **Completion Rate**, **Retention** | Parents are scared and overwhelmed. Emotional containment keeps them regulated enough to finish onboarding. |
+| **AI-Assisted Scheduling & Therapist Matching** | Matches based on availability + needs | **Completion Rate** + **Service Requests ↑** | Reduces the final decision friction (“Will we get someone who fits?”) and lowers uncertainty. |
+| **Post-Onboarding “What Happens Next” Page + SMS/Email Summary** | Clear next steps & timeline expectations | **Retention +20%**, **Higher NPS** | Removes ambiguity → increases follow-through into first session. |
+| **Self-Help & Stress Resources (P2)** | Gives parents immediate coping tools | **NPS**, **Retention** | Makes Daybreak feel supportive *before* therapy even starts. This strengthens trust and follow-through. |
+
+### P0: Must-have
+
+**AI-Powered Assessment Module**
+- Delivered via guided AI conversational intake (Tone: Reassuring Parenting Coach)
+- Collects context and emotional narrative BEFORE clinical screeners
+- Outputs structured summary (symptoms, duration, context) stored to intake_data JSON column
+- Transitions smoothly into PHQ/GAD with supportive framing
+
+**Streamlined Onboarding Flow**
+- Replaces long single-page forms with step-by-step progress wizard
+- Inline emotional reassurance + real-time FAQs powered by small LLM
+- Forms are broken into: Child Info → Parent Consent → AI Intake → Wellbeing Screeners → Insurance → Scheduling
+
+**Enhanced Scheduling Module**
+- Parent selects availability windows, not specific therapists
+- Matching algorithm suggests 2–4 therapists automatically
+- Parent may optionally choose from recommended matches
+
+### P1: Should-have
+
+**Image-to-Text Insurance Submission (OCR)**
+- Upload card → OCR auto-populates payer, member ID, group ID
+- Parent only confirms or corrects
+
+**Cost Estimation Tool**
+- Once insurance is parsed → run eligibility check
+- Display estimated out-of-pocket range before scheduling
+
+**Support Interface (Real-time Assistance)**
+- Floating “Need help?” chat entry point
+- Escalates to human staff if AI cannot resolve request
+
+### P2: Nice-to-have
+
+**Emotional Support Content**
+- short, empathetic supportive micro-messages at stress points
+- e.g., “Many parents feel uncertain here. You’re doing your best.”
+
+**Self-Help Resources**
+- On completion: present optional resources (articles, coping tools)
+- Helps parents feel empowered while waiting for match
+
+
+---
+
+# Project Setup & Architecture — Decisions & Plan
+
+## Source of Truth
+- **Standalone system** (no existing Daybreak systems to integrate now)
+- **Monorepo** with Rails (API) + Next.js (web)
+- **AI provider:** OpenAI (GPT‑4o / GPT‑4o‑mini for cost control)
+- **Clinical screeners:** Custom set, **real‑time** AI interpretation
+- **OCR:** OpenAI Vision (card photo → structured JSON); fallback to manual entry
+- **Cost Estimation:** Placeholder service (rule‑based; later replace with payer integrations)
+
+## Monorepo Layout
+```
+root/
+├─ apps/
+│  ├─ api/                # Rails 7, API‑only, GraphQL (graphql‑ruby), Sidekiq
+│  └─ web/                # Next.js 15 (App Router), React 18, Tailwind, shadcn/ui
+├─ packages/
+│  ├─ shared-types/       # Zod/TypeScript schemas mirroring GraphQL types
+│  ├─ prompts/            # Prompt templates + tests (Vitest)
+│  └─ ui/                 # (optional) shared UI components
+├─ infra/
+│  ├─ docker/             # Dockerfiles (api, web, worker)
+│  └─ terraform/          # (later) AWS + Aptible configs
+├─ scripts/               # DX, db seeders, smoke tests
+└─ README.md
+```
+
+## High‑Level Architecture
+```mermaid
+flowchart TD
+  A[Web (Next.js)] -- GraphQL --> B[(Rails API)]
+  subgraph AI
+    C[AI Intake Service
+(OpenAI SDK)]
+    D[Vision OCR Extractor]
+  end
+  B <--> C
+  B <--> D
+  B --- E[(PostgreSQL)]
+  B --- F[(Redis)]
+  B --- G[Sidekiq Workers]
+  G --> H[Email/SMS (Postmark/Twilio)]
+  B --> I[Audit Log]
+  A <-- Webhooks/Realtime --> B
+```
+
+## Core Services (how they hit Functional Requirements)
+- **AI Intake Service (P0):** conversational assessment in Tone **B (Reassuring Parenting Coach)**; streams assistant messages; emits `intake_summary` + optional `flags` (risk cues) in real time. Drives: ↑Service Requests, ↑Completion.
+- **Onboarding Flow Service (P0):** orchestrates steps, saves progress, and shows progress bar + ETA + save/resume. Drives: ↑Completion, 15‑min target.
+- **Scheduling Matcher (P0):** basic rules engine (availability ∩ clinician windows ∩ language ∩ grade range). Option **B** (AI‑guided suggestions) recommended. Drives: ↓time‑to‑first‑session, ↑Retention.
+- **Vision OCR (P1):** image → JSON extraction for insurance data; confidence scores; low‑confidence fields prompt inline confirmation. Drives: ↓Insurance drop‑off by 50%.
+- **Cost Estimator (P1):** rules table by payer plan type (HMO/PPO), region, and CPT code bundle → range (e.g., $X–$Y). Drives: ↑Trust, ↑Completion.
+- **Support Chat (P1):** in‑flow help; AI FAQ first, escalate to human inbox. Drives: ↑NPS.
+- **Emotional Support Content (P2):** micro‑copy + short reads surfaced by context (e.g., “talking to your teen about therapy”). Drives: ↑NPS, ↑Retention.
+
+## Data Model (initial)
+- **parents**(id, name, email, phone, auth_provider, created_at)
+- **students**(id, parent_id FK, name, dob, grade, school, language, gender_identity, address, created_at)
+- **onboarding_sessions**(id, parent_id, student_id, status[draft|active|completed], step, eta_seconds, started_at, completed_at)
+- **intake_messages**(id, session_id, role[user|assistant], content, tokens, created_at)
+- **intake_summaries**(id, session_id, concerns_json, goals_json, risk_flags_json, created_at)
+- **screeners**(id, key, title, version, items_json)
+- **screener_responses**(id, session_id, screener_id, scores_json, ai_plain_english, risk_level)
+- **insurance_cards**(id, session_id, front_url, back_url, ocr_json, confidence_json)
+- **insurance_policies**(id, session_id, payer_name, member_id, group_number, planholder_name, dob, address_json, verified[bool])
+- **cost_estimates**(id, session_id, min_cents, max_cents, basis_json)
+- **availability_windows**(id, actor[parent|student|clinician], actor_id, tz, rrule, source)
+- **appointments**(id, student_id, clinician_id, starts_at, ends_at, location, status)
+- **audit_logs**(id, actor, action, entity, before, after, ip, user_agent, created_at)
+
+> Note: **PHI minimization**—store only what’s required; keep AI prompts **de‑identified** (see Security).
+
+## GraphQL Surface (examples)
+- `mutation startOnboarding(parentInput, studentInput) → OnboardingSession`
+- `mutation aiIntakeMessage(sessionId, userText) → [AssistantDelta]` (streamed)
+- `mutation submitScreener(sessionId, answers) → ScreenerResponse`
+- `mutation uploadInsuranceCard(sessionId, frontUrl, backUrl) → OCRResult`
+- `mutation confirmInsurance(sessionId, fields) → InsurancePolicy`
+- `query estimateCost(sessionId) → CostEstimate`
+- `query suggestedSlots(studentId) → [Slot]`
+- `mutation book(slotId) → Appointment`
+- `query me/onboardingSession(id)`
+
+## Prompts & Conversation Design
+**System:** “You are a warm, reassuring parenting coach… Avoid diagnoses. Reflect, normalize, and guide. Short, friendly sentences.”
+**Developer:** “Extract no PII; capture concerns/goals/themes internally; highlight risk cues (self‑harm, aggression, school refusal). Always reassure and explain next step.”
+**User flow:** ~20 topical probes (school, sleep, friends, mood, motivation, routines). Real‑time paraphrase + optional ‘Would you like to add this?’ chips.
+
+## Vision OCR Plan (OpenAI)
+- Accept JPG/PNG; send to GPT‑4o Vision with an **extraction schema** (payer_name, member_id, group_number, planholder_name, plan_type, rx_bin, phone, addr, etc.)
+- Return `{ data, confidence }`; render fields with inline badges: **High**, **Medium**, **Low**; require confirmation for Medium/Low; fallback: switch to manual entry with field‑level help.
+
+## Cost Estimation (Placeholder)
+- Inputs: payer_name, plan_type, state, session_type (intake/individual), in_network[bool]
+- Config table example: `(payer_name, plan_type, state) -> min/max` with UI copy: “This is an estimate; we’ll verify and confirm before sessions begin.”
+
+## Scheduling (v1)
+- Choose **Option B** (AI suggests clinician then shows times) unless specified otherwise
+- Matching heuristic: language + grade band + availability overlap + load balancing; return 2–3 suggestions with 
+  short bios and rationale (“Matches after‑school hours, experience with anxiety + school stress”).
+
+## Security, Privacy, HIPAA Posture (non‑legal, engineering plan)
+- **Transport:** TLS 1.2+
+- **At rest:** Postgres row‑level encryption for sensitive columns (member_id, group_number, addresses) + disk encryption
+- **Secrets:** Vault/Aptible ENV secrets; rotated
+- **Access:** RBAC (parent vs staff); PII/PHI scoped queries
+- **Audit:** Every read/write of PHI into `audit_logs`
+- **Prompt hygiene:** Strip names, exact addresses, DOB before sending to OpenAI; use stable pseudonyms within a session; store prompt+response IDs, not raw PHI
+- **Data retention:** Configurable TTL for raw intake chat; summarize → then purge messages if policy requires
+- **Backups:** Encrypted snapshots; tested restores
+- **Vendors:** Ensure BAAs as required before enabling production PHI flows; otherwise keep PHI out of vendor calls via de‑identification
+
+## MVP Scope & Priorities
+- **Include P0 + P1** features for Day‑1 demo value
+  - P0: AI Intake, Streamlined Flow (progress/ETA/save‑resume), Scheduling
+  - P1: Insurance OCR + Cost Estimate + Support Chat (email/ticket fallback)
+- Defer P2 content until after baseline funnel metrics
+
+## Front-End UI Stack & MCP Integration
+
+**UI Library:** shadcn/ui (Next.js native, accessible, themeable)
+- Components are generated into the repo for full control.
+- Tailwind-based styling ensures scalability and consistency.
+- Works seamlessly with our Next.js App Router architecture.
+
+**MCP (Model Context Protocol) Support:**
+- We will integrate the official **Next.js MCP development server** for agent-aware UI.
+- MCP allows the AI intake agent (and future agents) to:
+  - Access UI state
+  - Trigger UI transitions (e.g., advance onboarding steps)
+  - Provide inline guidance or clarifications
+  - Dynamically surface supportive microcopy at stress points
+
+**Implementation Notes:**
+- Add `.mcp.json` at project root to register the MCP development server.
+- Use shadcn/ui component primitives (e.g., `Card`, `Input`, `Dialog`) for consistent onboarding UI.
+- Each onboarding step will expose optional MCP “introspection hooks” for future AI-driven personalization (e.g., adaptive phrasing based on parent tone).
+- MCP stays optional and additive: the onboarding remains fully functional without active agents.
+
+**Developer Setup (reference):**
+```bash
+npm install shadcn/ui
+npx shadcn@latest init -d
+```
+
+```json
+// .mcp.json
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    }
+  }
+}
+```
+
+---
+
+## UX Requirements
+- Progress indicator: “Step X of 5” + **ETA countdown**
+- **Save/Resume** (magic link via email/SMS)
+- Mobile‑first responsive layout; large tap targets; WCAG AA
+- Inline AI FAQ and micro‑reassurance copy on every step
+- Final **What Happens Next** page + SMS/email summary
+
+## Milestones & PR‑Sized Tasks (initial)
+1) **Repo & Infra**
+   - [API] Rails API skeleton (GraphQL, Sidekiq, Redis, Postgres)
+   - [WEB] Next.js app scaffold + auth‑lite (magic link)
+   - Docker compose for local dev; seed scripts
+2) **Data & Schema**
+   - Migrations for core tables
+   - GraphQL types, input validators (Zod)
+3) **AI Intake (P0)**
+   - Prompt template + unit tests
+   - Streaming endpoint + UI chat panel with chips
+   - Summary generator + storage
+4) **Screeners (P0)**
+   - Custom screener model + renderer
+   - Real‑time interpretation stream + plain‑language output block
+5) **Insurance (P1)**
+   - Upload UI (front/back) + presigned S3
+   - Vision extraction service + confidence UI + manual fallback
+   - Policy confirmation + cost estimator
+6) **Scheduling (P0)**
+   - Availability forms; basic matcher; suggested clinicians + slots
+   - Book flow + confirmation page + email/SMS
+7) **Support & Finish**
+   - Inline FAQ + escalate to email
+   - What‑happens‑next page; save/resume flows; analytics events
+8) **Security & Ops**
+   - Audit logging, PII masking, secrets, backup scripts
+   - Basic dashboards: funnel (start→finish, insurance drop‑off), time to complete
+
+---
+

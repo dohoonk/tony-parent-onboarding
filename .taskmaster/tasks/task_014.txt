@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Integrate MCP (Model Context Protocol) for Agent-Aware UI
+# Status: pending
+# Dependencies: 4
+# Priority: low
+# Description: Enable MCP hooks in onboarding steps for future AI-driven personalization and UI transitions.
+# Details:
+Add .mcp.json to project root. Expose introspection hooks in onboarding UI for agent access to state and transitions. Ensure onboarding works with and without active agents.
+
+# Test Strategy:
+Test onboarding flow with and without MCP agent. Validate hooks and UI transitions.
