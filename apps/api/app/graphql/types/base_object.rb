@@ -4,9 +4,14 @@ module Types
     connection_type_class(Types::BaseConnection)
     field_class Types::BaseField
     
-    # Mark as abstract to exclude from schema
-    # This is a base class, not a concrete queryable type
-    abstract
+    # Add a dummy field to satisfy GraphQL's requirement that object types have fields
+    # This is a base class, so this field will be inherited by all child types
+    # Child types can override this field if needed
+    field :_typename, String, null: false, description: "GraphQL type name" do
+      def resolve
+        object.class.name
+      end
+    end
   end
 end
 
