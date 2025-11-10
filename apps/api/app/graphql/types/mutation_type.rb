@@ -13,6 +13,7 @@ module Types
     field :estimate_cost, mutation: Mutations::EstimateCost
     field :match_therapists, mutation: Mutations::MatchTherapists
     field :book_appointment, mutation: Mutations::BookAppointment
+    field :support_chat_message, mutation: Mutations::SupportChatMessage
   end
 end
 
