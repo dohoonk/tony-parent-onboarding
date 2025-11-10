@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000030) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_231211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -168,7 +168,47 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000030) do
     t.datetime "verified_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "front_card_url"
+    t.string "back_card_url"
+    t.string "group_id"
+    t.string "plan_holder_first_name"
+    t.string "plan_holder_last_name"
+    t.date "plan_holder_dob"
+    t.string "plan_holder_country", default: "US"
+    t.string "plan_holder_state"
+    t.string "plan_holder_city"
+    t.string "plan_holder_street_address"
+    t.string "plan_holder_zip_code"
+    t.string "plan_holder_legal_gender"
+    t.string "insurance_company_name"
+    t.integer "kind", default: 0
+    t.integer "level", default: 0
+    t.integer "eligibility", default: 0
+    t.integer "genesis", default: 0
+    t.text "system_labels", default: [], array: true
+    t.string "openpm_insurance_organization_id"
+    t.string "openpm_coverage_id"
+    t.string "openpm_insurance_organization_name"
+    t.jsonb "migration_details", default: {}
+    t.jsonb "profile_data", default: {}
+    t.string "user_type"
+    t.uuid "user_id"
+    t.uuid "created_by_id"
+    t.index ["created_by_id"], name: "index_insurance_policies_on_created_by_id"
+    t.index ["eligibility"], name: "index_insurance_policies_on_eligibility"
+    t.index ["group_id"], name: "index_insurance_policies_on_group_id"
+    t.index ["insurance_company_name"], name: "index_insurance_policies_on_insurance_company_name"
+    t.index ["kind"], name: "index_insurance_policies_on_kind"
+    t.index ["level"], name: "index_insurance_policies_on_level"
+    t.index ["migration_details"], name: "index_insurance_policies_on_migration_details", using: :gin
     t.index ["onboarding_session_id"], name: "index_insurance_policies_on_onboarding_session_id", unique: true
+    t.index ["openpm_coverage_id"], name: "index_insurance_policies_on_openpm_coverage_id"
+    t.index ["openpm_insurance_organization_id"], name: "index_insurance_policies_on_openpm_insurance_organization_id"
+    t.index ["plan_holder_state"], name: "index_insurance_policies_on_plan_holder_state"
+    t.index ["plan_holder_zip_code"], name: "index_insurance_policies_on_plan_holder_zip_code"
+    t.index ["profile_data"], name: "index_insurance_policies_on_profile_data", using: :gin
+    t.index ["system_labels"], name: "index_insurance_policies_on_system_labels", using: :gin
+    t.index ["user_type", "user_id"], name: "index_insurance_policies_on_user"
   end
 
   create_table "intake_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -508,6 +548,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000030) do
   add_foreign_key "credentialed_insurances", "credentialed_insurances", column: "parent_credentialed_insurance_id"
   add_foreign_key "insurance_cards", "onboarding_sessions"
   add_foreign_key "insurance_policies", "onboarding_sessions"
+  add_foreign_key "insurance_policies", "parents", column: "created_by_id"
   add_foreign_key "intake_messages", "onboarding_sessions"
   add_foreign_key "intake_summaries", "onboarding_sessions"
   add_foreign_key "memberships", "organizations"
