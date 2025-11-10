@@ -82,6 +82,7 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
               value={formData.firstName}
               onChange={(e) => handleChange('firstName', e.target.value)}
               aria-invalid={!!errors.firstName}
+              aria-required="true"
               aria-describedby={errors.firstName ? 'firstName-error' : undefined}
             />
             {errors.firstName && (
@@ -100,6 +101,7 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
               value={formData.lastName}
               onChange={(e) => handleChange('lastName', e.target.value)}
               aria-invalid={!!errors.lastName}
+              aria-required="true"
               aria-describedby={errors.lastName ? 'lastName-error' : undefined}
             />
             {errors.lastName && (
@@ -120,6 +122,7 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
             aria-invalid={!!errors.email}
+            aria-required="true"
             aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email && (
@@ -139,6 +142,7 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             aria-invalid={!!errors.phone}
+            aria-required="true"
             aria-describedby={errors.phone ? 'phone-error' : undefined}
           />
           {errors.phone && (

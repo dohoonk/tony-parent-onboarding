@@ -34,7 +34,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         aria-valuenow={percentage}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label="Onboarding progress"
+        aria-label={`Onboarding progress: ${percentage}% complete, step ${current} of ${total}`}
       >
         <div
           className="h-full bg-primary transition-all duration-300 ease-in-out"

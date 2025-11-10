@@ -1,28 +1,28 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ApolloWrapper } from "@/lib/apollo-wrapper"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { SkipLink } from "@/components/onboarding/SkipLink";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Parent Onboarding - Daybreak Health",
-  description: "AI-powered onboarding for parents seeking mental health services",
-}
+  title: "Daybreak Health - Parent Onboarding",
+  description: "Complete your child's mental health onboarding",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.Node
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ApolloWrapper>
+        <SkipLink href="#main-content">Skip to main content</SkipLink>
+        <main id="main-content" tabIndex={-1}>
           {children}
-        </ApolloWrapper>
+        </main>
       </body>
     </html>
-  )
+  );
 }
-
