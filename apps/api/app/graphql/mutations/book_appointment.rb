@@ -8,22 +8,24 @@ module Mutations
     field :errors, [String], null: false
 
     def resolve(input:)
-      parent = context[:current_user]
+      require_authentication!
       
-      unless parent
-        return { appointment: nil, errors: ["Authentication required"] }
-      end
-
-      session = parent.onboarding_sessions.find_by(id: input.session_id)
+      session = current_user.onboarding_sessions.find_by(id: input.session_id)
       
       unless session
         return { appointment: nil, errors: ["Session not found"] }
       end
 
+      student = session.students.first
+      
+      unless student
+        return { appointment: nil, errors: ["Student not found"] }
+      end
+
       # Create appointment
       appointment = Appointment.new(
         onboarding_session: session,
-        student: session.student,
+        student: student,
         therapist_id: input.therapist_id,
         scheduled_at: input.scheduled_at,
         duration_minutes: input.duration_minutes || 50,
@@ -31,14 +33,15 @@ module Mutations
       )
 
       if appointment.save
-        # Update session to completed if this is the final step
-        if session.current_step >= 5
-          session.update(status: 'completed')
-        end
+        # Update session status
+        session.update(status: 'completed')
+
+        # Send notification (async via Sidekiq)
+        SendAppointmentConfirmationJob.perform_later(appointment.id)
 
         # Log audit trail
         AuditLog.log_access(
-          actor: parent,
+          actor: current_user,
           action: 'write',
           entity: appointment,
           after: appointment.attributes

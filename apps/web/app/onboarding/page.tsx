@@ -10,6 +10,7 @@ import { ConsentStep } from '@/components/onboarding/steps/ConsentStep';
 import { AIIntakeStep } from '@/components/onboarding/steps/AIIntakeStep';
 import { ScreenerStep } from '@/components/onboarding/steps/ScreenerStep';
 import { InsuranceStep } from '@/components/onboarding/steps/InsuranceStep';
+import { SchedulingStep } from '@/components/onboarding/steps/SchedulingStep';
 
 const OnboardingContent: React.FC = () => {
   const {
