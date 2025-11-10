@@ -1199,7 +1199,7 @@
               1
             ],
             "details": "Create tasks: import:clinicians, import:organizations, import:contracts, import:org_contracts. Handle relationships and foreign keys. Make idempotent.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run each import task. Verify data integrity and relationships. Test idempotency."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:50:23.609Z",
+      "updated": "2025-11-10T22:54:05.850Z",
       "description": "Tasks for master context"
     }
   }
