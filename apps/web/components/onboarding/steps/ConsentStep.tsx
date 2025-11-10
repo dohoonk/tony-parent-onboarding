@@ -147,11 +147,11 @@ export const ConsentStep: React.FC<ConsentStepProps> = ({ onNext, onPrev }) => {
         </div>
       )}
 
-      <div className="flex justify-between">
-        <Button type="button" variant="outline" onClick={onPrev}>
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <Button type="button" variant="outline" onClick={onPrev} className="w-full sm:w-auto">
           Back
         </Button>
-        <Button onClick={handleSubmit}>Continue</Button>
+        <Button onClick={handleSubmit} className="w-full sm:w-auto">Continue</Button>
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export const StudentInfoStep: React.FC<StudentInfoStepProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="studentFirstName">
               Student First Name <span className="text-destructive">*</span>
@@ -118,7 +118,7 @@ export const StudentInfoStep: React.FC<StudentInfoStepProps> = ({
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="dateOfBirth">
               Date of Birth <span className="text-destructive">*</span>
@@ -172,11 +172,11 @@ export const StudentInfoStep: React.FC<StudentInfoStepProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-between">
-        <Button type="button" variant="outline" onClick={onPrev}>
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <Button type="button" variant="outline" onClick={onPrev} className="w-full sm:w-auto">
           Back
         </Button>
-        <Button type="submit">Continue</Button>
+        <Button type="submit" className="w-full sm:w-auto">Continue</Button>
       </div>
     </form>
   );

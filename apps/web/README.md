@@ -1,14 +1,43 @@
-# Parent Onboarding AI - Web App
+# Daybreak Health - Parent Onboarding Web App
 
-Next.js 15 frontend with App Router, React 18, Tailwind CSS, and shadcn/ui.
+Next.js 15 web application for parent onboarding with AI-powered intake.
 
-## Setup
+## Mobile-First Responsive Design
 
-### Prerequisites
-- Node.js 18+
-- npm or yarn
+This application is built with a **mobile-first approach** using Tailwind CSS. All components are designed to work seamlessly across devices from mobile phones to desktop computers.
 
-### Installation
+### Responsive Breakpoints
+
+- **Mobile**: Default (0px+) - Single column layouts, stacked elements
+- **Tablet**: `sm:` (640px+) - Two-column grids, side-by-side buttons
+- **Desktop**: `md:` (768px+) - Three-column grids, full navigation
+- **Large Desktop**: `lg:` (1024px+) - Maximum content width
+
+### Key Mobile Optimizations
+
+1. **Touch Targets**: All interactive elements meet the minimum 44x44px touch target size
+2. **Safe Area Insets**: Support for iOS safe areas (notch, home indicator)
+3. **Text Size**: Prevents iOS text size adjustment
+4. **Smooth Scrolling**: Native smooth scrolling on mobile devices
+5. **Viewport Meta**: Proper viewport configuration in layout
+
+### Component Responsive Patterns
+
+- **Stepper**: Horizontal on desktop, vertical on mobile
+- **Forms**: Single column on mobile, two-column on tablet+
+- **Buttons**: Full width on mobile, auto width on desktop
+- **Cards**: Stacked on mobile, grid layout on larger screens
+- **Navigation**: Collapsed on mobile, expanded on desktop
+
+### Testing Responsive Design
+
+1. Use browser DevTools responsive mode
+2. Test on real devices (iOS Safari, Android Chrome)
+3. Verify touch targets are easily tappable
+4. Check text readability at all sizes
+5. Ensure no horizontal scrolling
+
+## Development
 
 ```bash
 # Install dependencies
@@ -16,81 +45,19 @@ npm install
 
 # Run development server
 npm run dev
-```
-
-The app will be available at [http://localhost:3001](http://localhost:3001)
-
-### Environment Variables
-
-Create a `.env.local` file:
-
-```
-NEXT_PUBLIC_GRAPHQL_URL=http://localhost:3000/graphql
-NEXT_PUBLIC_API_URL=http://localhost:3000
-```
-
-## Project Structure
-
-```
-apps/web/
-├── app/                # Next.js 15 App Router
-│   ├── layout.tsx     # Root layout
-│   ├── page.tsx       # Home page
-│   └── globals.css    # Global styles
-├── components/
-│   └── ui/            # shadcn/ui components
-├── lib/               # Utility functions
-│   ├── apollo-wrapper.tsx  # GraphQL client setup
-│   └── utils.ts       # Helper functions
-└── public/            # Static assets
-```
-
-## Features
-
-- **Next.js 15 App Router**: Modern routing with React Server Components
-- **TypeScript**: Full type safety
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: Accessible, customizable UI components
-- **Apollo Client**: GraphQL client for API communication
-- **Mobile-First**: Responsive design optimized for mobile devices
-
-## Development
-
-```bash
-# Start development server
-npm run dev
 
 # Build for production
 npm run build
 
 # Start production server
 npm start
-
-# Run linter
-npm run lint
-
-# Type check
-npm run type-check
 ```
 
-## GraphQL Integration
+## Accessibility
 
-The app connects to the Rails API GraphQL endpoint at `http://localhost:3000/graphql`.
-
-Apollo Client is configured in `lib/apollo-wrapper.tsx` and provides GraphQL query/mutation capabilities throughout the app.
-
-## UI Components
-
-shadcn/ui components are located in `components/ui/` and can be customized via Tailwind CSS.
-
-Current components:
-- Button
-- Card
-- (More to be added as needed)
-
-## Styling
-
-Global styles are defined in `app/globals.css` using Tailwind CSS and CSS variables for theming.
-
-The app supports both light and dark modes out of the box.
-
+All components follow WCAG AA guidelines:
+- Proper ARIA labels and roles
+- Keyboard navigation support
+- Screen reader compatibility
+- Color contrast ratios
+- Focus indicators

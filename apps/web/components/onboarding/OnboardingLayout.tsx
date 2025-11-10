@@ -29,16 +29,16 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
   className
 }) => {
   return (
-    <div className={cn('container mx-auto max-w-4xl py-8', className)}>
+    <div className={cn('container mx-auto max-w-4xl px-4 py-4 sm:py-6 md:py-8', className)}>
       {/* Header with Progress */}
-      <div className="mb-8 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="mb-4 space-y-4 sm:mb-6 md:mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {title || 'Parent Onboarding'}
             </h1>
             {description && (
-              <p className="text-muted-foreground">{description}</p>
+              <p className="mt-1 text-sm text-muted-foreground sm:text-base">{description}</p>
             )}
           </div>
           {estimatedSeconds && estimatedSeconds > 0 && (
