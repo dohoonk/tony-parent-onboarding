@@ -1,18 +1,31 @@
 class GraphqlController < ApplicationController
+  include Authentication
+
   # If accessing from outside this domain, nullify the session
   # This allows for outside API access while preventing CSRF attacks,
   # but you'll have to authenticate your user separately
   # protect_from_forgery with: :null_session
 
+  # Skip authentication for specific operations (if needed)
+  # skip_before_action :authenticate_request, only: [:execute], if: :public_operation?
+
   def execute
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
+    
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
+      controller: self
     }
-    result = ApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+    
+    result = ApiSchema.execute(
+      query, 
+      variables: variables, 
+      context: context, 
+      operation_name: operation_name
+    )
+    
     render json: result
   rescue StandardError => e
     raise e unless Rails.env.development?
@@ -47,5 +60,18 @@ class GraphqlController < ApplicationController
 
     render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
   end
+
+  # Uncomment to allow specific operations without authentication
+  # def public_operation?
+  #   introspection_query? || health_check_query?
+  # end
+  #
+  # def introspection_query?
+  #   params[:operationName] == 'IntrospectionQuery'
+  # end
+  #
+  # def health_check_query?
+  #   params[:query]&.include?('healthCheck')
+  # end
 end
 
