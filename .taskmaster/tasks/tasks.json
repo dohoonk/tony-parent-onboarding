@@ -1303,7 +1303,7 @@
               2
             ],
             "details": "Update OpenAI Vision OCR prompt to extract all new fields. Map OCR results to model fields. Handle missing or low-confidence fields.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test OCR with sample insurance cards. Verify all fields are extracted correctly."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T23:13:40.522Z",
+      "updated": "2025-11-10T23:14:34.850Z",
       "description": "Tasks for master context"
     }
   }
