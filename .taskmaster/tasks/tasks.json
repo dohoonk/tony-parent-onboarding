@@ -342,7 +342,7 @@
         "dependencies": [
           4
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -383,7 +383,7 @@
               2
             ],
             "details": "Design system and user prompts that consistently guide GPT-4o to use the desired tone. Test and iterate prompt templates for reliability and effectiveness.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests for prompt templates, tone validation via sample outputs, and user feedback review."
           },
           {
@@ -395,7 +395,7 @@
               4
             ],
             "details": "Implement logic to parse AI responses and summarize relevant data points. Store extracted summaries in a dedicated intake_summaries table.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit and integration tests for summary extraction logic, accuracy checks against sample conversations."
           },
           {
@@ -406,7 +406,7 @@
               5
             ],
             "details": "Develop middleware or utility functions to scan and redact PHI from chat transcripts and summaries. Apply pseudonyms where necessary and validate compliance with privacy standards.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Automated tests for PHI detection and redaction, manual review of sample outputs for compliance."
           },
           {
@@ -417,7 +417,7 @@
               6
             ],
             "details": "Implement secure database operations to save intake summaries. Enforce data minimization and encryption for sensitive fields. Validate schema alignment with privacy requirements.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Database integration tests, encryption validation, and schema compliance checks."
           }
         ]
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:32:26.020Z",
+      "updated": "2025-11-10T20:33:22.731Z",
       "description": "Tasks for master context"
     }
   }
