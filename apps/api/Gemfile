@@ -20,6 +20,9 @@ gem "sidekiq", "~> 7.0"
 # GraphQL for API
 gem "graphql", "~> 2.0"
 
+# GraphiQL IDE for development
+gem "graphiql-rails", "~> 2.0", group: :development
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
