@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000022) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -347,6 +347,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000022) do
 
   add_foreign_key "appointments", "onboarding_sessions"
   add_foreign_key "appointments", "students"
+  add_foreign_key "appointments", "therapists"
   add_foreign_key "clinician_credentialed_insurances", "credentialed_insurances"
   add_foreign_key "clinician_credentialed_insurances", "therapists", column: "care_provider_profile_id"
   add_foreign_key "cost_estimates", "onboarding_sessions"

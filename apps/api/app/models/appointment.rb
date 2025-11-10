@@ -2,7 +2,7 @@ class Appointment < ApplicationRecord
   # Associations
   belongs_to :onboarding_session
   belongs_to :student
-  # TODO: belongs_to :therapist (when therapist model exists)
+  belongs_to :therapist
 
   # Enums
   enum :status, {
@@ -14,7 +14,7 @@ class Appointment < ApplicationRecord
   }, prefix: true
 
   # Validations
-  validates :therapist_id, presence: true
+  validates :therapist, presence: true
   validates :scheduled_at, presence: true
   validates :duration_minutes, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :status, presence: true
@@ -23,7 +23,7 @@ class Appointment < ApplicationRecord
   # Scopes
   scope :upcoming, -> { where('scheduled_at > ?', Time.current).where(status: ['scheduled', 'confirmed']) }
   scope :past, -> { where('scheduled_at < ?', Time.current) }
-  scope :for_therapist, ->(therapist_id) { where(therapist_id: therapist_id) }
+  scope :for_therapist, ->(therapist) { where(therapist: therapist) }
 
   # Instance methods
   def end_time

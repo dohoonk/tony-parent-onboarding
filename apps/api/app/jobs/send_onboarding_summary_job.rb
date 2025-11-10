@@ -41,7 +41,7 @@ class SendOnboardingSummaryJob < ApplicationJob
       student_name: session.students.first&.full_name || 'Your child',
       appointment_date: appointment&.scheduled_at&.strftime('%B %d, %Y'),
       appointment_time: appointment&.scheduled_at&.strftime('%I:%M %p'),
-      therapist_name: appointment ? "Therapist ID: #{appointment.therapist_id}" : 'To be assigned',
+      therapist_name: appointment&.therapist&.display_name || 'To be assigned',
       estimated_cost: session.cost_estimate ? "$#{session.cost_estimate.min_cost} - $#{session.cost_estimate.max_cost} per session" : 'To be determined',
       next_steps: [
         'You will receive a confirmation email and SMS shortly',

@@ -22,11 +22,39 @@ module Mutations
         return { appointment: nil, errors: ["Student not found"] }
       end
 
+      # Validate therapist exists
+      therapist = Therapist.find_by(id: input.therapist_id)
+      
+      unless therapist
+        return { appointment: nil, errors: ["Therapist not found"] }
+      end
+
+      # Check therapist has capacity
+      unless therapist.has_capacity?
+        return { appointment: nil, errors: ["Therapist is at full capacity"] }
+      end
+
+      # Check therapist availability (basic check - can be enhanced)
+      scheduled_time = input.scheduled_at
+      if scheduled_time.present?
+        # Check if therapist has availability window that includes this time
+        day_name = scheduled_time.strftime('%A')
+        time_str = scheduled_time.strftime('%H:%M:%S')
+        
+        therapist_available = therapist.availability_windows.any? do |window|
+          window.uses_json_format? && window.available_at_time?(day_name, time_str)
+        end
+        
+        unless therapist_available
+          return { appointment: nil, errors: ["Therapist is not available at the requested time"] }
+        end
+      end
+
       # Create appointment
       appointment = Appointment.new(
         onboarding_session: session,
         student: student,
-        therapist_id: input.therapist_id,
+        therapist: therapist,
         scheduled_at: input.scheduled_at,
         duration_minutes: input.duration_minutes || 50,
         status: 'scheduled'

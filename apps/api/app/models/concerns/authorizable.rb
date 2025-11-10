@@ -105,11 +105,11 @@ module Authorizable
     # For now, therapists can access resources they're assigned to via appointments
     case resource
     when Student
-      resource.appointments.exists?(therapist_id: self.id)
+      resource.appointments.exists?(therapist: self)
     when OnboardingSession
-      resource.student.appointments.exists?(therapist_id: self.id)
+      resource.student.appointments.exists?(therapist: self)
     when Appointment
-      resource.therapist_id == self.id
+      resource.therapist == self
     else
       false
     end

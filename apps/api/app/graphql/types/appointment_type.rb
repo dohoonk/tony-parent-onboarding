@@ -15,6 +15,7 @@ module Types
 
     field :onboarding_session, Types::OnboardingSessionType, null: false
     field :student, Types::StudentType, null: false
+    field :therapist, Types::TherapistType, null: false
   end
 end
 

@@ -9,9 +9,7 @@ class Therapist < ApplicationRecord
   has_many :clinician_credentialed_insurances, dependent: :destroy, foreign_key: 'care_provider_profile_id'
   has_many :credentialed_insurances, through: :clinician_credentialed_insurances
   has_many :availability_windows, as: :owner, dependent: :destroy
-
-  # Future associations (to be added when other models are created)
-  # has_many :appointments, dependent: :destroy
+  has_many :appointments, dependent: :destroy
 
   # Validations
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
