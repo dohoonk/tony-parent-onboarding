@@ -29,6 +29,7 @@ interface OnboardingContextValue {
   estimatedSecondsRemaining: number;
   isLoading: boolean;
   error: string | null;
+  lastSaveTime: Date | null;
   
   // Navigation
   goToStep: (step: number) => void;
@@ -37,10 +38,12 @@ interface OnboardingContextValue {
   
   // Data management
   updateData: (updates: Partial<OnboardingData>) => void;
+  clearProgress: () => void;
   
   // Persistence
   saveProgress: () => Promise<void>;
   loadProgress: () => Promise<void>;
+  hasSavedProgress: () => boolean;
 }
 
 const OnboardingContext = createContext<OnboardingContextValue | undefined>(undefined);
@@ -63,6 +66,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [data, setData] = useState<OnboardingData>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
 
   // Calculate remaining time based on current step
   const estimatedSecondsRemaining = STEPS
@@ -100,15 +104,17 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const saveProgress = useCallback(async () => {
     try {
+      const now = new Date();
       const progress = {
         step: currentStep,
         data,
-        timestamp: new Date().toISOString()
+        timestamp: now.toISOString()
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      setLastSaveTime(now);
     } catch (err) {
       console.error('Failed to save progress:', err);
-      // Don't show error to user for auto-save failures
+      throw err; // Throw to allow caller to handle
     }
   }, [currentStep, data]);
 
@@ -134,6 +140,17 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setData((prev) => ({ ...prev, ...updates }));
   }, []);
 
+  const clearProgress = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setCurrentStep(1);
+    setData({});
+    setLastSaveTime(null);
+  }, []);
+
+  const hasSavedProgress = useCallback((): boolean => {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  }, []);
+
   const value: OnboardingContextValue = {
     currentStep,
     totalSteps: STEPS.length,
@@ -142,12 +159,15 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     estimatedSecondsRemaining,
     isLoading,
     error,
+    lastSaveTime,
     goToStep,
     nextStep,
     prevStep,
     updateData,
+    clearProgress,
     saveProgress,
-    loadProgress
+    loadProgress,
+    hasSavedProgress
   };
 
   return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
