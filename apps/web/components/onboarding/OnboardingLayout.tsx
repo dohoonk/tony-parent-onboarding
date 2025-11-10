@@ -1,10 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Stepper, Step } from './Stepper';
 import { ProgressBar } from './ProgressBar';
 import { ETADisplay } from './ETADisplay';
+import { InlineFAQ } from './InlineFAQ';
+import { ReassuranceBanner } from './ReassuranceBanner';
+import { useReassurance } from '@/hooks/useReassurance';
 import { cn } from '@/lib/utils';
 
 interface OnboardingLayoutProps {
@@ -28,8 +31,45 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
   description,
   className
 }) => {
+  const progressPercent = Math.round((currentStep / totalSteps) * 100);
+  const currentStepData = steps.find((s) => s.id === currentStep);
+  
+  const { reassuranceMessage, generateReassurance, clearReassurance } = useReassurance({
+    context: {
+      stepName: currentStepData?.title,
+      progressPercent,
+      timeSpent: estimatedSeconds ? `${Math.floor(estimatedSeconds / 60)} min` : undefined
+    },
+    triggerPoints: ['starting_onboarding', 'completing_forms', 'insurance_verification', 'scheduling', 'almost_done']
+  });
+
+  // Trigger reassurance at stress points
+  useEffect(() => {
+    if (currentStep === 1) {
+      generateReassurance('starting_onboarding');
+    } else if (currentStep === 2 || currentStep === 3) {
+      generateReassurance('completing_forms');
+    } else if (currentStep === 7) {
+      generateReassurance('insurance_verification');
+    } else if (currentStep === 8) {
+      generateReassurance('scheduling');
+    } else if (currentStep === totalSteps - 1) {
+      generateReassurance('almost_done');
+    }
+  }, [currentStep, totalSteps, generateReassurance]);
+
   return (
     <div className={cn('container mx-auto max-w-4xl px-4 py-4 sm:py-6 md:py-8', className)}>
+      {/* Reassurance Banner */}
+      {reassuranceMessage && (
+        <ReassuranceBanner
+          message={reassuranceMessage}
+          onDismiss={clearReassurance}
+          autoHide={true}
+          hideAfter={6000}
+        />
+      )}
+
       {/* Header with Progress */}
       <div className="mb-4 space-y-4 sm:mb-6 md:mb-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -68,6 +108,15 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
         </CardHeader>
         <CardContent>{children}</CardContent>
       </Card>
+
+      {/* Inline FAQ */}
+      <InlineFAQ
+        context={{
+          stepName: currentStepData?.title,
+          progressPercent,
+          timeSpent: estimatedSeconds ? `${Math.floor(estimatedSeconds / 60)} min` : undefined
+        }}
+      />
     </div>
   );
 };

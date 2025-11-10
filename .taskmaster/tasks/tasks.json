@@ -549,7 +549,7 @@
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -559,7 +559,7 @@
               3
             ],
             "details": "Evaluate and choose an LLM (open-source or API-based) that fits the use case. Set up API authentication, rate limits, and cost controls. Implement pre-processing (data cleaning, anonymization) and post-processing for responses. Ensure the LLM can be called programmatically from the onboarding UI.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test API connectivity, response latency, and basic FAQ accuracy. Validate that the LLM returns coherent, relevant answers to sample onboarding questions."
           },
           {
@@ -571,7 +571,7 @@
               3
             ],
             "details": "Define user actions and onboarding steps that should trigger prompts. Implement event listeners or hooks in the UI to detect these moments. Route context (user action, step, previous inputs) to the LLM for personalized responses. Ensure prompts are only shown when relevant to reduce noise.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate user journeys to verify prompts appear at correct stress points. Check that irrelevant actions do not trigger prompts. Validate contextual accuracy of responses."
           },
           {
@@ -582,7 +582,7 @@
               1
             ],
             "details": "Develop tone guidelines and example prompts. Fine-tune the LLM (via prompt engineering or few-shot examples) to align outputs with the 'Reassuring Parenting Coach' voice. Implement a validation layer to screen responses for tone compliance before displaying to users.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Sample outputs across various scenarios and assess tone using human review and/or automated sentiment analysis. Iterate on prompts and validation rules until tone is consistently matched."
           },
           {
@@ -594,7 +594,7 @@
               3
             ],
             "details": "Collaborate with UX/UI to determine optimal placement (e.g., tooltips, inline banners, modals) for prompts. Implement the rendering logic in the frontend. Ensure prompts are non-disruptive, accessible, and visually consistent with the rest of the app.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Conduct usability testing to ensure prompts are noticeable but not intrusive. Verify accessibility compliance and cross-browser/device rendering. Gather user feedback on prompt placement and clarity."
           }
         ]
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:41:46.746Z",
+      "updated": "2025-11-10T20:43:44.221Z",
       "description": "Tasks for master context"
     }
   }

@@ -10,6 +10,8 @@ module Types
 
     field :onboarding_session, resolver: Queries::OnboardingSession
     field :available_screeners, resolver: Queries::AvailableScreeners
+    field :faq_answer, resolver: Queries::FaqAnswer
+    field :reassurance_message, resolver: Queries::ReassuranceMessage
 
     def health_check
       "OK"
