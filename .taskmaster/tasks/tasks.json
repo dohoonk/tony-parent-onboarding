@@ -1281,7 +1281,7 @@
             "description": "Add all missing fields from insurance_coverages.csv to insurance_policies table.",
             "dependencies": [],
             "details": "Add columns: member_id, group_id, front_card_url, back_card_url, plan_holder fields (first_name, last_name, dob, address fields), insurance_company_name, kind, level, eligibility, openpm fields. Add indexes as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run migration and verify all fields are added. Test data types."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T23:11:47.454Z",
+      "updated": "2025-11-10T23:12:28.164Z",
       "description": "Tasks for master context"
     }
   }
