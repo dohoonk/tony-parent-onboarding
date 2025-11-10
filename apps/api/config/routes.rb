@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   # GraphQL endpoint
   post "/graphql", to: "graphql#execute"
   
+  # Streaming endpoint for AI intake
+  get "/api/stream/intake/:session_id/:message_id", to: "streaming#stream_intake", as: :stream_intake
+  
   # GraphiQL IDE (development only)
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
