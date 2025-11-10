@@ -22,6 +22,7 @@ module Types
     field :credentialed_insurances, resolver: Queries::CredentialedInsurances
     field :referral, resolver: Queries::Referral
     field :referrals, resolver: Queries::Referrals
+    field :kinships, resolver: Queries::Kinships
 
     def health_check
       "OK"

@@ -6,6 +6,13 @@ class Parent < ApplicationRecord
   has_many :onboarding_sessions, dependent: :destroy
   has_many :referral_members, as: :user, dependent: :destroy
   has_many :referrals, foreign_key: 'submitter_id', dependent: :destroy
+  has_many :kinships_as_user_0, class_name: 'Kinship', as: :user_0, dependent: :destroy
+  has_many :kinships_as_user_1, class_name: 'Kinship', as: :user_1, dependent: :destroy
+  
+  # Helper method to get all kinships for this parent
+  def kinships
+    Kinship.where('(user_0_type = ? AND user_0_id = ?) OR (user_1_type = ? AND user_1_id = ?)', 'Parent', id, 'Parent', id)
+  end
 
   # Validations
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

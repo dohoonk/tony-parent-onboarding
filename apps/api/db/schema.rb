@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000025) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -171,6 +171,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000025) do
     t.text "summary_text"
     t.datetime "created_at", precision: nil, null: false
     t.index ["onboarding_session_id"], name: "index_intake_summaries_on_onboarding_session_id", unique: true
+  end
+
+  create_table "kinships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_0_id", null: false
+    t.string "user_0_type", null: false
+    t.uuid "user_1_id", null: false
+    t.string "user_1_type", null: false
+    t.integer "kind", null: false
+    t.string "user_0_label"
+    t.string "user_1_label"
+    t.boolean "guardian_can_be_contacted", default: false
+    t.jsonb "migration_details", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_kinships_on_created_at"
+    t.index ["guardian_can_be_contacted"], name: "index_kinships_on_guardian_can_be_contacted"
+    t.index ["kind", "guardian_can_be_contacted"], name: "index_kinships_on_kind_and_guardian_can_be_contacted"
+    t.index ["kind"], name: "index_kinships_on_kind"
+    t.index ["migration_details"], name: "index_kinships_on_migration_details", using: :gin
+    t.index ["user_0_id", "user_0_type", "user_1_id", "user_1_type"], name: "index_kinships_unique_relationship", unique: true
+    t.index ["user_0_id", "user_0_type"], name: "index_kinships_on_user_0_id_and_user_0_type"
+    t.index ["user_1_id", "user_1_type"], name: "index_kinships_on_user_1_id_and_user_1_type"
   end
 
   create_table "onboarding_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
