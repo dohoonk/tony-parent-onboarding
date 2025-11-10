@@ -3,6 +3,7 @@ class Student < ApplicationRecord
   belongs_to :parent
   has_many :onboarding_sessions, dependent: :destroy
   has_many :appointments, dependent: :destroy
+  has_many :referral_members, as: :user, dependent: :destroy
 
   # Validations
   validates :first_name, presence: true

@@ -4,6 +4,8 @@ class Parent < ApplicationRecord
   # Associations
   has_many :students, dependent: :destroy
   has_many :onboarding_sessions, dependent: :destroy
+  has_many :referral_members, as: :user, dependent: :destroy
+  has_many :referrals, foreign_key: 'submitter_id', dependent: :destroy
 
   # Validations
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

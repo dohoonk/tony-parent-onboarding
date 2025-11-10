@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000023) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000025) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -235,6 +235,74 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000023) do
     t.index ["role"], name: "index_parents_on_role"
   end
 
+  create_table "referral_members", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "referral_id", null: false
+    t.uuid "user_id", null: false
+    t.string "user_type", null: false
+    t.integer "role"
+    t.jsonb "data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_referral_members_on_created_at"
+    t.index ["data"], name: "index_referral_members_on_data", using: :gin
+    t.index ["referral_id", "user_id", "user_type"], name: "index_referral_members_unique", unique: true
+    t.index ["referral_id"], name: "index_referral_members_on_referral_id"
+    t.index ["role"], name: "index_referral_members_on_role"
+    t.index ["user_id", "user_type"], name: "index_referral_members_on_user_id_and_user_type"
+  end
+
+  create_table "referrals", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "submitter_id", null: false
+    t.uuid "organization_id", null: false
+    t.uuid "contract_id"
+    t.uuid "intake_id"
+    t.uuid "care_provider_id"
+    t.integer "service_kind"
+    t.text "concerns"
+    t.jsonb "data", default: {}
+    t.integer "terms_kind"
+    t.integer "appointment_kind"
+    t.integer "planned_sessions"
+    t.integer "initial_scheduled_sessions"
+    t.boolean "collect_coverage", default: false
+    t.text "allowed_coverage", default: [], array: true
+    t.integer "collection_rule"
+    t.boolean "self_responsibility_required", default: false
+    t.text "care_provider_requirements", default: [], array: true
+    t.datetime "referred_at", precision: nil
+    t.datetime "ready_for_scheduling_at", precision: nil
+    t.datetime "scheduled_at", precision: nil
+    t.datetime "onboarding_completed_at", precision: nil
+    t.datetime "enrolled_at", precision: nil
+    t.datetime "disenrolled_at", precision: nil
+    t.datetime "request_rejected_at", precision: nil
+    t.datetime "excluded_at", precision: nil
+    t.text "system_labels", default: [], array: true
+    t.string "tzdb"
+    t.text "notes"
+    t.string "disenrollment_category"
+    t.string "zendesk_ticket_id"
+    t.uuid "market_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["allowed_coverage"], name: "index_referrals_on_allowed_coverage", using: :gin
+    t.index ["care_provider_id"], name: "index_referrals_on_care_provider_id"
+    t.index ["care_provider_requirements"], name: "index_referrals_on_care_provider_requirements", using: :gin
+    t.index ["contract_id"], name: "index_referrals_on_contract_id"
+    t.index ["created_at"], name: "index_referrals_on_created_at"
+    t.index ["data"], name: "index_referrals_on_data", using: :gin
+    t.index ["enrolled_at"], name: "index_referrals_on_enrolled_at"
+    t.index ["intake_id"], name: "index_referrals_on_intake_id"
+    t.index ["organization_id", "referred_at"], name: "index_referrals_on_organization_id_and_referred_at"
+    t.index ["organization_id"], name: "index_referrals_on_organization_id"
+    t.index ["referred_at"], name: "index_referrals_on_referred_at"
+    t.index ["scheduled_at"], name: "index_referrals_on_scheduled_at"
+    t.index ["service_kind"], name: "index_referrals_on_service_kind"
+    t.index ["submitter_id", "created_at"], name: "index_referrals_on_submitter_id_and_created_at"
+    t.index ["submitter_id"], name: "index_referrals_on_submitter_id"
+    t.index ["system_labels"], name: "index_referrals_on_system_labels", using: :gin
+  end
+
   create_table "screener_responses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "onboarding_session_id", null: false
     t.uuid "screener_id", null: false
@@ -361,6 +429,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000023) do
   add_foreign_key "org_contracts", "contracts"
   add_foreign_key "org_contracts", "organizations"
   add_foreign_key "organizations", "organizations", column: "parent_organization_id"
+  add_foreign_key "referral_members", "referrals"
+  add_foreign_key "referrals", "contracts"
+  add_foreign_key "referrals", "organizations"
+  add_foreign_key "referrals", "parents", column: "submitter_id"
+  add_foreign_key "referrals", "therapists", column: "care_provider_id"
   add_foreign_key "screener_responses", "onboarding_sessions"
   add_foreign_key "screener_responses", "screeners"
   add_foreign_key "students", "parents"

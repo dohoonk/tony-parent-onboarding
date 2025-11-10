@@ -1002,7 +1002,7 @@
           17,
           2
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -1010,7 +1010,7 @@
             "description": "Write migrations for referrals and referral_members tables with all required fields.",
             "dependencies": [],
             "details": "Create referrals table with all status fields, JSONB data field, arrays for allowed_coverage and care_provider_requirements. Create referral_members join table. Add appropriate indexes and foreign keys.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run migrations and verify schema. Test foreign key constraints."
           },
           {
@@ -1021,7 +1021,7 @@
               1
             ],
             "details": "Add validations for required fields. Add associations (belongs_to :submitter, :organization, :contract, has_many :referral_members). Add state machine or methods for status transitions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test validations and associations. Test status transitions."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:20:57.969Z",
+      "updated": "2025-11-10T22:26:27.861Z",
       "description": "Tasks for master context"
     }
   }
