@@ -14,7 +14,7 @@ export default function Home() {
         <CardContent>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              We're here to guide you through understanding your child's mental health needs 
+              We&apos;re here to guide you through understanding your child&apos;s mental health needs 
               and connecting you with the right support.
             </p>
             <Button className="w-full" size="lg">

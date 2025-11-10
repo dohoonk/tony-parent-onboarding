@@ -155,7 +155,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
       <div className="rounded-md border bg-muted/50 p-4">
         <h3 className="font-semibold">Insurance Information</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Upload photos of your insurance card (front and back) and we'll extract the information for you.
+          Upload photos of your insurance card (front and back) and we&apos;ll extract the information for you.
         </p>
       </div>
 
@@ -170,6 +170,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
           <CardContent className="space-y-4">
             {frontImage ? (
               <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={frontImage.preview}
                   alt="Insurance card front"
@@ -254,6 +255,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
           <CardContent className="space-y-4">
             {backImage ? (
               <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={backImage.preview}
                   alt="Insurance card back"

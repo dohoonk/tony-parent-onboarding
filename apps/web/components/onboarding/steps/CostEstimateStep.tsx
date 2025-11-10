@@ -85,7 +85,7 @@ export const CostEstimateStep: React.FC<CostEstimateStepProps> = ({
       <div className="rounded-md border bg-muted/50 p-4">
         <h3 className="font-semibold">Cost Estimate</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Based on your insurance information, here's an estimate of your out-of-pocket costs.
+          Based on your insurance information, here&apos;s an estimate of your out-of-pocket costs.
         </p>
       </div>
 
@@ -127,8 +127,8 @@ export const CostEstimateStep: React.FC<CostEstimateStepProps> = ({
             <div className="rounded-md bg-muted p-4">
               <p className="text-xs text-muted-foreground">
                 <strong>Note:</strong> This estimate is based on typical costs for your insurance 
-                plan type. Your actual costs depend on your specific plan details, whether you've 
-                met your deductible, and your copay/coinsurance structure. We'll verify your exact 
+                plan type. Your actual costs depend on your specific plan details, whether you&apos;ve 
+                met your deductible, and your copay/coinsurance structure. We&apos;ll verify your exact 
                 benefits before your first session.
               </p>
             </div>

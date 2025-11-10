@@ -2,6 +2,7 @@
 .DS_Store
 .env
 .env.*
+!.env.example
 *.log
 *.tmp
 *.swp
@@ -85,3 +86,6 @@ dev-debug.log
 # Task files
 # tasks.json
 # tasks/ 
+
+TESTING_GUIDE.md
+SETUP_ENV.md

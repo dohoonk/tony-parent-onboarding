@@ -90,7 +90,7 @@ export const ConsentStep: React.FC<ConsentStepProps> = ({ onNext, onPrev }) => {
                 <a href="/privacy" className="text-primary underline" target="_blank">
                   Privacy Policy
                 </a>
-                , including how my family's protected health information will be used and disclosed.
+                , including how my family&apos;s protected health information will be used and disclosed.
               </p>
             </div>
           </div>

@@ -119,7 +119,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Your appointment has been successfully booked. You'll receive a confirmation email and SMS shortly.
+              Your appointment has been successfully booked. You&apos;ll receive a confirmation email and SMS shortly.
             </p>
             <Button onClick={onNext} className="w-full sm:w-auto">
               Continue
@@ -135,7 +135,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
       <div className="rounded-md border bg-muted/50 p-4">
         <h3 className="font-semibold">Schedule Your First Session</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Select your preferred time and we'll match you with available therapists.
+          Select your preferred time and we&apos;ll match you with available therapists.
         </p>
       </div>
 
@@ -171,7 +171,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
               <CardTitle>Recommended Therapists</CardTitle>
             </div>
             <CardDescription>
-              We've matched you with therapists based on your needs and availability
+              We&apos;ve matched you with therapists based on your needs and availability
             </CardDescription>
           </CardHeader>
           <CardContent>

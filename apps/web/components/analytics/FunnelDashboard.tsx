@@ -96,7 +96,7 @@ export const FunnelDashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">450</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Users who didn't complete
+              Users who didn&apos;t complete
             </p>
           </CardContent>
         </Card>

@@ -81,9 +81,9 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
     <div className="space-y-6">
       <div className="text-center">
         <CheckCircle2 className="h-16 w-16 text-green-600 mx-auto mb-4" />
-        <h2 className="text-3xl font-bold tracking-tight">You're All Set!</h2>
+        <h2 className="text-3xl font-bold tracking-tight">You&apos;re All Set!</h2>
         <p className="mt-2 text-muted-foreground">
-          Thank you for completing the onboarding process. Here's what happens next.
+          Thank you for completing the onboarding process. Here&apos;s what happens next.
         </p>
       </div>
 
@@ -119,7 +119,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
           <Card>
             <CardHeader>
               <CardTitle>What Happens Next</CardTitle>
-              <CardDescription>Here's your timeline and next steps</CardDescription>
+              <CardDescription>Here&apos;s your timeline and next steps</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -158,7 +158,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
                 If you have any questions or need to make changes to your appointment, 
-                please reach out to our support team. We're here to help!
+                please reach out to our support team. We&apos;re here to help!
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button variant="outline" className="flex-1">

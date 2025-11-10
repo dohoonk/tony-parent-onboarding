@@ -78,7 +78,7 @@ export const MagicLinkRequest: React.FC<MagicLinkRequestProps> = ({ onLinkSent }
             Magic Link Sent!
           </CardTitle>
           <CardDescription>
-            We've sent a secure link to{' '}
+            We&apos;ve sent a secure link to{' '}
             {sentMethod === 'email' ? (
               <strong>{sentIdentifier}</strong>
             ) : (
@@ -90,7 +90,7 @@ export const MagicLinkRequest: React.FC<MagicLinkRequestProps> = ({ onLinkSent }
           <div className="space-y-4">
             <div className="rounded-md bg-muted p-4">
               <p className="text-sm">
-                <strong>What's next?</strong>
+                <strong>What&apos;s next?</strong>
               </p>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                 <li>Check your {sentMethod === 'email' ? 'email inbox' : 'text messages'}</li>
@@ -99,7 +99,7 @@ export const MagicLinkRequest: React.FC<MagicLinkRequestProps> = ({ onLinkSent }
               </ul>
             </div>
             <p className="text-xs text-muted-foreground">
-              Didn't receive it? Check your spam folder or{' '}
+              Didn&apos;t receive it? Check your spam folder or{' '}
               <button
                 onClick={() => {
                   setIsSuccess(false);
@@ -177,7 +177,7 @@ export const MagicLinkRequest: React.FC<MagicLinkRequestProps> = ({ onLinkSent }
                   disabled={isLoading}
                 />
                 <p className="text-xs text-muted-foreground">
-                  We'll send you a text message with a secure link
+                  We&apos;ll send you a text message with a secure link
                 </p>
               </div>
               {error && (

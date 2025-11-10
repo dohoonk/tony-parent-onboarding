@@ -15,7 +15,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
       <div className="text-center">
         <h2 className="text-2xl font-bold">Welcome to Daybreak Health</h2>
         <p className="mt-2 text-muted-foreground">
-          We're here to support your child's mental health journey.
+          We&apos;re here to support your child&apos;s mental health journey.
         </p>
       </div>
 
@@ -38,7 +38,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
               <Shield className="mb-4 h-12 w-12 text-primary" />
               <h3 className="font-semibold">HIPAA Secure</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Your family's privacy and data security are our top priorities
+                Your family&apos;s privacy and data security are our top priorities
               </p>
             </div>
           </CardContent>

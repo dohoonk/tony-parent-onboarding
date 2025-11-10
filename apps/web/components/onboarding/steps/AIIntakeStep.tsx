@@ -32,11 +32,12 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
         {
           id: '1',
           role: 'assistant',
-          content: "Hi! I'm here to help you share information about your child's mental health needs. This conversation is completely confidential and will help us match your child with the right therapist. What brings you here today?",
+          content: "Hi! I&apos;m here to help you share information about your child&apos;s mental health needs. This conversation is completely confidential and will help us match your child with the right therapist. What brings you here today?",
           timestamp: new Date()
         }
       ]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -133,7 +134,7 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       <div className="rounded-md border bg-muted/50 p-4">
         <h3 className="font-semibold">AI-Powered Intake Conversation</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Have a natural conversation with our AI assistant. Share what's on your mind about your child's mental health needs.
+          Have a natural conversation with our AI assistant. Share what&apos;s on your mind about your child&apos;s mental health needs.
         </p>
       </div>
 
