@@ -12,6 +12,8 @@ module Types
     field :available_screeners, resolver: Queries::AvailableScreeners
     field :faq_answer, resolver: Queries::FaqAnswer
     field :reassurance_message, resolver: Queries::ReassuranceMessage
+    field :therapist, resolver: Queries::Therapist
+    field :therapists, resolver: Queries::Therapists
 
     def health_check
       "OK"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000015) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -180,6 +180,82 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000015) do
     t.index ["parent_id"], name: "index_students_on_parent_id"
   end
 
+  create_table "therapists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "healthie_id"
+    t.string "email"
+    t.string "phone"
+    t.string "first_name"
+    t.string "middle_name"
+    t.string "last_name"
+    t.string "preferred_name"
+    t.string "preferred_pronoun"
+    t.string "title"
+    t.date "birthdate"
+    t.string "preferred_language", default: "en"
+    t.string "legal_gender"
+    t.string "standardized_gender"
+    t.string "self_gender"
+    t.string "gender_identity"
+    t.string "ethnicity"
+    t.text "ethnicity_and_demographics", default: [], array: true
+    t.string "primary_ethnicity"
+    t.string "primary_ethnicity_code"
+    t.string "primary_race"
+    t.string "primary_race_code"
+    t.text "religions", default: [], array: true
+    t.string "standardized_sexual_orientation"
+    t.string "self_sexual_orientation"
+    t.string "sexual_orientation"
+    t.string "sexual_orientation_code"
+    t.string "npi_number"
+    t.text "licenses", default: [], array: true
+    t.text "licensed_states", default: [], array: true
+    t.string "primary_state"
+    t.text "states_active", default: [], array: true
+    t.text "specialties", default: [], array: true
+    t.text "modalities", default: [], array: true
+    t.text "care_languages", default: [], array: true
+    t.string "employment_type"
+    t.string "clinical_role"
+    t.string "care_provider_role"
+    t.string "care_provider_status"
+    t.boolean "clinical_associate", default: false
+    t.boolean "is_super_admin", default: false
+    t.text "bio"
+    t.jsonb "profile_data", default: {}
+    t.uuid "supervisor_id"
+    t.uuid "associate_supervisor_id"
+    t.integer "capacity_total", default: 0
+    t.integer "capacity_filled", default: 0
+    t.integer "capacity_available", default: 0
+    t.integer "capacity_total_daybreak", default: 0
+    t.integer "capacity_filled_daybreak", default: 0
+    t.integer "capacity_available_daybreak", default: 0
+    t.integer "capacity_total_kaiser", default: 0
+    t.integer "capacity_filled_kaiser", default: 0
+    t.integer "capacity_available_kaiser", default: 0
+    t.string "account_status"
+    t.text "system_labels", default: [], array: true
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_therapists_on_active"
+    t.index ["care_languages"], name: "index_therapists_on_care_languages", using: :gin
+    t.index ["clinical_role"], name: "index_therapists_on_clinical_role"
+    t.index ["created_at"], name: "index_therapists_on_created_at"
+    t.index ["email"], name: "index_therapists_on_email"
+    t.index ["employment_type", "active"], name: "index_therapists_on_employment_type_and_active"
+    t.index ["employment_type"], name: "index_therapists_on_employment_type"
+    t.index ["healthie_id"], name: "index_therapists_on_healthie_id"
+    t.index ["licensed_states"], name: "index_therapists_on_licensed_states", using: :gin
+    t.index ["npi_number"], name: "index_therapists_on_npi_number"
+    t.index ["primary_state", "active"], name: "index_therapists_on_primary_state_and_active"
+    t.index ["primary_state"], name: "index_therapists_on_primary_state"
+    t.index ["profile_data"], name: "index_therapists_on_profile_data", using: :gin
+    t.index ["specialties"], name: "index_therapists_on_specialties", using: :gin
+    t.index ["supervisor_id"], name: "index_therapists_on_supervisor_id"
+  end
+
   add_foreign_key "appointments", "onboarding_sessions"
   add_foreign_key "appointments", "students"
   add_foreign_key "cost_estimates", "onboarding_sessions"
@@ -192,4 +268,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000015) do
   add_foreign_key "screener_responses", "onboarding_sessions"
   add_foreign_key "screener_responses", "screeners"
   add_foreign_key "students", "parents"
+  add_foreign_key "therapists", "therapists", column: "associate_supervisor_id"
+  add_foreign_key "therapists", "therapists", column: "supervisor_id"
 end

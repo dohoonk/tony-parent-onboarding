@@ -817,7 +817,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -825,34 +825,40 @@
             "description": "Write Rails migration to create therapists table with all required fields including arrays and JSONB.",
             "dependencies": [],
             "details": "Create migration with UUID primary key, all string/text fields, array fields (specialties, languages, modalities, licenses, licensed_states), JSONB profile_data, numeric fields for capacity, and foreign key for supervisor_id. Add appropriate indexes.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run migration and verify schema matches requirements. Check indexes are created."
           },
           {
             "id": 2,
             "title": "Create Therapist Model with Validations",
             "description": "Create Therapist ActiveRecord model with validations, associations, and helper methods.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add validations for required fields, email format, array validations. Add associations (has_many :supervisees, belongs_to :supervisor). Add helper methods for capacity calculations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write RSpec tests for validations and associations. Test capacity calculations."
           },
           {
             "id": 3,
             "title": "Create GraphQL Types for Therapist",
             "description": "Create GraphQL object type, input types, and queries for Therapist.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Create TherapistType with all fields. Create input types for filtering and searching. Add queries for listing and finding therapists.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test GraphQL queries in GraphiQL. Verify all fields are accessible."
           },
           {
             "id": 4,
             "title": "Add Indexes and Optimize Queries",
             "description": "Add database indexes for common query patterns and optimize performance.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add indexes on email, supervisor_id, employment_type, clinical_role. Consider composite indexes for common filter combinations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test query performance with EXPLAIN ANALYZE. Verify indexes are used."
           }
         ]
@@ -882,7 +888,9 @@
             "id": 2,
             "title": "Create Organization Model with Hierarchical Associations",
             "description": "Create Organization model with self-referential associations for districts and schools.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add belongs_to :parent_organization, has_many :child_organizations. Add scopes for districts (kind=1) and schools (kind=2). Add helper methods for hierarchy navigation.",
             "status": "pending",
             "testStrategy": "Test parent-child relationships. Verify scopes work correctly."
@@ -891,7 +899,9 @@
             "id": 3,
             "title": "Create GraphQL Types for Organization",
             "description": "Create GraphQL object type and queries for Organization with hierarchy support.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Create OrganizationType with parent and children fields. Add queries for listing organizations, finding by slug, and querying hierarchy.",
             "status": "pending",
             "testStrategy": "Test GraphQL queries including hierarchy traversal. Verify nested queries work."
@@ -950,7 +960,9 @@
             "id": 2,
             "title": "Update AvailabilityWindow Model for Dual Format Support",
             "description": "Update model to handle both rrule and JSON formats with helper methods.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add methods to parse and format availability_json. Add methods to convert between rrule and JSON formats. Add validation for JSON structure.",
             "status": "pending",
             "testStrategy": "Test parsing both formats. Test conversion between formats. Verify validations."
@@ -959,7 +971,9 @@
             "id": 3,
             "title": "Update TherapistMatchingService for Availability Queries",
             "description": "Update matching service to query availability_json for day/time matching.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Add logic to match therapist availability_json with patient availability. Handle day-of-week and time block matching. Consider timezone conversions.",
             "status": "pending",
             "testStrategy": "Test matching logic with various availability patterns. Verify timezone handling."
@@ -968,7 +982,9 @@
             "id": 4,
             "title": "Create CSV Import Scripts for Availabilities",
             "description": "Create rake tasks to import clinician_availabilities.csv and patient_availabilities.csv.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Parse CSV and convert to availability_json format. Handle timezone conversions. Link to therapists and patients. Make idempotent.",
             "status": "pending",
             "testStrategy": "Run imports and verify data is correctly stored. Test idempotency."
@@ -1001,7 +1017,9 @@
             "id": 2,
             "title": "Create Referral and ReferralMember Models",
             "description": "Create models with validations, associations, and status transition logic.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add validations for required fields. Add associations (belongs_to :submitter, :organization, :contract, has_many :referral_members). Add state machine or methods for status transitions.",
             "status": "pending",
             "testStrategy": "Test validations and associations. Test status transitions."
@@ -1010,7 +1028,9 @@
             "id": 3,
             "title": "Create GraphQL Types and Mutations for Referrals",
             "description": "Create GraphQL types and mutations for creating and managing referrals.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Create ReferralType and ReferralMemberType. Add mutations for create_referral, update_referral_status. Add queries for listing referrals.",
             "status": "pending",
             "testStrategy": "Test GraphQL mutations and queries. Verify status updates work."
@@ -1019,7 +1039,9 @@
             "id": 4,
             "title": "Create CSV Import Scripts for Referrals",
             "description": "Create rake tasks to import referrals.csv and referral_members.csv.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Parse CSV files, handle JSONB fields, create referrals and members. Handle status field mappings. Make idempotent.",
             "status": "pending",
             "testStrategy": "Run imports and verify data. Test idempotency and relationships."
@@ -1108,7 +1130,9 @@
             "id": 2,
             "title": "Create GraphQL Query for Therapist Matches",
             "description": "Create GraphQL query with filtering for therapist matching.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create query type with arguments for insurance_id, availability, specialties, languages. Return matched therapists with scores and rationale.",
             "status": "pending",
             "testStrategy": "Test GraphQL query in GraphiQL. Verify filtering works correctly."
@@ -1117,7 +1141,9 @@
             "id": 3,
             "title": "Update SchedulingStep Component for Real Data",
             "description": "Update frontend component to use real therapist data from GraphQL query.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Replace mock therapist data with GraphQL query. Display real therapist bios, specialties, and match rationale. Handle loading and error states.",
             "status": "pending",
             "testStrategy": "Test component with real data. Verify UI displays correctly. Test error handling."
@@ -1126,7 +1152,9 @@
             "id": 4,
             "title": "Add Match Rationale and Scoring Display",
             "description": "Display match scores and rationale to help parents understand therapist recommendations.",
-            "dependencies": [3],
+            "dependencies": [
+              3
+            ],
             "details": "Show match score percentage, reasons for match (insurance, availability, specialties), and therapist capacity status.",
             "status": "pending",
             "testStrategy": "Verify rationale is displayed clearly. Test with various match scenarios."
@@ -1167,7 +1195,9 @@
             "id": 2,
             "title": "Create Import Tasks for Core Entities",
             "description": "Create rake tasks for importing clinicians, organizations, contracts, and org_contracts.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create tasks: import:clinicians, import:organizations, import:contracts, import:org_contracts. Handle relationships and foreign keys. Make idempotent.",
             "status": "pending",
             "testStrategy": "Run each import task. Verify data integrity and relationships. Test idempotency."
@@ -1176,7 +1206,9 @@
             "id": 3,
             "title": "Create Import Tasks for Insurance and Credentialing",
             "description": "Create rake tasks for importing insurance-related data.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create tasks: import:credentialed_insurances, import:clinician_credentialed_insurances, import:insurance_coverages. Handle many-to-many relationships.",
             "status": "pending",
             "testStrategy": "Run imports and verify relationships. Test therapist-insurance associations."
@@ -1185,7 +1217,9 @@
             "id": 4,
             "title": "Create Import Tasks for Availability Data",
             "description": "Create rake tasks for importing clinician and patient availabilities.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create tasks: import:clinician_availabilities, import:patient_availabilities. Convert CSV format to availability_json. Handle timezone conversions.",
             "status": "pending",
             "testStrategy": "Run imports and verify availability_json format. Test timezone handling."
@@ -1194,7 +1228,9 @@
             "id": 5,
             "title": "Create Import Tasks for Referrals and Relationships",
             "description": "Create rake tasks for importing referrals, kinships, and memberships.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create tasks: import:referrals, import:referral_members, import:kinships, import:memberships. Handle complex relationships and JSONB fields.",
             "status": "pending",
             "testStrategy": "Run imports and verify relationships. Test JSONB field parsing."
@@ -1203,7 +1239,9 @@
             "id": 6,
             "title": "Create Import Tasks for Documents, Questionnaires, and Patients",
             "description": "Create rake tasks for remaining data imports.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Create tasks: import:documents, import:questionnaires, import:patients_and_guardians. Handle multi-language JSONB fields for documents.",
             "status": "pending",
             "testStrategy": "Run imports and verify data. Test multi-language support for documents."
@@ -1212,7 +1250,13 @@
             "id": 7,
             "title": "Create Master Import Task and Documentation",
             "description": "Create master task to run all imports in correct order and add documentation.",
-            "dependencies": [2, 3, 4, 5, 6],
+            "dependencies": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
             "details": "Create import:all task that runs imports in dependency order. Add README documentation for import process. Add error recovery instructions.",
             "status": "pending",
             "testStrategy": "Run master import task. Verify all data imports correctly. Test error recovery."
@@ -1244,7 +1288,9 @@
             "id": 2,
             "title": "Update InsurancePolicy Model",
             "description": "Update model to include new fields with validations.",
-            "dependencies": [1],
+            "dependencies": [
+              1
+            ],
             "details": "Add validations for new fields. Update associations if needed. Add helper methods for plan holder information.",
             "status": "pending",
             "testStrategy": "Test validations. Verify model works with new fields."
@@ -1253,7 +1299,9 @@
             "id": 3,
             "title": "Update OCR Extraction Service",
             "description": "Update OCR service to populate all new insurance fields from card images.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Update OpenAI Vision OCR prompt to extract all new fields. Map OCR results to model fields. Handle missing or low-confidence fields.",
             "status": "pending",
             "testStrategy": "Test OCR with sample insurance cards. Verify all fields are extracted correctly."
@@ -1262,7 +1310,9 @@
             "id": 4,
             "title": "Update InsuranceStep Component",
             "description": "Update frontend component to display and handle new insurance fields.",
-            "dependencies": [2],
+            "dependencies": [
+              2
+            ],
             "details": "Update form to include new fields. Update confirmation UI to show plan holder information. Handle field validation.",
             "status": "pending",
             "testStrategy": "Test form with new fields. Verify validation and confirmation flow."
@@ -1312,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T21:20:00.000Z",
+      "updated": "2025-11-10T21:53:37.271Z",
       "description": "Tasks for master context"
     }
   }
