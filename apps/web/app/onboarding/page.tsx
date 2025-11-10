@@ -7,6 +7,7 @@ import { WelcomeStep } from '@/components/onboarding/steps/WelcomeStep';
 import { ParentInfoStep } from '@/components/onboarding/steps/ParentInfoStep';
 import { StudentInfoStep } from '@/components/onboarding/steps/StudentInfoStep';
 import { ConsentStep } from '@/components/onboarding/steps/ConsentStep';
+import { AIIntakeStep } from '@/components/onboarding/steps/AIIntakeStep';
 
 const OnboardingContent: React.FC = () => {
   const {
@@ -62,26 +63,14 @@ const OnboardingContent: React.FC = () => {
       
       case 5:
         return (
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">AI Intake Step</h3>
-            <p className="mt-2 text-muted-foreground">
-              This step will be implemented with AI-powered conversational intake.
-            </p>
-            <div className="mt-6 flex justify-between">
-              <button onClick={prevStep} className="rounded-md bg-muted px-4 py-2">
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  updateData({ aiIntakeComplete: true });
-                  nextStep();
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
+          <AIIntakeStep
+            onNext={() => {
+              updateData({ aiIntakeComplete: true });
+              nextStep();
+            }}
+            onPrev={prevStep}
+            sessionId={session?.id?.toString()}
+          />
         );
       
       case 6:
