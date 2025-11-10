@@ -16,6 +16,8 @@ module Types
     field :therapists, resolver: Queries::Therapists
     field :organization, resolver: Queries::Organization
     field :organizations, resolver: Queries::Organizations
+    field :contract, resolver: Queries::Contract
+    field :contracts, resolver: Queries::Contracts
 
     def health_check
       "OK"

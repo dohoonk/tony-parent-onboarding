@@ -3,9 +3,12 @@ class Organization < ApplicationRecord
   belongs_to :parent_organization, class_name: 'Organization', optional: true, foreign_key: 'parent_organization_id'
   has_many :child_organizations, class_name: 'Organization', foreign_key: 'parent_organization_id', dependent: :nullify
 
+  # Associations
+  has_many :org_contracts, dependent: :destroy
+  has_many :contracts, through: :org_contracts
+
   # Future associations (to be added when other models are created)
   # has_many :memberships, dependent: :destroy
-  # has_many :org_contracts, dependent: :destroy
 
   # Validations
   validates :slug, presence: true, uniqueness: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000017) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -65,6 +65,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000017) do
     t.datetime "updated_at", null: false
     t.index ["owner_type", "owner_id"], name: "index_availability_windows_on_owner_type_and_owner_id"
     t.index ["start_date"], name: "index_availability_windows_on_start_date"
+  end
+
+  create_table "contracts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.date "effective_date", null: false
+    t.date "end_date"
+    t.text "services", default: [], array: true
+    t.jsonb "terms", default: {}
+    t.string "contract_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_contracts_on_created_at"
+    t.index ["effective_date", "end_date"], name: "index_contracts_on_effective_date_and_end_date"
+    t.index ["effective_date"], name: "index_contracts_on_effective_date"
+    t.index ["end_date"], name: "index_contracts_on_end_date"
+    t.index ["services"], name: "index_contracts_on_services", using: :gin
+    t.index ["terms"], name: "index_contracts_on_terms", using: :gin
   end
 
   create_table "cost_estimates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -131,6 +147,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000017) do
     t.index ["parent_id"], name: "index_onboarding_sessions_on_parent_id"
     t.index ["status"], name: "index_onboarding_sessions_on_status"
     t.index ["student_id"], name: "index_onboarding_sessions_on_student_id"
+  end
+
+  create_table "org_contracts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "organization_id", null: false
+    t.uuid "contract_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_org_contracts_on_contract_id"
+    t.index ["created_at"], name: "index_org_contracts_on_created_at"
+    t.index ["organization_id", "contract_id"], name: "index_org_contracts_on_organization_id_and_contract_id", unique: true
+    t.index ["organization_id"], name: "index_org_contracts_on_organization_id"
   end
 
   create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -289,6 +316,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000017) do
   add_foreign_key "intake_summaries", "onboarding_sessions"
   add_foreign_key "onboarding_sessions", "parents"
   add_foreign_key "onboarding_sessions", "students"
+  add_foreign_key "org_contracts", "contracts"
+  add_foreign_key "org_contracts", "organizations"
   add_foreign_key "organizations", "organizations", column: "parent_organization_id"
   add_foreign_key "screener_responses", "onboarding_sessions"
   add_foreign_key "screener_responses", "screeners"
