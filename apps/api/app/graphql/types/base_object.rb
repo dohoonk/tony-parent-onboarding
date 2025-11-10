@@ -6,7 +6,7 @@ module Types
     
     # Mark as having no fields - this is a base class, not a concrete type
     # Prevents GraphQL from requiring fields on this abstract base class
-    has_no_fields
+    has_no_fields(true)
   end
 end
 
