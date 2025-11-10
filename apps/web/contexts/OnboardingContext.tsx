@@ -13,6 +13,7 @@ export interface OnboardingData {
   screenersComplete?: boolean;
   insuranceComplete?: boolean;
   schedulingComplete?: boolean;
+  onboardingComplete?: boolean;
 }
 
 export interface Step {
