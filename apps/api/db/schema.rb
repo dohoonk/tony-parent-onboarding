@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000027) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -128,6 +128,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000027) do
     t.index ["network_status"], name: "index_credentialed_insurances_on_network_status"
     t.index ["parent_credentialed_insurance_id", "network_status"], name: "idx_on_parent_credentialed_insurance_id_network_sta_1b073221cf"
     t.index ["parent_credentialed_insurance_id"], name: "idx_on_parent_credentialed_insurance_id_1bfe213fc2"
+  end
+
+  create_table "documents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "version", null: false
+    t.string "label", null: false
+    t.text "checkboxes"
+    t.date "version_date"
+    t.jsonb "urls", default: {}
+    t.jsonb "names", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_documents_on_created_at"
+    t.index ["label", "version"], name: "index_documents_unique_label_version", unique: true
+    t.index ["label"], name: "index_documents_on_label"
+    t.index ["names"], name: "index_documents_on_names", using: :gin
+    t.index ["urls"], name: "index_documents_on_urls", using: :gin
+    t.index ["version"], name: "index_documents_on_version"
+    t.index ["version_date"], name: "index_documents_on_version_date"
   end
 
   create_table "insurance_cards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
