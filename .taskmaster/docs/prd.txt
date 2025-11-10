@@ -70,11 +70,16 @@ Step 5 — Scheduling + Clear "What Happens Next" Summary
 ---
 
 ## 7. Next Steps
-- Create UX Flow diagram (Mermaid)
-- Define AI conversation prompts and transitions
-- Design insurance OCR + validation workflow
-- Write final PRD + architecture.md
-- Generate task breakdown for Rails + Next.js
+- ✅ Create UX Flow diagram (Mermaid)
+- ✅ Define AI conversation prompts and transitions
+- ✅ Design insurance OCR + validation workflow
+- ✅ Write final PRD + architecture.md
+- ✅ Generate task breakdown for Rails + Next.js
+- ✅ Integrate test data from client-provided CSV files
+- ✅ Update database schema to match production data structure
+- ✅ Implement real therapist matching with actual data
+- ⏳ Complete test data import and validation
+- ⏳ Update frontend to use real therapist and organization data
 
 
 ## 6. Functional Requirements — Implementation Plan
@@ -192,51 +197,154 @@ flowchart TD
 - **Support Chat (P1):** in‑flow help; AI FAQ first, escalate to human inbox. Drives: ↑NPS.
 - **Emotional Support Content (P2):** micro‑copy + short reads surfaced by context (e.g., “talking to your teen about therapy”). Drives: ↑NPS, ↑Retention.
 
-## Data Model (initial)
-- **parents**(id, name, email, phone, auth_provider, created_at)
-- **students**(id, parent_id FK, name, dob, grade, school, language, gender_identity, address, created_at)
-- **onboarding_sessions**(id, parent_id, student_id, status[draft|active|completed], step, eta_seconds, started_at, completed_at)
-- **intake_messages**(id, session_id, role[user|assistant], content, tokens, created_at)
-- **intake_summaries**(id, session_id, concerns_json, goals_json, risk_flags_json, created_at)
-- **screeners**(id, key, title, version, items_json)
-- **screener_responses**(id, session_id, screener_id, scores_json, ai_plain_english, risk_level)
-- **insurance_cards**(id, session_id, front_url, back_url, ocr_json, confidence_json)
-- **insurance_policies**(id, session_id, payer_name, member_id, group_number, planholder_name, dob, address_json, verified[bool])
-- **cost_estimates**(id, session_id, min_cents, max_cents, basis_json)
-- **availability_windows**(id, actor[parent|student|clinician], actor_id, tz, rrule, source)
-- **appointments**(id, student_id, clinician_id, starts_at, ends_at, location, status)
-- **audit_logs**(id, actor, action, entity, before, after, ip, user_agent, created_at)
+## Data Model (Updated with Test Data Integration)
 
-> Note: **PHI minimization**—store only what’s required; keep AI prompts **de‑identified** (see Security).
+### Core Onboarding Tables
+- **parents**(id, email, phone, first_name, last_name, preferred_name, middle_name, title, preferred_language, preferred_pronoun, legal_gender, birthdate, address fields, healthie_id, account_status, auth_provider, role, system_labels, created_at, updated_at)
+- **students**(id, parent_id FK, first_name, last_name, date_of_birth, grade, school, language, gender_identity, address, created_at, updated_at)
+- **onboarding_sessions**(id, parent_id, student_id, status[draft|active|completed|abandoned], current_step, eta_seconds, started_at, completed_at, created_at, updated_at)
+- **intake_messages**(id, session_id, role[user|assistant|system], content, de_identified_content, created_at)
+- **intake_summaries**(id, session_id, concerns_json, goals_json, risk_flags_json, summary_text, created_at)
+- **screeners**(id, key, title, version, items_json, created_at, updated_at)
+- **screener_responses**(id, session_id, screener_id, answers_json, score, interpretation_text, created_at)
+- **questionnaires**(id, subject_id FK[students], respondent_id FK[parents], score, started_at, completed_at, question_answers JSONB, type, language_of_completion, created_at, updated_at)
+- **insurance_cards**(id, session_id, front_image_url, back_image_url, ocr_json, confidence_json, created_at)
+- **insurance_policies**(id, session_id, payer_name, member_id ENCRYPTED, group_id, group_number ENCRYPTED, plan_type, plan_holder_first_name, plan_holder_last_name, plan_holder_dob, plan_holder_country, plan_holder_state, plan_holder_city, plan_holder_street_address, plan_holder_zip_code, plan_holder_legal_gender, front_card_url, back_card_url, insurance_company_name, kind, level, eligibility, openpm_insurance_organization_id, openpm_coverage_id, openpm_insurance_organization_name, verified_at, created_at, updated_at)
+- **cost_estimates**(id, session_id, min_cost_cents, max_cost_cents, basis, created_at)
+- **availability_windows**(id, owner_type[Parent|Student|Therapist], owner_id, rrule, availability_json JSONB, start_date, end_date, created_at, updated_at)
+- **appointments**(id, session_id FK, student_id FK, therapist_id FK, scheduled_at, duration_minutes, status[scheduled|confirmed|completed|cancelled|no_show], notes, created_at, updated_at)
+- **audit_logs**(id, actor_id, actor_type, action, entity_type, entity_id, before_json, after_json, ip_address, user_agent, created_at)
 
-## GraphQL Surface (examples)
+### Therapist/Clinician Management
+- **therapists**(id, healthie_id, email, first_name, last_name, preferred_name, middle_name, phone, bio, specialties array, languages array, modalities array, ethnicity, gender, sexual_orientation, religion, npi_number, licenses array, licensed_states array, supervisor_id FK, capacity_total, capacity_filled, capacity_available, employment_type, clinical_role, profile_data JSONB, created_at, updated_at)
+- **clinician_credentialed_insurances**(id, therapist_id FK, credentialed_insurance_id FK, created_at, updated_at) — many-to-many join table
+
+### Organization & Contract Management
+- **organizations**(id, parent_organization_id FK[self-referential], kind enum[district=1|school=2], slug, name, tzdb, market_id, internal_name, config JSONB, enabled_at, created_at, updated_at)
+- **contracts**(id, effective_date, end_date, services array, terms JSONB, contract_url, created_at, updated_at)
+- **org_contracts**(id, organization_id FK, contract_id FK, created_at, updated_at) — join table
+
+### Insurance Credentialing
+- **credentialed_insurances**(id, name, country, state, line_of_business, legacy_names array, network_status, parent_credentialed_insurance_id FK[self-referential], open_pm_name, created_at, updated_at)
+
+### Referrals & Relationships
+- **referrals**(id, submitter_id FK[parents], organization_id FK, service_kind, concerns, data JSONB, contract_id FK, terms_kind, appointment_kind, planned_sessions, collect_coverage, allowed_coverage array, collection_rule, self_responsibility_required, care_provider_requirements array, referred_at, ready_for_scheduling_at, scheduled_at, onboarding_completed_at, enrolled_at, disenrolled_at, intake_id, tzdb, system_labels array, created_at, updated_at)
+- **referral_members**(id, referral_id FK, user_id FK, role, data JSONB, created_at, updated_at) — join table
+- **kinships**(id, user_0_id FK, user_1_id FK, kind enum, user_0_label, user_1_label, guardian_can_be_contacted boolean, created_at, updated_at) — parent-child relationships
+- **memberships**(id, user_id FK, organization_id FK, census_person_id, profile_data JSONB, created_at, updated_at) — user-organization relationships
+
+### Documents & Content
+- **documents**(id, version, label, checkboxes, version_date, urls JSONB[multi-language], names JSONB[multi-language], created_at, updated_at) — consent forms, policies, etc.
+
+### Schema Relationships
+```
+parents (1) --- (*) students
+         |            |
+         |            |-- (*) onboarding_sessions
+         |                      |
+         |                      |-- (*) intake_messages
+         |                      |-- (1) intake_summaries
+         |                      |-- (*) screener_responses
+         |                      |-- (*) insurance_cards
+         |                      |-- (1) insurance_policies
+         |                      |-- (1) cost_estimates
+         |                      |-- (*) appointments
+         |
+         |-- (*) kinships (user_0_id or user_1_id)
+         |-- (*) memberships
+         |-- (*) referrals
+
+students (1) --- (*) questionnaires
+         |
+         |-- (*) appointments
+
+therapists (1) --- (*) clinician_credentialed_insurances
+            |              |
+            |              |-- (*) credentialed_insurances
+            |
+            |-- (*) availability_windows (owner_type='Therapist')
+            |-- (*) appointments
+            |-- (*) supervisees (supervisor_id)
+
+organizations (1) --- (*) org_contracts
+              |              |
+              |              |-- (*) contracts
+              |
+              |-- (*) child_organizations (parent_organization_id)
+              |-- (*) memberships
+              |-- (*) referrals
+
+screeners (1) --- (*) screener_responses
+```
+
+> Note: **PHI minimization**—store only what's required; keep AI prompts **de‑identified** (see Security). Sensitive fields (member_id, group_number) are encrypted at rest using Rails encryption.
+
+## GraphQL Surface (Updated)
+
+### Onboarding Mutations & Queries
 - `mutation startOnboarding(parentInput, studentInput) → OnboardingSession`
 - `mutation aiIntakeMessage(sessionId, userText) → [AssistantDelta]` (streamed)
-- `mutation submitScreener(sessionId, answers) → ScreenerResponse`
+- `mutation streamAiIntakeMessage(sessionId, messageId) → Success` (triggers SSE stream)
+- `mutation extractIntakeSummary(sessionId) → IntakeSummary`
+- `mutation submitScreener(sessionId, screenerKey, answers) → ScreenerResponse`
 - `mutation uploadInsuranceCard(sessionId, frontUrl, backUrl) → OCRResult`
+- `mutation generatePresignedUrl(filename, fileType, contentType) → PresignedUrl`
 - `mutation confirmInsurance(sessionId, fields) → InsurancePolicy`
-- `query estimateCost(sessionId) → CostEstimate`
-- `query suggestedSlots(studentId) → [Slot]`
-- `mutation book(slotId) → Appointment`
-- `query me/onboardingSession(id)`
+- `mutation estimateCost(sessionId) → CostEstimate`
+- `mutation matchTherapists(sessionId, criteria) → [TherapistMatch]`
+- `mutation bookAppointment(sessionId, therapistId, scheduledAt) → Appointment`
+- `mutation supportChatMessage(sessionId, message) → SupportMessage`
+- `mutation sendOnboardingSummary(sessionId) → Success`
+- `query onboardingSession(id) → OnboardingSession`
+- `query availableScreeners → [Screener]`
+- `query faqAnswer(question, context) → FAQAnswer`
+- `query reassuranceMessage(context) → ReassuranceMessage`
+
+### Therapist & Organization Queries (New)
+- `query therapists(filters: {insuranceId, specialties, languages, availability}) → [Therapist]`
+- `query therapist(id) → Therapist`
+- `query organizations(parentId, kind) → [Organization]`
+- `query organization(id) → Organization`
+- `query contracts(organizationId) → [Contract]`
+
+### Referral Queries (New)
+- `mutation createReferral(input) → Referral`
+- `mutation updateReferralStatus(referralId, status) → Referral`
+- `query referrals(organizationId, status) → [Referral]`
 
 ## Prompts & Conversation Design
 **System:** “You are a warm, reassuring parenting coach… Avoid diagnoses. Reflect, normalize, and guide. Short, friendly sentences.”
 **Developer:** “Extract no PII; capture concerns/goals/themes internally; highlight risk cues (self‑harm, aggression, school refusal). Always reassure and explain next step.”
 **User flow:** ~20 topical probes (school, sleep, friends, mood, motivation, routines). Real‑time paraphrase + optional ‘Would you like to add this?’ chips.
 
-## Vision OCR Plan (OpenAI)
-- Accept JPG/PNG; send to GPT‑4o Vision with an **extraction schema** (payer_name, member_id, group_number, planholder_name, plan_type, rx_bin, phone, addr, etc.)
+## Vision OCR Plan (OpenAI - Updated Schema)
+- Accept JPG/PNG; send to GPT‑4o Vision with an **extraction schema** matching `insurance_policies` table:
+  - Basic: payer_name, member_id, group_id, group_number, plan_type
+  - Plan holder: first_name, last_name, dob, country, state, city, street_address, zip_code, legal_gender
+  - Additional: insurance_company_name, kind, level, eligibility
 - Return `{ data, confidence }`; render fields with inline badges: **High**, **Medium**, **Low**; require confirmation for Medium/Low; fallback: switch to manual entry with field‑level help.
+- Store extracted data in `insurance_policies` table with all new fields populated.
 
-## Cost Estimation (Placeholder)
-- Inputs: payer_name, plan_type, state, session_type (intake/individual), in_network[bool]
-- Config table example: `(payer_name, plan_type, state) -> min/max` with UI copy: “This is an estimate; we’ll verify and confirm before sessions begin.”
+## Cost Estimation (Placeholder - Enhanced)
+- Inputs: payer_name (from `insurance_policies`), plan_type, state, session_type (intake/individual), in_network[bool]
+- Uses `credentialed_insurances` table to verify network status
+- Config table example: `(payer_name, plan_type, state) -> min/max` with UI copy: "This is an estimate; we'll verify and confirm before sessions begin."
+- Can leverage `insurance_coverages` test data for more accurate estimates
 
-## Scheduling (v1)
+## Scheduling (v1 - Updated with Real Data)
 - Choose **Option B** (AI suggests clinician then shows times) unless specified otherwise
-- Matching heuristic: language + grade band + availability overlap + load balancing; return 2–3 suggestions with 
-  short bios and rationale (“Matches after‑school hours, experience with anxiety + school stress”).
+- **Therapist Matching Service** uses real database queries:
+  - Matches based on: insurance credentialing (via `clinician_credentialed_insurances`), availability windows (from `availability_windows` with `availability_json`), specialties, languages, capacity (available > 0)
+  - Returns 2–4 matched therapists with:
+    - Full bios from `therapists` table
+    - Match scores and rationale (e.g., "Matches after‑school hours, credentialed with your insurance, experience with anxiety + school stress")
+    - Capacity status (available slots)
+    - Licensed states and languages
+- **Availability System** supports dual format:
+  - Legacy `rrule` format for recurring patterns
+  - New `availability_json` format: `[{day: 'Monday', time_blocks: [{start: '08:00:00', duration: 60}]}]`
+  - Both clinician and patient availabilities stored in `availability_windows` table
+- **Appointments** link to `therapists` table via foreign key (replaces UUID-only reference)
 
 ## Security, Privacy, HIPAA Posture (non‑legal, engineering plan)
 - **Transport:** TLS 1.2+
@@ -303,34 +411,78 @@ npx shadcn@latest init -d
 - Inline AI FAQ and micro‑reassurance copy on every step
 - Final **What Happens Next** page + SMS/email summary
 
-## Milestones & PR‑Sized Tasks (initial)
-1) **Repo & Infra**
-   - [API] Rails API skeleton (GraphQL, Sidekiq, Redis, Postgres)
-   - [WEB] Next.js app scaffold + auth‑lite (magic link)
+## Milestones & PR‑Sized Tasks (Updated)
+
+### Phase 1: Core Infrastructure ✅ (Completed)
+1) **Repo & Infra** ✅
+   - [API] Rails 8 API skeleton (GraphQL, Sidekiq, Redis, Postgres)
+   - [WEB] Next.js 15 app scaffold + auth‑lite (magic link)
    - Docker compose for local dev; seed scripts
-2) **Data & Schema**
-   - Migrations for core tables
+2) **Data & Schema** ✅
+   - Migrations for core onboarding tables
    - GraphQL types, input validators (Zod)
-3) **AI Intake (P0)**
+3) **AI Intake (P0)** ✅
    - Prompt template + unit tests
-   - Streaming endpoint + UI chat panel with chips
+   - Streaming endpoint (SSE) + UI chat panel with chips
    - Summary generator + storage
-4) **Screeners (P0)**
+4) **Screeners (P0)** ✅
    - Custom screener model + renderer
    - Real‑time interpretation stream + plain‑language output block
-5) **Insurance (P1)**
+5) **Insurance (P1)** ✅
    - Upload UI (front/back) + presigned S3
    - Vision extraction service + confidence UI + manual fallback
    - Policy confirmation + cost estimator
-6) **Scheduling (P0)**
+6) **Scheduling (P0)** ✅
    - Availability forms; basic matcher; suggested clinicians + slots
    - Book flow + confirmation page + email/SMS
-7) **Support & Finish**
+7) **Support & Finish** ✅
    - Inline FAQ + escalate to email
    - What‑happens‑next page; save/resume flows; analytics events
-8) **Security & Ops**
+8) **Security & Ops** ✅
    - Audit logging, PII masking, secrets, backup scripts
    - Basic dashboards: funnel (start→finish, insurance drop‑off), time to complete
+
+### Phase 2: Test Data Integration (In Progress)
+9) **Therapist & Organization Data Models**
+   - Create `therapists` table with full profile data (specialties, languages, capacity, etc.)
+   - Create `organizations` table with hierarchical structure (districts → schools)
+   - Create `contracts` and `org_contracts` for organization service agreements
+   - Create `credentialed_insurances` and `clinician_credentialed_insurances` for insurance credentialing
+   - GraphQL types and queries for all new entities
+
+10) **Availability System Enhancement**
+    - Add `availability_json` field to `availability_windows` for day-based time blocks
+    - Support dual format (rrule + JSON) for backward compatibility
+    - Import clinician and patient availabilities from CSV
+
+11) **Referrals & Relationships**
+    - Create `referrals` and `referral_members` tables
+    - Create `kinships` table for parent-child relationships
+    - Create `memberships` table for user-organization links
+    - GraphQL mutations and queries for referral management
+
+12) **Documents & Questionnaires**
+    - Create `documents` table for consent forms and policies (multi-language support)
+    - Create `questionnaires` table and integrate with existing screeners
+    - Update `ConsentStep` to fetch real documents from database
+
+13) **Data Import Infrastructure**
+    - Create base CSV import infrastructure with error handling and idempotency
+    - Import tasks for all 16 CSV files in `devdocs/` directory
+    - Master import task with dependency ordering
+    - Data validation and integrity checks
+
+14) **Service Updates for Real Data**
+    - Update `TherapistMatchingService` to use real database queries
+    - Update `InsurancePolicy` model with all fields from test data
+    - Update `Parent` and `Student` models for test data compatibility
+    - Update `Appointment` model to link to `therapists` table
+    - Update `SchedulingStep` component to use real therapist data
+
+15) **Testing & Validation**
+    - Comprehensive test suite for all imported data
+    - Referential integrity validation
+    - Data type and relationship verification
 
 ---
 
