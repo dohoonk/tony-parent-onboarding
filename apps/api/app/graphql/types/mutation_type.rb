@@ -10,6 +10,7 @@ module Types
     field :generate_presigned_url, mutation: Mutations::GeneratePresignedUrl
     field :upload_insurance_card, mutation: Mutations::UploadInsuranceCard
     field :confirm_insurance, mutation: Mutations::ConfirmInsurance
+    field :estimate_cost, mutation: Mutations::EstimateCost
     field :book_appointment, mutation: Mutations::BookAppointment
   end
 end
