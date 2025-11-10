@@ -7,8 +7,7 @@ class Organization < ApplicationRecord
   has_many :org_contracts, dependent: :destroy
   has_many :contracts, through: :org_contracts
 
-  # Future associations (to be added when other models are created)
-  # has_many :memberships, dependent: :destroy
+  has_many :memberships, dependent: :destroy
 
   # Validations
   validates :slug, presence: true, uniqueness: true

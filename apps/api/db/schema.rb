@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000026) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -193,6 +193,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000026) do
     t.index ["user_0_id", "user_0_type", "user_1_id", "user_1_type"], name: "index_kinships_unique_relationship", unique: true
     t.index ["user_0_id", "user_0_type"], name: "index_kinships_on_user_0_id_and_user_0_type"
     t.index ["user_1_id", "user_1_type"], name: "index_kinships_on_user_1_id_and_user_1_type"
+  end
+
+  create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "user_type", null: false
+    t.uuid "organization_id", null: false
+    t.string "census_person_id"
+    t.jsonb "profile_data", default: {}
+    t.jsonb "migration_details", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["census_person_id"], name: "index_memberships_on_census_person_id"
+    t.index ["created_at"], name: "index_memberships_on_created_at"
+    t.index ["migration_details"], name: "index_memberships_on_migration_details", using: :gin
+    t.index ["organization_id", "user_id", "user_type"], name: "index_memberships_unique_user_org", unique: true
+    t.index ["organization_id"], name: "index_memberships_on_organization_id"
+    t.index ["profile_data"], name: "index_memberships_on_profile_data", using: :gin
+    t.index ["user_id", "user_type", "organization_id"], name: "index_memberships_on_user_id_and_user_type_and_organization_id"
+    t.index ["user_id", "user_type"], name: "index_memberships_on_user_id_and_user_type"
   end
 
   create_table "onboarding_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -446,6 +465,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000026) do
   add_foreign_key "insurance_policies", "onboarding_sessions"
   add_foreign_key "intake_messages", "onboarding_sessions"
   add_foreign_key "intake_summaries", "onboarding_sessions"
+  add_foreign_key "memberships", "organizations"
   add_foreign_key "onboarding_sessions", "parents"
   add_foreign_key "onboarding_sessions", "students"
   add_foreign_key "org_contracts", "contracts"

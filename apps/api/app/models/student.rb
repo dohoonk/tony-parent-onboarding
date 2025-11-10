@@ -11,6 +11,9 @@ class Student < ApplicationRecord
   def kinships
     Kinship.where('(user_0_type = ? AND user_0_id = ?) OR (user_1_type = ? AND user_1_id = ?)', 'Student', id, 'Student', id)
   end
+  
+  has_many :memberships, as: :user, dependent: :destroy
+  has_many :organizations, through: :memberships
 
   # Validations
   validates :first_name, presence: true

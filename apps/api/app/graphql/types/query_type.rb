@@ -23,6 +23,7 @@ module Types
     field :referral, resolver: Queries::Referral
     field :referrals, resolver: Queries::Referrals
     field :kinships, resolver: Queries::Kinships
+    field :memberships, resolver: Queries::Memberships
 
     def health_check
       "OK"
