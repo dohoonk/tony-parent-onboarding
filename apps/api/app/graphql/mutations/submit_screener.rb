@@ -33,10 +33,21 @@ module Mutations
         answers_json: input.answers
       )
 
-      # Calculate score (placeholder - actual logic depends on screener)
-      response.score = response.calculate_score if response.respond_to?(:calculate_score)
+      # Calculate score
+      response.score = calculate_screener_score(input.answers, screener)
 
       if response.save
+        # Generate AI interpretation
+        begin
+          interpretation_data = ScreenerInterpretationService.interpret(response)
+          response.update!(
+            interpretation_text: interpretation_data[:interpretation_text]
+          )
+        rescue StandardError => e
+          Rails.logger.error("Failed to generate interpretation: #{e.message}")
+          # Continue without interpretation - response is still saved
+        end
+
         # Log audit trail
         AuditLog.log_access(
           actor: parent,
@@ -49,6 +60,15 @@ module Mutations
       else
         { response: nil, errors: response.errors.full_messages }
       end
+    end
+
+    private
+
+    def calculate_screener_score(answers, screener)
+      # Sum all answer values
+      answers.values.sum
+    rescue StandardError
+      0
     end
   end
 end

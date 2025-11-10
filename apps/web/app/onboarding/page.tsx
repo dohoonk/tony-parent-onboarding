@@ -8,6 +8,7 @@ import { ParentInfoStep } from '@/components/onboarding/steps/ParentInfoStep';
 import { StudentInfoStep } from '@/components/onboarding/steps/StudentInfoStep';
 import { ConsentStep } from '@/components/onboarding/steps/ConsentStep';
 import { AIIntakeStep } from '@/components/onboarding/steps/AIIntakeStep';
+import { ScreenerStep } from '@/components/onboarding/steps/ScreenerStep';
 
 const OnboardingContent: React.FC = () => {
   const {
@@ -75,26 +76,14 @@ const OnboardingContent: React.FC = () => {
       
       case 6:
         return (
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">Clinical Screeners Step</h3>
-            <p className="mt-2 text-muted-foreground">
-              This step will include clinical assessment questionnaires.
-            </p>
-            <div className="mt-6 flex justify-between">
-              <button onClick={prevStep} className="rounded-md bg-muted px-4 py-2">
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  updateData({ screenersComplete: true });
-                  nextStep();
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
+          <ScreenerStep
+            onNext={() => {
+              updateData({ screenersComplete: true });
+              nextStep();
+            }}
+            onPrev={prevStep}
+            sessionId={session?.id?.toString()}
+          />
         );
       
       case 7:
