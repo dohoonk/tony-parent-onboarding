@@ -1,6 +1,6 @@
 module Types
   module Inputs
-    class CreateReferralInput < BaseInputObject
+    class CreateReferralInput < Types::BaseInputObject
       description "Input for creating a new referral"
 
       argument :organization_id, ID, required: true

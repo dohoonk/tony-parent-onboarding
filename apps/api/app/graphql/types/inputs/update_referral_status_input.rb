@@ -1,6 +1,6 @@
 module Types
   module Inputs
-    class UpdateReferralStatusInput < BaseInputObject
+    class UpdateReferralStatusInput < Types::BaseInputObject
       description "Input for updating referral status"
 
       argument :referral_id, ID, required: true

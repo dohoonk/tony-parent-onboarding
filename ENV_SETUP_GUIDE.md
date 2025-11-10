@@ -84,7 +84,7 @@ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 1. Go to https://console.aws.amazon.com/s3/
 2. Click **"Create bucket"**
 3. Configure bucket:
-   - **Bucket name**: `parent-onboarding-insurance-cards` (must be globally unique)
+   - **Bucket name**: `parent-onboarding-insurance-cards-tony` (must be globally unique)
    - **Region**: Choose closest to you (e.g., `us-east-1`)
    - **Block Public Access**: Keep enabled for security
    - **Versioning**: Optional (enable if you want to track changes)
@@ -94,7 +94,7 @@ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 **How to set it:**
 ```bash
 # In apps/api/.env
-AWS_S3_BUCKET=parent-onboarding-insurance-cards
+AWS_S3_BUCKET=parent-onboarding-insurance-cards-tony
 ```
 
 **Note:** The bucket name must be globally unique across all AWS accounts.
