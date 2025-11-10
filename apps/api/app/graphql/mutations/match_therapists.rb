@@ -4,11 +4,12 @@ module Mutations
 
     argument :session_id, ID, required: true
     argument :availability_window_id, ID, required: true
+    argument :insurance_policy_id, ID, required: false, description: "Optional insurance policy ID for network matching"
 
     field :matches, [Types::TherapistMatchType], null: false
     field :errors, [String], null: false
 
-    def resolve(session_id:, availability_window_id:)
+    def resolve(session_id:, availability_window_id:, insurance_policy_id: nil)
       require_authentication!
       
       session = current_user.onboarding_sessions.find_by(id: session_id)
@@ -29,10 +30,17 @@ module Mutations
         return { matches: [], errors: ["Availability window not found"] }
       end
 
+      # Get insurance policy if provided
+      insurance_policy = nil
+      if insurance_policy_id.present?
+        insurance_policy = session.parent.insurance_policies.find_by(id: insurance_policy_id)
+      end
+
       # Get matches
       matches = TherapistMatchingService.match(
         student: student,
         availability_window: availability_window,
+        insurance_policy: insurance_policy,
         limit: 4
       )
 

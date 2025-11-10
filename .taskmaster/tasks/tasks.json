@@ -1123,7 +1123,7 @@
             "description": "Replace mock data with real database queries for therapists, insurances, and availability.",
             "dependencies": [],
             "details": "Query Therapists table with joins to ClinicianCredentialedInsurances and AvailabilityWindows. Filter by insurance, availability, specialties, languages, and capacity. Calculate match scores.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test queries with various filter combinations. Verify match scores are calculated correctly."
           },
           {
@@ -1134,7 +1134,7 @@
               1
             ],
             "details": "Create query type with arguments for insurance_id, availability, specialties, languages. Return matched therapists with scores and rationale.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test GraphQL query in GraphiQL. Verify filtering works correctly."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:12:01.307Z",
+      "updated": "2025-11-10T22:20:57.969Z",
       "description": "Tasks for master context"
     }
   }
