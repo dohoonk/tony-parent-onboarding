@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
 import { MagicLinkRequest } from '@/components/onboarding/MagicLinkRequest';
@@ -125,7 +125,7 @@ const ResumeContent: React.FC = () => {
             open={showResumeDialog}
             onResume={handleResume}
             onStartFresh={handleStartFresh}
-            lastSaveDate={lastSaveDate}
+            lastSaveDate={lastSaveDate || undefined}
             completedSteps={currentStep - 1}
             totalSteps={8}
           />
@@ -152,7 +152,18 @@ const ResumeContent: React.FC = () => {
 export default function ResumePage() {
   return (
     <OnboardingProvider>
-      <ResumeContent />
+      <Suspense fallback={
+        <div className="container mx-auto flex min-h-screen items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardContent className="p-6 text-center">
+              <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              <p className="text-muted-foreground">Loading...</p>
+            </CardContent>
+          </Card>
+        </div>
+      }>
+        <ResumeContent />
+      </Suspense>
     </OnboardingProvider>
   );
 }

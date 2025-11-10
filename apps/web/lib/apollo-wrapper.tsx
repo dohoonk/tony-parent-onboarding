@@ -1,11 +1,7 @@
 "use client"
 
-import { ApolloLink, HttpLink } from "@apollo/client"
-import {
-  ApolloNextAppProvider,
-  ApolloClient,
-  InMemoryCache,
-} from "@apollo/experimental-nextjs-app-support"
+import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider } from "@apollo/client"
+import { useMemo } from "react"
 
 function makeClient() {
   const httpLink = new HttpLink({
@@ -20,10 +16,12 @@ function makeClient() {
 }
 
 export function ApolloWrapper({ children }: React.PropsWithChildren) {
+  const client = useMemo(() => makeClient(), [])
+  
   return (
-    <ApolloNextAppProvider makeClient={makeClient}>
+    <ApolloProvider client={client}>
       {children}
-    </ApolloNextAppProvider>
+    </ApolloProvider>
   )
 }
 

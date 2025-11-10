@@ -48,7 +48,10 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
