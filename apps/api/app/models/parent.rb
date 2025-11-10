@@ -1,4 +1,6 @@
 class Parent < ApplicationRecord
+  include Authorizable
+
   # Associations
   has_many :students, dependent: :destroy
   has_many :onboarding_sessions, dependent: :destroy
@@ -11,11 +13,16 @@ class Parent < ApplicationRecord
 
   # Callbacks
   before_validation :normalize_email
+  after_initialize :set_default_role, if: :new_record?
 
   private
 
   def normalize_email
     self.email = email&.downcase&.strip
+  end
+
+  def set_default_role
+    self.role ||= Authorizable::ROLES[:parent]
   end
 end
 

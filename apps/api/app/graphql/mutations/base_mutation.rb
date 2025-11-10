@@ -19,25 +19,34 @@ module Mutations
       raise GraphQL::ExecutionError, "Authentication required" unless authenticated?
     end
 
-    # Helper method for authorization checks
-    def authorize_parent_access!(resource)
+    # Helper method for role-based authorization
+    def authorize!(permission)
+      require_authentication!
+      
+      unless current_user.can?(permission)
+        raise GraphQL::ExecutionError, "Insufficient permissions"
+      end
+    end
+
+    # Helper method for resource-based authorization
+    def authorize_access!(resource)
+      require_authentication!
+      
       return if resource.nil?
       
-      parent_id = case resource
-                  when Parent
-                    resource.id
-                  when Student
-                    resource.parent_id
-                  when OnboardingSession
-                    resource.parent_id
-                  else
-                    # Try to get parent_id from association
-                    resource.try(:parent_id) || resource.try(:onboarding_session)&.parent_id
-                  end
-
-      unless current_user&.id == parent_id
-        raise GraphQL::ExecutionError, "Unauthorized access"
+      unless current_user.can_access?(resource)
+        raise GraphQL::ExecutionError, "Unauthorized access to resource"
       end
+    end
+
+    # Legacy helper - maintained for backward compatibility
+    def authorize_parent_access!(resource)
+      authorize_access!(resource)
+    end
+
+    # Helper to check if current user has a specific role
+    def has_role?(role_name)
+      current_user&.has_role?(role_name) || false
     end
   end
 end

@@ -214,7 +214,7 @@
               3
             ],
             "details": "Define role checks in resolvers or use a policy layer (e.g., Pundit or custom logic) to enforce permissions. Ensure only authorized roles can perform sensitive actions (e.g., staff-only queries, parent-only mutations). Document permission matrix.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write tests for each operation to verify access is correctly restricted by role. Attempt unauthorized actions and confirm expected errors."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:18:15.832Z",
+      "updated": "2025-11-10T20:19:35.946Z",
       "description": "Tasks for master context"
     }
   }

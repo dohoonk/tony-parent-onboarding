@@ -8,6 +8,7 @@ module Types
     field :first_name, String, null: false
     field :last_name, String, null: false
     field :auth_provider, String, null: false
+    field :role, Types::RoleEnum, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 
