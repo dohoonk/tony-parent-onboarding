@@ -1145,7 +1145,7 @@
               2
             ],
             "details": "Replace mock therapist data with GraphQL query. Display real therapist bios, specialties, and match rationale. Handle loading and error states.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test component with real data. Verify UI displays correctly. Test error handling."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T23:01:38.825Z",
+      "updated": "2025-11-10T23:10:53.241Z",
       "description": "Tasks for master context"
     }
   }

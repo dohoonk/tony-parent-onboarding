@@ -1,21 +1,27 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useMutation } from '@apollo/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, Calendar, User, CheckCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { MATCH_THERAPISTS, BOOK_APPOINTMENT } from '@/lib/graphql/mutations';
 
 interface TherapistMatch {
   id: string;
   name: string;
   languages: string[];
   specialties: string[];
-  bio: string;
-  match_score: number;
-  match_rationale: string;
+  modalities: string[];
+  bio: string | null;
+  capacityAvailable: number;
+  capacityUtilization: number;
+  matchScore: number;
+  matchRationale: string;
+  matchDetails?: any;
 }
 
 interface SchedulingStepProps {
@@ -32,62 +38,96 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [therapistMatches, setTherapistMatches] = useState<TherapistMatch[]>([]);
   const [selectedTherapist, setSelectedTherapist] = useState<string>('');
+  const [availabilityWindowId, setAvailabilityWindowId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [matchTherapists] = useMutation(MATCH_THERAPISTS);
+  const [bookAppointment] = useMutation(BOOK_APPOINTMENT);
+
   const timeSlots = [
-    { id: 'morning', label: 'Morning (9 AM - 12 PM)', value: 'morning' },
-    { id: 'afternoon', label: 'Afternoon (12 PM - 5 PM)', value: 'afternoon' },
-    { id: 'evening', label: 'Evening (5 PM - 8 PM)', value: 'evening' }
+    { id: 'morning', label: 'Morning (9 AM - 12 PM)', value: 'morning', timeRange: { start: 9, end: 12 } },
+    { id: 'afternoon', label: 'Afternoon (12 PM - 5 PM)', value: 'afternoon', timeRange: { start: 12, end: 17 } },
+    { id: 'evening', label: 'Evening (5 PM - 8 PM)', value: 'evening', timeRange: { start: 17, end: 20 } }
   ];
 
   useEffect(() => {
-    if (selectedTime) {
+    if (selectedTime && sessionId) {
       loadTherapistMatches();
     }
-  }, [selectedTime]);
+  }, [selectedTime, sessionId]);
+
+  // Helper to create a temporary availability window ID based on time slot
+  // In production, this should create an actual availability window or use an existing one
+  const getAvailabilityWindowId = (timeSlot: string): string => {
+    // For now, we'll use a placeholder approach
+    // In production, you'd either:
+    // 1. Query existing availability windows for the parent/student
+    // 2. Create a new availability window via mutation
+    // 3. Use a default availability window ID
+    // This is a temporary solution - the backend should handle this better
+    return `temp-${timeSlot}-${sessionId}`;
+  };
 
   const loadTherapistMatches = async () => {
+    if (!sessionId) {
+      setError('Session ID is required');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // TODO: Call GraphQL mutation to get therapist matches
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Mock matches
-      setTherapistMatches([
-        {
-          id: '1',
-          name: 'Dr. Sarah Johnson',
-          languages: ['English', 'Spanish'],
-          specialties: ['Anxiety', 'Depression'],
-          bio: 'Experienced child therapist specializing in anxiety and depression. Over 10 years of experience working with children and adolescents.',
-          match_score: 95,
-          match_rationale: 'Language match: English; Age-appropriate: Grade 6 within range; Available during requested time'
-        },
-        {
-          id: '2',
-          name: 'Dr. Michael Chen',
-          languages: ['English', 'Mandarin'],
-          specialties: ['Anxiety', 'Trauma'],
-          bio: 'Bilingual therapist with expertise in trauma-informed care. Specializes in working with diverse populations.',
-          match_score: 85,
-          match_rationale: 'Language match: English; Age range: Close match; Available during requested time'
+      // Create a temporary availability window ID based on the time slot
+      // Note: In production, this should be a real availability window ID
+      const windowId = getAvailabilityWindowId(selectedTime);
+      setAvailabilityWindowId(windowId);
+
+      const { data, errors } = await matchTherapists({
+        variables: {
+          sessionId,
+          availabilityWindowId: windowId,
+          insurancePolicyId: null // TODO: Get from insurance step
         }
-      ]);
-    } catch (err) {
-      setError('Failed to load therapist matches');
-      console.error(err);
+      });
+
+      if (errors && errors.length > 0) {
+        throw new Error(errors[0].message);
+      }
+
+      if (data?.matchTherapists?.errors && data.matchTherapists.errors.length > 0) {
+        throw new Error(data.matchTherapists.errors[0]);
+      }
+
+      // Transform GraphQL response to component format
+      const matches: TherapistMatch[] = (data?.matchTherapists?.matches || []).map((match: any) => ({
+        id: match.id,
+        name: match.name,
+        languages: match.languages || [],
+        specialties: match.specialties || [],
+        modalities: match.modalities || [],
+        bio: match.bio,
+        capacityAvailable: match.capacityAvailable || 0,
+        capacityUtilization: match.capacityUtilization || 0,
+        matchScore: match.matchScore || 0,
+        matchRationale: match.matchRationale || '',
+        matchDetails: match.matchDetails
+      }));
+
+      setTherapistMatches(matches);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load therapist matches');
+      console.error('Error loading therapist matches:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleBook = async () => {
-    if (!selectedTherapist || !selectedTime) {
+    if (!selectedTherapist || !selectedTime || !sessionId) {
       setError('Please select a therapist and time slot');
       return;
     }
@@ -96,12 +136,36 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
     setError(null);
 
     try {
-      // TODO: Call GraphQL mutation to book appointment
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Calculate scheduled_at based on selected time slot
+      // For now, schedule for next week at the start of the selected time range
+      const timeSlot = timeSlots.find(slot => slot.value === selectedTime);
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + 7); // Next week
+      scheduledDate.setHours(timeSlot?.timeRange.start || 14, 0, 0, 0); // Start of time range
+
+      const { data, errors } = await bookAppointment({
+        variables: {
+          input: {
+            sessionId,
+            therapistId: selectedTherapist,
+            scheduledAt: scheduledDate.toISOString(),
+            durationMinutes: 50
+          }
+        }
+      });
+
+      if (errors && errors.length > 0) {
+        throw new Error(errors[0].message);
+      }
+
+      if (data?.bookAppointment?.errors && data.bookAppointment.errors.length > 0) {
+        throw new Error(data.bookAppointment.errors[0]);
+      }
+
       setIsBooked(true);
-    } catch (err) {
-      setError('Failed to book appointment. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      setError(err.message || 'Failed to book appointment. Please try again.');
+      console.error('Error booking appointment:', err);
     } finally {
       setIsBooking(false);
     }
@@ -199,12 +263,14 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
                         <div className="flex items-start justify-between">
                           <div>
                             <h4 className="font-semibold">{therapist.name}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {therapist.bio}
-                            </p>
+                            {therapist.bio && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {therapist.bio}
+                              </p>
+                            )}
                           </div>
                           <Badge variant="secondary">
-                            {therapist.match_score}% match
+                            {therapist.matchScore}% match
                           </Badge>
                         </div>
                         
@@ -216,9 +282,26 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
                           ))}
                         </div>
 
+                        {therapist.languages.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            <span className="text-xs text-muted-foreground">Languages:</span>
+                            {therapist.languages.map((lang) => (
+                              <Badge key={lang} variant="outline" className="text-xs">
+                                {lang}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
                         <div className="text-xs text-muted-foreground">
-                          <strong>Why this match:</strong> {therapist.match_rationale}
+                          <strong>Why this match:</strong> {therapist.matchRationale}
                         </div>
+
+                        {therapist.capacityAvailable > 0 && (
+                          <div className="text-xs text-muted-foreground">
+                            <strong>Availability:</strong> {therapist.capacityAvailable} spots available
+                          </div>
+                        )}
 
                         <RadioGroup value={selectedTherapist} onValueChange={setSelectedTherapist}>
                           <div className="flex items-center space-x-2">
