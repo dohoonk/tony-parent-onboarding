@@ -58,7 +58,8 @@ const STEPS: Step[] = [
   { id: 5, title: 'AI Intake', description: 'Tell us your story', estimatedSeconds: 300 },
   { id: 6, title: 'Screeners', description: 'Quick assessment', estimatedSeconds: 180 },
   { id: 7, title: 'Insurance', description: 'Coverage information', estimatedSeconds: 120 },
-  { id: 8, title: 'Scheduling', description: 'Book first session', estimatedSeconds: 120 }
+  { id: 8, title: 'Scheduling', description: 'Book first session', estimatedSeconds: 120 },
+  { id: 9, title: 'Summary', description: 'Review and complete', estimatedSeconds: 60 }
 ];
 
 const STORAGE_KEY = 'daybreak-onboarding-progress';

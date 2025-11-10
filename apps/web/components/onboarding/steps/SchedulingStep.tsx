@@ -125,6 +125,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
               type="button"
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 onNext();
               }} 
               className="w-full sm:w-auto"
