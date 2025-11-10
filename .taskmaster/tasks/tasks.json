@@ -281,7 +281,7 @@
               2
             ],
             "details": "Use React context or a state management library to track current step, completed steps, and time estimates. Update progress bar and ETA dynamically as the user advances. Persist state for save/resume functionality.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test state updates on step navigation, progress bar accuracy, and ETA recalculation. Simulate mid-flow interruptions and resumes."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:24:09.790Z",
+      "updated": "2025-11-10T20:24:59.871Z",
       "description": "Tasks for master context"
     }
   }
