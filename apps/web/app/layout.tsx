@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SkipLink } from "@/components/onboarding/SkipLink";
+import { SupportChat } from "@/components/support/SupportChat";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>
+        <SupportChat />
       </body>
     </html>
   );
