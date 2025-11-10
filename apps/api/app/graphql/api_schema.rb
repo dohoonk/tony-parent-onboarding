@@ -2,6 +2,13 @@ class ApiSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
+  # Exclude base classes from schema introspection
+  # These are abstract base classes, not concrete types
+  def self.resolve_type(type, obj, ctx)
+    # This prevents base classes from being exposed
+    nil
+  end
+
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
   use GraphQL::Dataloader
 
