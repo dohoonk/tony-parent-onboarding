@@ -1156,7 +1156,7 @@
               3
             ],
             "details": "Show match score percentage, reasons for match (insurance, availability, specialties), and therapist capacity status.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify rationale is displayed clearly. Test with various match scenarios."
           }
         ]
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T23:10:53.241Z",
+      "updated": "2025-11-10T23:11:22.403Z",
       "description": "Tasks for master context"
     }
   }
