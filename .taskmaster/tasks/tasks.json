@@ -303,7 +303,7 @@
               4
             ],
             "details": "Generate and send magic links for resuming onboarding using email/SMS APIs. Validate link security, expiration, and user identification. Ensure seamless resume experience on both desktop and mobile.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test magic link generation, delivery, expiration, and resume flow. Validate security and user experience."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:26:11.002Z",
+      "updated": "2025-11-10T20:28:12.744Z",
       "description": "Tasks for master context"
     }
   }
