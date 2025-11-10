@@ -1232,7 +1232,7 @@
               1
             ],
             "details": "Create tasks: import:referrals, import:referral_members, import:kinships, import:memberships. Handle complex relationships and JSONB fields.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run imports and verify relationships. Test JSONB field parsing."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:56:11.118Z",
+      "updated": "2025-11-10T22:57:12.077Z",
       "description": "Tasks for master context"
     }
   }
