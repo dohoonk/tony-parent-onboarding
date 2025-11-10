@@ -26,6 +26,8 @@ module Types
     field :memberships, resolver: Queries::Memberships
     field :documents, resolver: Queries::Documents
     field :document, resolver: Queries::Document
+    field :questionnaires, resolver: Queries::Questionnaires
+    field :questionnaire, resolver: Queries::Questionnaire
 
     def health_check
       "OK"

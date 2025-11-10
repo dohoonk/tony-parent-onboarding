@@ -14,6 +14,7 @@ class Student < ApplicationRecord
   
   has_many :memberships, as: :user, dependent: :destroy
   has_many :organizations, through: :memberships
+  has_many :questionnaires, foreign_key: 'subject_id', dependent: :destroy
 
   # Validations
   validates :first_name, presence: true

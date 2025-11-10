@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_000028) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_000030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -294,6 +294,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000028) do
     t.index ["role"], name: "index_parents_on_role"
   end
 
+  create_table "questionnaires", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "subject_id", null: false
+    t.uuid "respondent_id", null: false
+    t.integer "score", default: 0
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.jsonb "question_answers", default: {}
+    t.integer "questionnaire_type", null: false
+    t.string "language_of_completion", default: "eng"
+    t.string "census_person_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed_at"], name: "index_questionnaires_on_completed_at"
+    t.index ["created_at"], name: "index_questionnaires_on_created_at"
+    t.index ["language_of_completion"], name: "index_questionnaires_on_language_of_completion"
+    t.index ["question_answers"], name: "index_questionnaires_on_question_answers", using: :gin
+    t.index ["questionnaire_type"], name: "index_questionnaires_on_questionnaire_type"
+    t.index ["respondent_id", "completed_at"], name: "index_questionnaires_on_respondent_id_and_completed_at"
+    t.index ["respondent_id"], name: "index_questionnaires_on_respondent_id"
+    t.index ["score"], name: "index_questionnaires_on_score"
+    t.index ["started_at"], name: "index_questionnaires_on_started_at"
+    t.index ["subject_id", "questionnaire_type"], name: "index_questionnaires_on_subject_id_and_questionnaire_type"
+    t.index ["subject_id"], name: "index_questionnaires_on_subject_id"
+  end
+
   create_table "referral_members", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "referral_id", null: false
     t.uuid "user_id", null: false
@@ -369,7 +394,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000028) do
     t.integer "score"
     t.text "interpretation_text"
     t.datetime "created_at", precision: nil, null: false
+    t.uuid "questionnaire_id"
     t.index ["onboarding_session_id"], name: "index_screener_responses_on_onboarding_session_id"
+    t.index ["questionnaire_id"], name: "index_screener_responses_on_questionnaire_id"
     t.index ["screener_id"], name: "index_screener_responses_on_screener_id"
   end
 
@@ -489,12 +516,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_000028) do
   add_foreign_key "org_contracts", "contracts"
   add_foreign_key "org_contracts", "organizations"
   add_foreign_key "organizations", "organizations", column: "parent_organization_id"
+  add_foreign_key "questionnaires", "parents", column: "respondent_id"
+  add_foreign_key "questionnaires", "students", column: "subject_id"
   add_foreign_key "referral_members", "referrals"
   add_foreign_key "referrals", "contracts"
   add_foreign_key "referrals", "organizations"
   add_foreign_key "referrals", "parents", column: "submitter_id"
   add_foreign_key "referrals", "therapists", column: "care_provider_id"
   add_foreign_key "screener_responses", "onboarding_sessions"
+  add_foreign_key "screener_responses", "questionnaires"
   add_foreign_key "screener_responses", "screeners"
   add_foreign_key "students", "parents"
   add_foreign_key "therapists", "therapists", column: "associate_supervisor_id"

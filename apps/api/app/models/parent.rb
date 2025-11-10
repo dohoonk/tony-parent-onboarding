@@ -16,6 +16,7 @@ class Parent < ApplicationRecord
   
   has_many :memberships, as: :user, dependent: :destroy
   has_many :organizations, through: :memberships
+  has_many :questionnaires, foreign_key: 'respondent_id', dependent: :destroy
 
   # Validations
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

@@ -2,6 +2,7 @@ class ScreenerResponse < ApplicationRecord
   # Associations
   belongs_to :onboarding_session
   belongs_to :screener
+  belongs_to :questionnaire, optional: true # Optional link to questionnaire
 
   # Validations
   validates :answers_json, presence: true
