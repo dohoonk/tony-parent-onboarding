@@ -57,51 +57,70 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
     setError(null);
 
     try {
-      // TODO: Call GraphQL mutation to send message and stream response
-      // For now, simulate streaming
-      await simulateStreamingResponse(userMessage.content);
+      // TODO: Call GraphQL mutation to send message first
+      // For now, we'll use a temporary ID and call streaming
+      const tempMessageId = userMessage.id;
+      
+      // Start streaming response
+      await handleStreamingResponse(tempMessageId);
     } catch (err) {
       setError('Failed to send message. Please try again.');
       console.error('Chat error:', err);
-    } finally {
       setIsLoading(false);
       setIsStreaming(false);
     }
   };
 
-  const simulateStreamingResponse = async (userInput: string) => {
-    // Simulate streaming response
-    const responseText = "Thank you for sharing that. Can you tell me more about how long this has been going on?";
-    const words = responseText.split(' ');
-    let currentText = '';
-
-    for (let i = 0; i < words.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      currentText += (i > 0 ? ' ' : '') + words[i];
-      
-      setMessages((prev) => {
-        const lastMessage = prev[prev.length - 1];
-        if (lastMessage?.role === 'assistant' && lastMessage.id === 'streaming') {
-          return [...prev.slice(0, -1), { ...lastMessage, content: currentText }];
-        } else {
-          return [...prev, {
-            id: 'streaming',
-            role: 'assistant',
-            content: currentText,
-            timestamp: new Date()
-          }];
-        }
-      });
+  const handleStreamingResponse = async (userMessageId: string) => {
+    if (!sessionId) {
+      setError('Session ID is required');
+      return;
     }
 
-    // Finalize message
-    setMessages((prev) => {
-      const lastMessage = prev[prev.length - 1];
-      if (lastMessage?.id === 'streaming') {
-        return [...prev.slice(0, -1), { ...lastMessage, id: Date.now().toString() }];
+    // TODO: Get auth token from context/store
+    const token = localStorage.getItem('auth_token') || '';
+    
+    // Import streaming client dynamically
+    const { StreamingClient } = await import('@/lib/streaming-client');
+    
+    const streamClient = new StreamingClient(
+      // onChunk
+      (chunk: string) => {
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          if (lastMessage?.role === 'assistant' && lastMessage.id === 'streaming') {
+            return [...prev.slice(0, -1), { ...lastMessage, content: lastMessage.content + chunk }];
+          } else {
+            return [...prev, {
+              id: 'streaming',
+              role: 'assistant',
+              content: chunk,
+              timestamp: new Date()
+            }];
+          }
+        });
+      },
+      // onComplete
+      (messageId: string) => {
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          if (lastMessage?.id === 'streaming') {
+            return [...prev.slice(0, -1), { ...lastMessage, id: messageId }];
+          }
+          return prev;
+        });
+        setIsStreaming(false);
+      },
+      // onError
+      (error: string) => {
+        setError(error);
+        setIsStreaming(false);
+        // Remove streaming message on error
+        setMessages((prev) => prev.filter(msg => msg.id !== 'streaming'));
       }
-      return prev;
-    });
+    );
+
+    streamClient.start(sessionId, userMessageId, token);
   };
 
   const handleContinue = () => {

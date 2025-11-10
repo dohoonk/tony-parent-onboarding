@@ -372,7 +372,7 @@
               2
             ],
             "details": "Utilize OpenAI's streaming API endpoints to deliver partial message updates as they are generated. Update the chat UI to display streaming content incrementally.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Integration tests for streaming endpoints, latency measurement, and UI responsiveness validation."
           },
           {
@@ -810,7 +810,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T20:31:50.530Z",
+      "updated": "2025-11-10T20:32:26.020Z",
       "description": "Tasks for master context"
     }
   }
