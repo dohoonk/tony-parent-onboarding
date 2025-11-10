@@ -1,6 +1,12 @@
 namespace :import do
   desc "Import questionnaires from CSV"
   task questionnaires: :environment do
+    importer = Importers::QuestionnaireImporter.new
+    importer.import
+  end
+
+  # Legacy implementation (kept for reference)
+  task questionnaires_legacy: :environment do
     require 'csv'
     require 'json'
     

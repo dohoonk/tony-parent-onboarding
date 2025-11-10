@@ -1,6 +1,12 @@
 namespace :import do
   desc "Import documents from CSV"
   task documents: :environment do
+    importer = Importers::DocumentImporter.new
+    importer.import
+  end
+
+  # Legacy implementation (kept for reference)
+  task documents_legacy: :environment do
     require 'csv'
     require 'json'
     

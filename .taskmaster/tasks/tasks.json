@@ -1243,7 +1243,7 @@
               1
             ],
             "details": "Create tasks: import:documents, import:questionnaires, import:patients_and_guardians. Handle multi-language JSONB fields for documents.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run imports and verify data. Test multi-language support for documents."
           },
           {
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:57:12.077Z",
+      "updated": "2025-11-10T23:00:42.868Z",
       "description": "Tasks for master context"
     }
   }
