@@ -121,7 +121,14 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
             <p className="text-sm text-muted-foreground mb-4">
               Your appointment has been successfully booked. You&apos;ll receive a confirmation email and SMS shortly.
             </p>
-            <Button onClick={onNext} className="w-full sm:w-auto">
+            <Button 
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                onNext();
+              }} 
+              className="w-full sm:w-auto"
+            >
               Continue
             </Button>
           </CardContent>
