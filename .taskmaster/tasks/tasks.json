@@ -1002,7 +1002,7 @@
           17,
           2
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1043,7 +1043,7 @@
               2
             ],
             "details": "Parse CSV files, handle JSONB fields, create referrals and members. Handle status field mappings. Make idempotent.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run imports and verify data. Test idempotency and relationships."
           }
         ]
@@ -1362,7 +1362,7 @@
     ],
     "metadata": {
       "created": "2025-11-10T19:15:26.704Z",
-      "updated": "2025-11-10T22:28:16.405Z",
+      "updated": "2025-11-10T22:29:23.213Z",
       "description": "Tasks for master context"
     }
   }
