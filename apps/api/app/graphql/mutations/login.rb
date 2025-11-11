@@ -28,7 +28,7 @@ module Mutations
       end
 
       # Generate JWT token
-      token = JwtService.encode(parent_id: parent.id)
+      token = JwtService.encode(parent)
       
       # Log audit trail
       AuditLog.log_access(
