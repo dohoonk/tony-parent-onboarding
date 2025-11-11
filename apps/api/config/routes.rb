@@ -7,6 +7,11 @@ Rails.application.routes.draw do
   # Streaming endpoint for AI intake
   get "/api/stream/intake/:session_id/:message_id", to: "streaming#stream_intake", as: :stream_intake
   
+  # Test OCR endpoint (development only)
+  if Rails.env.development?
+    post "/test_ocr", to: "test_ocr#extract"
+  end
+  
   # GraphiQL IDE (development only)
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
