@@ -16,7 +16,16 @@ module Authentication
     return nil unless token
 
     begin
-      decoded = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256')
+      secret_key = Rails.application.credentials.secret_key_base || 
+                   ENV['SECRET_KEY_BASE'] || 
+                   (Rails.env.development? ? 'development-secret-key-base-for-jwt-tokens-minimum-32-characters-long' : nil)
+      
+      unless secret_key
+        Rails.logger.error("❌ No secret key available for JWT verification")
+        return nil
+      end
+      
+      decoded = JWT.decode(token, secret_key, true, algorithm: 'HS256')
       payload = decoded.first
       
       parent_id = payload['parent_id']

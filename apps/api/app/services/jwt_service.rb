@@ -1,5 +1,10 @@
 class JwtService
-  SECRET_KEY = Rails.application.credentials.secret_key_base
+  # Get secret key from credentials, environment variable, or generate a development key
+  SECRET_KEY = begin
+    Rails.application.credentials.secret_key_base ||
+    ENV['SECRET_KEY_BASE'] ||
+    (Rails.env.development? ? 'development-secret-key-base-for-jwt-tokens-minimum-32-characters-long' : nil)
+  end
 
   # Encode a JWT token
   # @param parent [Parent] the parent user
