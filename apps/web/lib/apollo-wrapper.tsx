@@ -1,6 +1,7 @@
 "use client"
 
-import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider } from "@apollo/client"
+import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider, from } from "@apollo/client"
+import { setContext } from "@apollo/client/link/context"
 import { useMemo } from "react"
 
 function makeClient() {
@@ -9,9 +10,22 @@ function makeClient() {
     fetchOptions: { cache: "no-store" },
   })
 
+  // Add authentication header to all requests
+  const authLink = setContext((_, { headers }) => {
+    // Get token from localStorage (or wherever it's stored)
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+    
+    return {
+      headers: {
+        ...headers,
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+      }
+    }
+  })
+
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link: httpLink,
+    link: from([authLink, httpLink]),
   })
 }
 
