@@ -14,6 +14,7 @@ export interface OnboardingData {
   insuranceComplete?: boolean;
   schedulingComplete?: boolean;
   onboardingComplete?: boolean;
+  sessionId?: string;
 }
 
 export interface Step {
@@ -32,6 +33,7 @@ interface OnboardingContextValue {
   isLoading: boolean;
   error: string | null;
   lastSaveTime: Date | null;
+  sessionId: string | null;
   
   // Navigation
   goToStep: (step: number) => void;
@@ -46,6 +48,9 @@ interface OnboardingContextValue {
   saveProgress: () => Promise<void>;
   loadProgress: () => Promise<void>;
   hasSavedProgress: () => boolean;
+  
+  // Session management
+  createSession: () => Promise<void>;
 }
 
 const OnboardingContext = createContext<OnboardingContextValue | undefined>(undefined);
@@ -70,6 +75,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const stepStartTime = useRef<Record<number, number>>({});
   const onboardingStartTime = useRef<number | null>(null);
 
@@ -108,9 +114,12 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsLoading(true);
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const { step, data: storedData } = JSON.parse(stored);
+        const { step, data: storedData, sessionId: storedSessionId } = JSON.parse(stored);
         setCurrentStep(step);
         setData(storedData);
+        if (storedSessionId) {
+          setSessionId(storedSessionId);
+        }
       }
     } catch (err) {
       console.error('Failed to load progress:', err);
@@ -126,6 +135,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const progress = {
         step: currentStep,
         data,
+        sessionId,
         timestamp: now.toISOString()
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
@@ -134,7 +144,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.error('Failed to save progress:', err);
       throw err; // Throw to allow caller to handle
     }
-  }, [currentStep, data]);
+  }, [currentStep, data, sessionId]);
 
   const goToStep = useCallback((step: number) => {
     if (step >= 1 && step <= STEPS.length) {
@@ -180,7 +190,22 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setCurrentStep(1);
     setData({});
     setLastSaveTime(null);
+    setSessionId(null);
   }, []);
+
+  // Create a temporary session ID for now
+  // TODO: Replace with actual API call to startOnboarding mutation when authentication is implemented
+  const createSession = useCallback(async () => {
+    if (sessionId) {
+      return; // Session already exists
+    }
+    
+    // Generate a temporary session ID
+    // In production, this should call the startOnboarding GraphQL mutation
+    const tempSessionId = `temp-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    setSessionId(tempSessionId);
+    updateData({ sessionId: tempSessionId });
+  }, [sessionId]);
 
   const hasSavedProgress = useCallback((): boolean => {
     return localStorage.getItem(STORAGE_KEY) !== null;
@@ -195,6 +220,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isLoading,
     error,
     lastSaveTime,
+    sessionId,
     goToStep,
     nextStep,
     prevStep,
@@ -202,7 +228,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     clearProgress,
     saveProgress,
     loadProgress,
-    hasSavedProgress
+    hasSavedProgress,
+    createSession
   };
 
   return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;

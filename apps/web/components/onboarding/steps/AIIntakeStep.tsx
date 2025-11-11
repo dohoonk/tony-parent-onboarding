@@ -74,7 +74,9 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
 
   const handleStreamingResponse = async (userMessageId: string) => {
     if (!sessionId) {
-      setError('Session ID is required');
+      setError('Session ID is required. Please go back and complete the previous steps.');
+      setIsLoading(false);
+      setIsStreaming(false);
       return;
     }
 

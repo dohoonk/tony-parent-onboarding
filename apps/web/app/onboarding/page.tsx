@@ -22,7 +22,9 @@ const OnboardingContent: React.FC = () => {
     estimatedSecondsRemaining,
     nextStep,
     prevStep,
-    updateData
+    updateData,
+    sessionId,
+    createSession
   } = useOnboarding();
 
   const renderStep = () => {
@@ -45,8 +47,10 @@ const OnboardingContent: React.FC = () => {
       case 3:
         return (
           <StudentInfoStep
-            onNext={(studentInfo) => {
+            onNext={async (studentInfo) => {
               updateData({ studentInfo });
+              // Create session after we have both parent and student info
+              await createSession();
               nextStep();
             }}
             onPrev={prevStep}
@@ -73,7 +77,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={undefined}
+            sessionId={sessionId || undefined}
           />
         );
       
@@ -85,7 +89,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={undefined}
+            sessionId={sessionId || undefined}
           />
         );
       
@@ -97,7 +101,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={undefined}
+            sessionId={sessionId || undefined}
           />
         );
       
@@ -109,7 +113,7 @@ const OnboardingContent: React.FC = () => {
               nextStep();
             }}
             onPrev={prevStep}
-            sessionId={undefined}
+            sessionId={sessionId || undefined}
           />
         );
       
@@ -120,7 +124,7 @@ const OnboardingContent: React.FC = () => {
               updateData({ onboardingComplete: true });
               // TODO: Redirect to completion page or dashboard
             }}
-            sessionId={undefined}
+            sessionId={sessionId || undefined}
           />
         );
       
