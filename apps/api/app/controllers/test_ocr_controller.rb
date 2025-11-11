@@ -1,6 +1,5 @@
 class TestOcrController < ApplicationController
-  # Skip CSRF for testing
-  skip_before_action :verify_authenticity_token, if: -> { Rails.env.development? }
+  # API controllers don't have CSRF protection by default
 
   # Test endpoint to manually trigger OCR extraction
   # Usage: POST /test_ocr with JSON body:
