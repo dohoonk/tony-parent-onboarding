@@ -19,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SkipLink href="#main-content">Skip to main content</SkipLink>
-        <main id="main-content" tabIndex={-1}>
-          {children}
-        </main>
-        <SupportChat />
+        <ApolloWrapper>
+          <SkipLink href="#main-content">Skip to main content</SkipLink>
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <SupportChat />
+        </ApolloWrapper>
       </body>
     </html>
   );
