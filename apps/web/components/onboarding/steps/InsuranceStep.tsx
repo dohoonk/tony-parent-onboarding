@@ -39,6 +39,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
   
   const frontInputRef = useRef<HTMLInputElement>(null);
   const backInputRef = useRef<HTMLInputElement>(null);
+  const [uploadInsuranceCard] = useMutation(UPLOAD_INSURANCE_CARD);
 
   const handleImageSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -119,8 +120,6 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
       }
     }
   };
-
-  const [uploadInsuranceCard] = useMutation(UPLOAD_INSURANCE_CARD);
 
   const handleExtract = async () => {
     if (!frontImage?.url) {
