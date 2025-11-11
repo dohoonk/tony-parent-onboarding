@@ -44,3 +44,15 @@ export const BOOK_APPOINTMENT = gql`
   }
 `;
 
+export const UPLOAD_INSURANCE_CARD = gql`
+  mutation UploadInsuranceCard($input: UploadInsuranceCardInput!) {
+    uploadInsuranceCard(input: $input) {
+      insuranceCard {
+        id
+        extractedData
+      }
+      errors
+    }
+  }
+`;
+

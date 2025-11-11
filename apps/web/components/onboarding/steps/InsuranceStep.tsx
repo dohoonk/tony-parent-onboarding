@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { useMutation } from '@apollo/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InsuranceExtractionResults } from '../InsuranceExtractionResults';
 import { ManualInsuranceForm } from '../ManualInsuranceForm';
+import { UPLOAD_INSURANCE_CARD } from '@/lib/graphql/mutations';
 
 interface InsuranceStepProps {
   onNext: () => void;
@@ -118,9 +120,16 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
     }
   };
 
+  const [uploadInsuranceCard] = useMutation(UPLOAD_INSURANCE_CARD);
+
   const handleExtract = async () => {
     if (!frontImage?.url) {
       setError('Please upload at least the front of your insurance card');
+      return;
+    }
+
+    if (!sessionId) {
+      setError('Session ID is required');
       return;
     }
 
@@ -128,23 +137,32 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
     setError(null);
 
     try {
-      // TODO: Call GraphQL mutation to extract insurance data
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      // Mock extracted data
-      setExtractedData({
-        payer_name: 'Blue Cross Blue Shield',
-        member_id: 'ABC123456789',
-        group_number: 'GRP001',
-        confidence: {
-          payer_name: 'high',
-          member_id: 'medium',
-          group_number: 'low'
+      const { data } = await uploadInsuranceCard({
+        variables: {
+          input: {
+            sessionId: sessionId,
+            frontImageUrl: frontImage.url,
+            backImageUrl: backImage?.url || null
+          }
         }
       });
-    } catch (err) {
-      setError('Failed to extract insurance information. Please enter manually.');
-      console.error(err);
+
+      if (data?.uploadInsuranceCard?.errors?.length > 0) {
+        setError(data.uploadInsuranceCard.errors.join(', '));
+        return;
+      }
+
+      const extractedDataFromAPI = data?.uploadInsuranceCard?.insuranceCard?.extractedData;
+      
+      if (extractedDataFromAPI) {
+        // Data is already in the correct format: { payer_name: { value: "...", confidence: "high" }, ... }
+        setExtractedData(extractedDataFromAPI);
+      } else {
+        setError('No data extracted from the insurance card. Please try again or enter manually.');
+      }
+    } catch (err: any) {
+      console.error('OCR extraction error:', err);
+      setError(err.message || 'Failed to extract insurance information. Please enter manually.');
     } finally {
       setIsProcessing(false);
     }
