@@ -205,7 +205,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const tempSessionId = `temp-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     setSessionId(tempSessionId);
     updateData({ sessionId: tempSessionId });
-  }, [sessionId]);
+  }, [sessionId, updateData]);
 
   const hasSavedProgress = useCallback((): boolean => {
     return localStorage.getItem(STORAGE_KEY) !== null;
