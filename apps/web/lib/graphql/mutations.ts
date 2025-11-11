@@ -2,12 +2,12 @@ import { gql } from '@apollo/client';
 
 export const SIGNUP = gql`
   mutation Signup($email: String!, $password: String!, $firstName: String!, $lastName: String!) {
-    signup(email: $email, password: $password, first_name: $firstName, last_name: $lastName) {
+    signup(email: $email, password: $password, firstName: $firstName, lastName: $lastName) {
       parent {
         id
         email
-        first_name
-        last_name
+        firstName
+        lastName
       }
       token
       errors
@@ -21,8 +21,8 @@ export const LOGIN = gql`
       parent {
         id
         email
-        first_name
-        last_name
+        firstName
+        lastName
       }
       token
       errors
