@@ -111,9 +111,24 @@ class InsuranceOcrService
           {
             type: 'text',
             text: <<~PROMPT
-              Extract insurance card information from these images. Ignore any "SAMPLE" watermarks or overlays - extract the actual information that would be on a real card.
+              You are extracting insurance card information from an image. This is a REAL insurance card with actual patient data.
               
-              **CRITICAL: Read the EXACT text from the card. Do NOT make up, guess, or use placeholder values. Extract only what you can actually see on the card.**
+              **STEP 1: First, carefully examine the entire image and describe what you see:**
+              - What text labels are visible? (e.g., "Member Name:", "ID Number:", "Group Number:")
+              - What actual values appear next to those labels?
+              - Read the card from top to bottom, left to right
+              - Note any text that might be partially obscured
+              
+              **STEP 2: Extract ONLY the actual values you can see:**
+              - If you see "Member Name: JAMIE DOE", extract "JAMIE DOE" (not "Member Name")
+              - If you see "ID Number: ABC123456789", extract "ABC123456789" (not "ID Number" or a placeholder)
+              - If you see "Group Number: 123456", extract "123456" (not "Group Number" or a placeholder)
+              
+              **CRITICAL RULES:**
+              1. NEVER use placeholder values like "Member Name", "ABC123", "123456", "XYZ123456789", "023457"
+              2. NEVER extract the LABEL itself as the value (e.g., don't extract "Member Name" as the subscriber_name)
+              3. If you cannot clearly see a value, set confidence to "low" or omit the field entirely
+              4. Extract EXACTLY what is written on the card - do not modify, guess, or infer
               
               **IMPORTANT:** Look carefully at the card layout. Common insurance card formats:
               - Blue Cross Blue Shield: Look for "Member Name", "Identification Number" or "ID Number", "Group Number"
@@ -171,10 +186,13 @@ class InsuranceOcrService
               - For dates, extract exactly as shown and we'll parse the format
               - If a field is not visible or unclear, set confidence to "low" or omit it - do NOT guess
               
-              **Before returning JSON, verify:**
-              - subscriber_name should be an actual name (not "Member Name" or "Subscriber Name")
-              - member_id should be the actual ID number from the card (not "ABC123" or placeholder)
-              - group_number should be the actual group number (not "123456" or placeholder)
+              **VERIFICATION CHECKLIST (before returning JSON):**
+              - subscriber_name: Is this an actual person's name? (NOT "Member Name", "Subscriber Name", or any label)
+              - member_id: Is this the actual ID/policy number? (NOT "ABC123", "XYZ123456789", or any placeholder pattern)
+              - group_number: Is this the actual group number? (NOT "123456", "023457", or any placeholder pattern)
+              - payer_name: Is this the actual insurance company name? (NOT a generic placeholder)
+              
+              If any field contains placeholder-like values, set confidence to "low" and note in the response that the value may be unclear.
               
               For each field, provide a confidence level: "high", "medium", or "low" based on how clearly the information is visible.
               
@@ -267,10 +285,23 @@ class InsuranceOcrService
         # Transform values based on field type
         transformed_value = transform_field_value(key, raw_value)
         
+        # Validate that we didn't extract placeholder values
+        if is_placeholder_value?(key, transformed_value)
+          Rails.logger.warn("Detected placeholder value for #{key}: #{transformed_value.inspect}")
+          # Set confidence to low and keep the value (user can manually correct)
+          confidence = 'low'
+        end
+        
         result[key] = transformed_value
         confidence_scores[key] = confidence
       else
         transformed_value = transform_field_value(key, value)
+        
+        # Validate placeholder values
+        if is_placeholder_value?(key, transformed_value)
+          Rails.logger.warn("Detected placeholder value for #{key}: #{transformed_value.inspect}")
+        end
+        
         result[key] = transformed_value
         confidence_scores[key] = 'medium' # Default confidence
       end
@@ -280,6 +311,50 @@ class InsuranceOcrService
       extracted_data: result,
       confidence_scores: confidence_scores
     }
+  end
+
+  # Check if a value looks like a placeholder (template card)
+  # @param field_name [Symbol, String] Field name
+  # @param value [String] Extracted value
+  # @return [Boolean] True if value appears to be a placeholder
+  def self.is_placeholder_value?(field_name, value)
+    return false if value.blank?
+    
+    value_str = value.to_s.strip
+    
+    # Common placeholder patterns
+    placeholder_patterns = {
+      subscriber_name: [
+        /^member\s+name$/i,
+        /^subscriber\s+name$/i,
+        /^name$/i,
+        /^policyholder\s+name$/i,
+        /^insured\s+name$/i,
+        /^patient\s+name$/i
+      ],
+      member_id: [
+        /^xyz\d+$/i,
+        /^abc\d+$/i,
+        /^123456789$/,
+        /^sample\d*$/i,
+        /^test\d*$/i,
+        /^placeholder/i
+      ],
+      group_number: [
+        /^023457$/,
+        /^123456$/,
+        /^000000$/,
+        /^sample$/i,
+        /^test$/i
+      ],
+      payer_name: [
+        /^sample\s+insurance/i,
+        /^test\s+insurance/i
+      ]
+    }
+    
+    patterns = placeholder_patterns[field_name.to_sym] || []
+    patterns.any? { |pattern| value_str.match?(pattern) }
   end
 
   def self.transform_field_value(field_name, value)
