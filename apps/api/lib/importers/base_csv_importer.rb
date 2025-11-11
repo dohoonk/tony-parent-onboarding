@@ -1,3 +1,5 @@
+require 'csv'
+
 module Importers
   class BaseCsvImporter
     attr_reader :csv_path, :model_class, :stats

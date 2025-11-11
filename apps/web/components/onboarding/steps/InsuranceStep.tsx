@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { InsuranceExtractionResults } from '../InsuranceExtractionResults';
 import { ManualInsuranceForm } from '../ManualInsuranceForm';
 import { UPLOAD_INSURANCE_CARD } from '@/lib/graphql/mutations';
 
@@ -66,6 +65,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
       const uploaded: UploadedImage = {
         file,
         preview,
+        url: preview,
         uploading: false
       };
 
@@ -86,38 +86,6 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
     } else {
       setBackImage(null);
       if (backInputRef.current) backInputRef.current.value = '';
-    }
-  };
-
-  const handleUpload = async (side: 'front' | 'back') => {
-    const image = side === 'front' ? frontImage : backImage;
-    if (!image) return;
-
-    // TODO: Get presigned URL and upload to S3
-    // For now, simulate upload
-    if (side === 'front') {
-      setFrontImage((prev) => prev ? { ...prev, uploading: true } : null);
-    } else {
-      setBackImage((prev) => prev ? { ...prev, uploading: true } : null);
-    }
-
-    try {
-      // Simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      const mockUrl = `https://s3.example.com/insurance-cards/${side}-${Date.now()}.jpg`;
-      
-      if (side === 'front') {
-        setFrontImage((prev) => prev ? { ...prev, url: mockUrl, uploading: false } : null);
-      } else {
-        setBackImage((prev) => prev ? { ...prev, url: mockUrl, uploading: false } : null);
-      }
-    } catch (err) {
-      if (side === 'front') {
-        setFrontImage((prev) => prev ? { ...prev, uploading: false, error: 'Upload failed' } : null);
-      } else {
-        setBackImage((prev) => prev ? { ...prev, uploading: false, error: 'Upload failed' } : null);
-      }
     }
   };
 
@@ -163,6 +131,8 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
       if (extractedDataFromAPI && Object.keys(extractedDataFromAPI).length > 0) {
         // Data is already in the correct format: { payer_name: { value: "...", confidence: "high" }, ... }
         setExtractedData(extractedDataFromAPI);
+        setConfirmedData(null);
+        setShowManualForm(true);
       } else {
         setError('No data extracted from the insurance card. Please try again or enter manually.');
       }
@@ -218,7 +188,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
                 {frontImage.url && (
                   <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
                     <CheckCircle2 className="h-4 w-4" />
-                    Uploaded
+                    Ready for extraction
                   </div>
                 )}
                 {frontImage.error && (
@@ -249,24 +219,6 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
               className="hidden"
               aria-label="Upload front of insurance card"
             />
-            {frontImage && !frontImage.url && (
-              <Button
-                type="button"
-                onClick={() => handleUpload('front')}
-                disabled={frontImage.uploading}
-                className="w-full"
-                size="sm"
-              >
-                {frontImage.uploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  'Upload to Server'
-                )}
-              </Button>
-            )}
           </CardContent>
         </Card>
 
@@ -303,7 +255,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
                 {backImage.url && (
                   <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
                     <CheckCircle2 className="h-4 w-4" />
-                    Uploaded
+                    Ready for extraction
                   </div>
                 )}
               </div>
@@ -328,27 +280,21 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
               className="hidden"
               aria-label="Upload back of insurance card"
             />
-            {backImage && !backImage.url && (
-              <Button
-                type="button"
-                onClick={() => handleUpload('back')}
-                disabled={backImage.uploading}
-                className="w-full"
-                size="sm"
-              >
-                {backImage.uploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  'Upload to Server'
-                )}
-              </Button>
-            )}
           </CardContent>
         </Card>
       </div>
+
+      {!showManualForm && (
+        <div className="flex justify-end">
+          <Button variant="link" type="button" onClick={() => {
+            setShowManualForm(true);
+            setExtractedData(null);
+            setConfirmedData(null);
+          }}>
+            Enter information manually instead
+          </Button>
+        </div>
+      )}
 
       {/* Extract Button */}
       {frontImage?.url && !extractedData && !showManualForm && (
@@ -371,39 +317,43 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
         </div>
       )}
 
-      {/* Extraction Results */}
-      {extractedData && !showManualForm && (
-        <InsuranceExtractionResults
-          extractedData={extractedData}
-          onConfirm={(data) => {
-            setConfirmedData(data);
-            setShowManualForm(false);
-          }}
-          onEdit={() => setShowManualForm(true)}
-        />
-      )}
-
       {/* Manual Entry Form */}
       {showManualForm && (
         <ManualInsuranceForm
-          initialData={extractedData ? Object.fromEntries(
+          initialData={(() => {
+            if (confirmedData) {
+              return confirmedData;
+            }
+            if (extractedData) {
+              return Object.fromEntries(
+                Object.entries(extractedData).map(([key, field]: [string, any]) => [
+                  key,
+                  field?.value || ''
+                ])
+              );
+            }
+            return {};
+          })()}
+          confidenceMap={extractedData ? Object.fromEntries(
             Object.entries(extractedData).map(([key, field]: [string, any]) => [
               key,
-              field?.value || ''
+              field?.confidence || ''
             ])
-          ) : {}}
+          ) : undefined}
           onSubmit={(data) => {
             setConfirmedData(data);
-            setShowManualForm(false);
+            onNext();
           }}
-          onCancel={() => {
-            if (extractedData) {
-              setShowManualForm(false);
-            } else {
-              setFrontImage(null);
-              setBackImage(null);
-            }
-          }}
+          onCancel={
+            showManualForm && !extractedData
+              ? () => {
+                  setShowManualForm(false);
+                  setConfirmedData(null);
+                }
+              : extractedData
+              ? () => setShowManualForm(false)
+              : undefined
+          }
         />
       )}
 
@@ -416,13 +366,6 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
         <Button type="button" variant="outline" onClick={onPrev} className="w-full sm:w-auto">
           Back
-        </Button>
-        <Button
-          onClick={onNext}
-          disabled={!confirmedData}
-          className="w-full sm:w-auto"
-        >
-          Continue
         </Button>
       </div>
     </div>

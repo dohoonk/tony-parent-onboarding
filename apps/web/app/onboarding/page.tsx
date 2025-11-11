@@ -30,7 +30,26 @@ const OnboardingContent: React.FC = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <WelcomeStep onNext={nextStep} />;
+        return (
+          <WelcomeStep
+            onNext={nextStep}
+            onAuthSuccess={({ firstName, lastName, email }) => {
+              updateData({
+                parentInfo: {
+                  ...(data.parentInfo || {}),
+                  firstName,
+                  lastName,
+                  email,
+                  phone: data.parentInfo?.phone || '',
+                  street: data.parentInfo?.street || '',
+                  city: data.parentInfo?.city || '',
+                  state: data.parentInfo?.state || '',
+                  postalCode: data.parentInfo?.postalCode || ''
+                }
+              });
+            }}
+          />
+        );
       
       case 2:
         return (
@@ -48,9 +67,8 @@ const OnboardingContent: React.FC = () => {
         return (
           <StudentInfoStep
             onNext={async (studentInfo) => {
-              updateData({ studentInfo });
               // Create session after we have both parent and student info
-              await createSession();
+              await createSession(studentInfo);
               nextStep();
             }}
             onPrev={prevStep}

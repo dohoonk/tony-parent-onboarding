@@ -8,12 +8,11 @@ class OpenaiService
     @client = OpenAI::Client.new(access_token: api_key)
   end
 
-  # Generate a chat completion with streaming support
+  # Generate a chat completion
   # @param messages [Array<Hash>] Array of message hashes with role and content
-  # @param stream [Boolean] Whether to stream the response
   # @param system_prompt [String] Optional system prompt
-  # @return [Hash, Enumerator] Response hash or streaming enumerator
-  def chat_completion(messages:, stream: false, system_prompt: nil)
+  # @return [Hash] Response hash
+  def chat_completion(messages:, system_prompt: nil)
     request_messages = messages.dup
     request_messages.unshift({ role: 'system', content: system_prompt }) if system_prompt
 
@@ -29,20 +28,11 @@ class OpenaiService
       model: model,
       messages: request_messages,
       max_tokens: max_tokens,
-      temperature: TEMPERATURE,
-      stream: stream
+      temperature: TEMPERATURE
     }
 
-    if stream
-      @client.chat(
-        parameters: params
-      )
-    else
-      response = @client.chat(
-        parameters: params
-      )
-      parse_response(response)
-    end
+    response = @client.chat(parameters: params)
+    parse_response(response)
   rescue OpenAI::Error => e
     Rails.logger.error("=" * 80)
     Rails.logger.error("OpenAI API Error")
@@ -58,12 +48,30 @@ class OpenaiService
   # @param system_prompt [String] Optional system prompt
   # @yield [String] Yields content chunks as they arrive
   def stream_chat_completion(messages:, system_prompt: nil, &block)
-    enum = chat_completion(messages: messages, stream: true, system_prompt: system_prompt)
-    
-    enum.each do |chunk|
-      content = extract_content_from_chunk(chunk)
-      block.call(content) if content.present?
+    raise ArgumentError, "Block is required for streaming" unless block_given?
+
+    request_messages = messages.dup
+    request_messages.unshift({ role: 'system', content: system_prompt }) if system_prompt
+
+    has_images = request_messages.any? do |msg|
+      msg[:content].is_a?(Array) && msg[:content].any? { |item| item.is_a?(Hash) && item[:type] == 'image_url' }
     end
+
+    model = has_images ? VISION_MODEL : MODEL
+    max_tokens = has_images ? 2000 : MAX_TOKENS
+
+    params = {
+      model: model,
+      messages: request_messages,
+      max_tokens: max_tokens,
+      temperature: TEMPERATURE,
+      stream: proc do |chunk, _bytesize|
+        content = extract_content_from_chunk(chunk)
+        block.call(content) if content.present?
+      end
+    }
+
+    @client.chat(parameters: params)
   rescue OpenAI::Error => e
     Rails.logger.error("OpenAI streaming error: #{e.message}")
     raise ServiceError.new("AI streaming unavailable: #{e.message}")

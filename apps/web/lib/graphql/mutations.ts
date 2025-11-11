@@ -74,6 +74,69 @@ export const BOOK_APPOINTMENT = gql`
   }
 `;
 
+export const START_ONBOARDING = gql`
+  mutation StartOnboarding($input: StartOnboardingInput!) {
+    startOnboarding(input: $input) {
+      session {
+        id
+        status
+        currentStep
+        student {
+          id
+          firstName
+          lastName
+        }
+      }
+      errors
+    }
+  }
+`;
+
+export const CREATE_STUDENT = gql`
+  mutation CreateStudent($input: CreateStudentInput!) {
+    createStudent(input: $input) {
+      student {
+        id
+        firstName
+        lastName
+        dateOfBirth
+        grade
+        school
+        language
+      }
+      errors
+    }
+  }
+`;
+
+export const CREATE_AVAILABILITY_WINDOW = gql`
+  mutation CreateAvailabilityWindow($input: CreateAvailabilityWindowInput!) {
+    createAvailabilityWindow(input: $input) {
+      availabilityWindow {
+        id
+        startDate
+        endDate
+        timezone
+        availabilityJson
+      }
+      errors
+    }
+  }
+`;
+
+export const CREATE_INTAKE_MESSAGE = gql`
+  mutation CreateIntakeMessage($input: CreateIntakeMessageInput!) {
+    createIntakeMessage(input: $input) {
+      message {
+        id
+        content
+        createdAt
+      }
+      errors
+    }
+  }
+`;
+
 export const UPLOAD_INSURANCE_CARD = gql`
   mutation UploadInsuranceCard($input: UploadInsuranceCardInput!) {
     uploadInsuranceCard(input: $input) {

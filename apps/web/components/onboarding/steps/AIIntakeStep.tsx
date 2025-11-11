@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useMutation } from '@apollo/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { Send, Loader2 } from 'lucide-react';
 import { ChatMessage } from './AIIntakeChat';
 import { AIChatPanel } from './AIChatPanel';
 import { IntakeSummaryReview } from './IntakeSummaryReview';
+import { CREATE_INTAKE_MESSAGE } from '@/lib/graphql/mutations';
 
 interface AIIntakeStepProps {
   onNext: () => void;
@@ -32,6 +34,7 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
     risk_flags: string[];
     summary_text: string;
   } | null>(null);
+  const [createIntakeMessageMutation] = useMutation(CREATE_INTAKE_MESSAGE);
 
   // Initialize with welcome message
   useEffect(() => {
@@ -50,37 +53,98 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const trimmedMessage = input.trim();
+    if (!trimmedMessage || isLoading) return;
 
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input.trim(),
-      timestamp: new Date()
-    };
+    if (!sessionId) {
+      setError('Session ID is required. Please go back and complete the previous steps.');
+      return;
+    }
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
-    setIsStreaming(true);
     setError(null);
 
+    // Development mode: simulate conversation when using temp sessions
+    const isTempSession = sessionId.startsWith('temp-session-');
+
+    if (isTempSession) {
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: trimmedMessage,
+        timestamp: new Date()
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setInput('');
+      setIsLoading(true);
+      setIsStreaming(true);
+
+      try {
+        await handleStreamingResponse(userMessage.id, trimmedMessage, true);
+      } catch (err) {
+        setError('Failed to send message. Please try again.');
+        console.error('Chat error:', err);
+        setIsLoading(false);
+        setIsStreaming(false);
+      }
+
+      return;
+    }
+
+    setIsLoading(true);
+    setIsStreaming(true);
+
     try {
-      // TODO: Call GraphQL mutation to send message first
-      // For now, we'll use a temporary ID and call streaming
-      const tempMessageId = userMessage.id;
-      
-      // Start streaming response
-      await handleStreamingResponse(tempMessageId);
-    } catch (err) {
-      setError('Failed to send message. Please try again.');
+      const { data, errors: mutationErrors } = await createIntakeMessageMutation({
+        variables: {
+          input: {
+            sessionId,
+            content: trimmedMessage
+          }
+        }
+      });
+
+      if (mutationErrors && mutationErrors.length > 0) {
+        throw new Error(mutationErrors[0].message);
+      }
+
+      const payload = data?.createIntakeMessage;
+
+      if (payload?.errors && payload.errors.length > 0) {
+        throw new Error(payload.errors[0]);
+      }
+
+      const createdMessage = payload?.message;
+
+      if (!createdMessage?.id) {
+        throw new Error('Failed to create intake message.');
+      }
+
+      const userMessage: ChatMessage = {
+        id: createdMessage.id,
+        role: 'user',
+        content: createdMessage.content,
+        timestamp: createdMessage.createdAt ? new Date(createdMessage.createdAt) : new Date()
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setInput('');
+
+      // Start streaming response with the persisted message ID
+      await handleStreamingResponse(userMessage.id, trimmedMessage, false);
+    } catch (err: any) {
+      setError(err.message || 'Failed to send message. Please try again.');
       console.error('Chat error:', err);
       setIsLoading(false);
       setIsStreaming(false);
     }
   };
 
-  const handleStreamingResponse = async (userMessageId: string) => {
+  const handleStreamingResponse = async (
+    userMessageId: string,
+    userMessageContent: string,
+    isTempSession: boolean
+  ) => {
     if (!sessionId) {
       setError('Session ID is required. Please go back and complete the previous steps.');
       setIsLoading(false);
@@ -88,19 +152,14 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       return;
     }
 
-    // Check if this is a temporary session ID (development mode)
-    const isTempSession = sessionId.startsWith('temp-session-');
-    
     if (isTempSession) {
       // Development mode: Simulate AI response since we don't have a real backend session
       setIsStreaming(true);
-      
-      // Get the last user message to generate context-aware response
-      const lastUserMessage = messages.findLast(msg => msg.role === 'user');
-      const userInput = lastUserMessage?.content.toLowerCase() || '';
-      
-      // Count conversation turns to track progress
-      const userMessageCount = messages.filter(msg => msg.role === 'user').length;
+      const userInput = userMessageContent.toLowerCase();
+
+      // Count conversation turns to track progress (include current message)
+      const previousUserMessageCount = messages.filter(msg => msg.role === 'user').length;
+      const userMessageCount = previousUserMessageCount + 1;
       
       // Generate context-aware response based on user input and conversation progress
       let simulatedResponse = '';
@@ -142,8 +201,13 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       }
       
       // Check if user wants to finish (after getting updated messages)
-      const shouldExtractSummary = userInput.includes('ready') || userInput.includes('done') || userInput.includes('complete') || 
-            userInput.includes('next step') || userInput.includes('move on') || userInput.includes('finish');
+      const shouldExtractSummary =
+        userInput.includes('ready') ||
+        userInput.includes('done') ||
+        userInput.includes('complete') ||
+        userInput.includes('next step') ||
+        userInput.includes('move on') ||
+        userInput.includes('finish');
       
       // Simulate chunked streaming
       const words = simulatedResponse.split(' ');
@@ -192,7 +256,6 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
     }
 
     // Production mode: Use real streaming
-    // TODO: Get auth token from context/store
     const token = localStorage.getItem('auth_token') || '';
     
     // Import streaming client dynamically

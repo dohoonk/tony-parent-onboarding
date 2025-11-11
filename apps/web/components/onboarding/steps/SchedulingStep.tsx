@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2, Calendar, User, CheckCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { MATCH_THERAPISTS, BOOK_APPOINTMENT } from '@/lib/graphql/mutations';
+import { MATCH_THERAPISTS, BOOK_APPOINTMENT, CREATE_AVAILABILITY_WINDOW } from '@/lib/graphql/mutations';
 
 interface TherapistMatch {
   id: string;
@@ -35,7 +36,9 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   onPrev,
   sessionId
 }) => {
-  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
   const [therapistMatches, setTherapistMatches] = useState<TherapistMatch[]>([]);
   const [selectedTherapist, setSelectedTherapist] = useState<string>('');
   const [availabilityWindowId, setAvailabilityWindowId] = useState<string | null>(null);
@@ -43,32 +46,57 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   const [isBooking, setIsBooking] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const availabilityWindowCacheRef = useRef<Record<string, string>>({});
 
   const [matchTherapists] = useMutation(MATCH_THERAPISTS);
+  const [createAvailabilityWindow] = useMutation(CREATE_AVAILABILITY_WINDOW);
   const [bookAppointment] = useMutation(BOOK_APPOINTMENT);
 
-  const timeSlots = [
-    { id: 'morning', label: 'Morning (9 AM - 12 PM)', value: 'morning', timeRange: { start: 9, end: 12 } },
-    { id: 'afternoon', label: 'Afternoon (12 PM - 5 PM)', value: 'afternoon', timeRange: { start: 12, end: 17 } },
-    { id: 'evening', label: 'Evening (5 PM - 8 PM)', value: 'evening', timeRange: { start: 17, end: 20 } }
-  ];
-
   useEffect(() => {
-    if (selectedTime && sessionId) {
+    if (selectedDate && startTime && endTime && sessionId) {
       loadTherapistMatches();
     }
-  }, [selectedTime, sessionId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, startTime, endTime, sessionId]);
 
-  // Helper to create a temporary availability window ID based on time slot
-  // In production, this should create an actual availability window or use an existing one
-  const getAvailabilityWindowId = (timeSlot: string): string => {
-    // For now, we'll use a placeholder approach
-    // In production, you'd either:
-    // 1. Query existing availability windows for the parent/student
-    // 2. Create a new availability window via mutation
-    // 3. Use a default availability window ID
-    // This is a temporary solution - the backend should handle this better
-    return `temp-${timeSlot}-${sessionId}`;
+  const buildAvailabilityJson = () => {
+    if (!selectedDate || !startTime || !endTime) {
+      throw new Error('Please choose a date and time range');
+    }
+
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+    const startInMinutes = startHour * 60 + startMinute;
+    const endInMinutes = endHour * 60 + endMinute;
+
+    if (Number.isNaN(startInMinutes) || Number.isNaN(endInMinutes)) {
+      throw new Error('Invalid time selection');
+    }
+
+    const durationMinutes = endInMinutes - startInMinutes;
+
+    if (durationMinutes <= 0) {
+      throw new Error('End time must be after start time');
+    }
+
+    const dateObj = new Date(`${selectedDate}T00:00:00`);
+    const dayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long' });
+    const dayName = dayFormatter.format(dateObj);
+
+    return {
+      days: [
+        {
+          day: dayName,
+          time_blocks: [
+            {
+              start: `${startTime}`,
+              duration: durationMinutes
+            }
+          ]
+        }
+      ]
+    };
   };
 
   const loadTherapistMatches = async () => {
@@ -77,13 +105,54 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
       return;
     }
 
+    if (!selectedDate || !startTime || !endTime) {
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Create a temporary availability window ID based on the time slot
-      // Note: In production, this should be a real availability window ID
-      const windowId = getAvailabilityWindowId(selectedTime);
+      const timezone =
+        (typeof Intl !== 'undefined' && Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+        'America/Los_Angeles';
+      const cacheKey = `${selectedDate}|${startTime}-${endTime}|${timezone}`;
+      let windowId = availabilityWindowCacheRef.current[cacheKey];
+
+      if (!windowId) {
+        const availabilityJson = buildAvailabilityJson();
+        const startDate = selectedDate;
+
+        const { data: availabilityData, errors: availabilityErrors } = await createAvailabilityWindow({
+          variables: {
+            input: {
+              startDate,
+              endDate: startDate,
+              timezone,
+              availabilityJson
+            }
+          }
+        });
+
+        if (availabilityErrors && availabilityErrors.length > 0) {
+          throw new Error(availabilityErrors[0].message);
+        }
+
+        const availabilityPayload = availabilityData?.createAvailabilityWindow;
+
+        if (availabilityPayload?.errors && availabilityPayload.errors.length > 0) {
+          throw new Error(availabilityPayload.errors[0]);
+        }
+
+        windowId = availabilityPayload?.availabilityWindow?.id;
+
+        if (!windowId) {
+          throw new Error('Failed to create availability window');
+        }
+
+        availabilityWindowCacheRef.current[cacheKey] = windowId;
+      }
+
       setAvailabilityWindowId(windowId);
 
       const { data, errors } = await matchTherapists({
@@ -127,8 +196,8 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   };
 
   const handleBook = async () => {
-    if (!selectedTherapist || !selectedTime || !sessionId) {
-      setError('Please select a therapist and time slot');
+    if (!selectedTherapist || !selectedDate || !startTime || !endTime || !sessionId) {
+      setError('Please select a therapist, date, and time range');
       return;
     }
 
@@ -136,12 +205,9 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
     setError(null);
 
     try {
-      // Calculate scheduled_at based on selected time slot
-      // For now, schedule for next week at the start of the selected time range
-      const timeSlot = timeSlots.find(slot => slot.value === selectedTime);
-      const scheduledDate = new Date();
-      scheduledDate.setDate(scheduledDate.getDate() + 7); // Next week
-      scheduledDate.setHours(timeSlot?.timeRange.start || 14, 0, 0, 0); // Start of time range
+      const [startHour, startMinute] = startTime.split(':').map(Number);
+      const scheduledDate = new Date(`${selectedDate}T00:00:00`);
+      scheduledDate.setHours(startHour || 0, startMinute || 0, 0, 0);
 
       const { data, errors } = await bookAppointment({
         variables: {
@@ -211,31 +277,73 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
         </p>
       </div>
 
-      {/* Time Selection */}
+      {/* Availability Selection */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <CardTitle>Select Preferred Time</CardTitle>
+            <CardTitle>Select Preferred Date & Time</CardTitle>
           </div>
-          <CardDescription>When would you prefer to have sessions?</CardDescription>
+          <CardDescription>Choose the day and time range that works best for your family.</CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup value={selectedTime} onValueChange={setSelectedTime}>
-            {timeSlots.map((slot) => (
-              <div key={slot.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={slot.value} id={slot.id} />
-                <Label htmlFor={slot.id} className="font-normal cursor-pointer">
-                  {slot.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="availability-date">Preferred date</Label>
+              <Input
+                id="availability-date"
+                type="date"
+                value={selectedDate}
+                min={new Date().toISOString().split('T')[0]}
+                onChange={(event) => {
+                  setSelectedDate(event.target.value);
+                  setSelectedTherapist('');
+                  setTherapistMatches([]);
+                  setAvailabilityWindowId(null);
+                  setError(null);
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="start-time">Start time</Label>
+              <Input
+                id="start-time"
+                type="time"
+                value={startTime}
+                onChange={(event) => {
+                  setStartTime(event.target.value);
+                  setSelectedTherapist('');
+                  setTherapistMatches([]);
+                  setAvailabilityWindowId(null);
+                  setError(null);
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="end-time">End time</Label>
+              <Input
+                id="end-time"
+                type="time"
+                value={endTime}
+                min={startTime}
+                onChange={(event) => {
+                  setEndTime(event.target.value);
+                  setSelectedTherapist('');
+                  setTherapistMatches([]);
+                  setAvailabilityWindowId(null);
+                  setError(null);
+                }}
+              />
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            We&apos;ll match you with therapists who have openings during this exact window.
+          </p>
         </CardContent>
       </Card>
 
       {/* Therapist Matches */}
-      {selectedTime && (
+      {selectedDate && startTime && endTime && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -337,7 +445,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
         </Button>
         <Button
           onClick={handleBook}
-          disabled={!selectedTherapist || !selectedTime || isBooking}
+          disabled={!selectedTherapist || !selectedDate || !startTime || !endTime || isBooking}
           className="w-full sm:w-auto"
         >
           {isBooking ? (

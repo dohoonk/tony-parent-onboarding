@@ -16,6 +16,10 @@ export interface ParentInfoData {
   lastName: string;
   email: string;
   phone: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
@@ -27,7 +31,11 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
     firstName: initialData.firstName || '',
     lastName: initialData.lastName || '',
     email: initialData.email || '',
-    phone: initialData.phone || ''
+    phone: initialData.phone || '',
+    street: initialData.street || '',
+    city: initialData.city || '',
+    state: initialData.state || '',
+    postalCode: initialData.postalCode || ''
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof ParentInfoData, string>>>({});
@@ -150,6 +158,50 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
               {errors.phone}
             </p>
           )}
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold text-muted-foreground">Home Address</h3>
+          <p className="text-xs text-muted-foreground">
+            This helps us match you with clinicians in your area.
+          </p>
+          <div className="mt-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="street">Street address</Label>
+              <Input
+                id="street"
+                value={formData.street}
+                onChange={(e) => handleChange('street', e.target.value)}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => handleChange('city', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={(e) => handleChange('state', e.target.value)}
+                  placeholder="CA"
+                />
+              </div>
+            </div>
+            <div className="space-y-2 sm:w-1/2">
+              <Label htmlFor="postalCode">ZIP / Postal code</Label>
+              <Input
+                id="postalCode"
+                value={formData.postalCode}
+                onChange={(e) => handleChange('postalCode', e.target.value)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

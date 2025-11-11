@@ -18,11 +18,7 @@ module Mutations
         return { matches: [], errors: ["Session not found"] }
       end
 
-      student = session.students.first
-      
-      unless student
-        return { matches: [], errors: ["Student not found"] }
-      end
+      student = session.student
 
       availability_window = AvailabilityWindow.find_by(id: availability_window_id)
       

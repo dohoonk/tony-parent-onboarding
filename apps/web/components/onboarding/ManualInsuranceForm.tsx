@@ -1,22 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '@/components/ui/tooltip';
 
 interface ManualInsuranceFormProps {
   initialData?: Record<string, string>;
+  confidenceMap?: Record<string, string>;
   onSubmit: (data: Record<string, string>) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  submitLabel?: string;
 }
 
 const FIELD_HELP: Record<string, string> = {
@@ -42,41 +45,88 @@ const FIELD_HELP: Record<string, string> = {
   eligibility: 'Eligibility status: Active, Pending, Expired, or Terminated'
 };
 
+const CONFIDENCE_LABELS: Record<string, string> = {
+  high: 'High Confidence',
+  medium: 'Medium Confidence',
+  low: 'Low Confidence'
+};
+
+const CONFIDENCE_BADGE_CLASSES: Record<string, string> = {
+  high: 'border-blue-200 bg-blue-50 text-blue-700',
+  medium: 'border-amber-200 bg-amber-50 text-amber-700',
+  low: 'border-red-200 bg-red-50 text-red-700'
+};
+
+const CONFIDENCE_INPUT_CLASSES: Record<string, string> = {
+  high: '',
+  medium: 'border-amber-300 bg-amber-50 focus-visible:ring-amber-400',
+  low: 'border-red-300 bg-red-50 focus-visible:ring-red-400'
+};
+
+const buildInitialState = (data: Record<string, string>) => ({
+  // Basic insurance information
+  payer_name: data.payer_name || '',
+  insurance_company_name: data.insurance_company_name || '',
+  member_id: data.member_id || '',
+  group_number: data.group_number || '',
+  group_id: data.group_id || '',
+  subscriber_name: data.subscriber_name || '',
+  plan_type: data.plan_type || '',
+  effective_date: data.effective_date || '',
+  // Plan holder information
+  plan_holder_first_name: data.plan_holder_first_name || '',
+  plan_holder_last_name: data.plan_holder_last_name || '',
+  plan_holder_dob: data.plan_holder_dob || '',
+  plan_holder_country: data.plan_holder_country || 'US',
+  plan_holder_state: data.plan_holder_state || '',
+  plan_holder_city: data.plan_holder_city || '',
+  plan_holder_street_address: data.plan_holder_street_address || '',
+  plan_holder_zip_code: data.plan_holder_zip_code || '',
+  plan_holder_legal_gender: data.plan_holder_legal_gender || '',
+  // Policy metadata
+  kind: data.kind || '',
+  level: data.level || '',
+  eligibility: data.eligibility || '1'
+});
+
 export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
   initialData = {},
+  confidenceMap,
   onSubmit,
-  onCancel
+  onCancel,
+  submitLabel = 'Confirm and Continue'
 }) => {
-  const [formData, setFormData] = useState({
-    // Basic insurance information
-    payer_name: initialData.payer_name || '',
-    insurance_company_name: initialData.insurance_company_name || '',
-    member_id: initialData.member_id || '',
-    group_number: initialData.group_number || '',
-    group_id: initialData.group_id || '',
-    subscriber_name: initialData.subscriber_name || '',
-    plan_type: initialData.plan_type || '',
-    effective_date: initialData.effective_date || '',
-    // Plan holder information
-    plan_holder_first_name: initialData.plan_holder_first_name || '',
-    plan_holder_last_name: initialData.plan_holder_last_name || '',
-    plan_holder_dob: initialData.plan_holder_dob || '',
-    plan_holder_country: initialData.plan_holder_country || 'US',
-    plan_holder_state: initialData.plan_holder_state || '',
-    plan_holder_city: initialData.plan_holder_city || '',
-    plan_holder_street_address: initialData.plan_holder_street_address || '',
-    plan_holder_zip_code: initialData.plan_holder_zip_code || '',
-    plan_holder_legal_gender: initialData.plan_holder_legal_gender || '',
-    // Policy metadata
-    kind: initialData.kind || '',
-    level: initialData.level || '',
-    eligibility: initialData.eligibility || '1' // Default to active
-  });
+  const [formData, setFormData] = useState(buildInitialState(initialData));
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPlanHolderSection, setShowPlanHolderSection] = useState(
     !!(initialData.plan_holder_first_name || initialData.plan_holder_last_name)
   );
+
+  useEffect(() => {
+    setFormData(buildInitialState(initialData));
+    setShowPlanHolderSection(
+      !!(initialData.plan_holder_first_name || initialData.plan_holder_last_name)
+    );
+  }, [initialData]);
+
+  const hasConfidenceData = useMemo(
+    () => Boolean(confidenceMap && Object.keys(confidenceMap).length > 0),
+    [confidenceMap]
+  );
+
+  const prefilledCount = useMemo(
+    () => Object.values(initialData).filter((value) => value && value.trim() !== '').length,
+    [initialData]
+  );
+
+  const needsReviewCount = useMemo(() => {
+    if (!confidenceMap) return 0;
+    return Object.values(confidenceMap).filter((confidence) => {
+      const normalized = confidence?.toLowerCase();
+      return normalized === 'medium' || normalized === 'low';
+    }).length;
+  }, [confidenceMap]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -110,11 +160,27 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
     }
   };
 
+  const getConfidence = (key: string): string | undefined => {
+    const raw = confidenceMap?.[key];
+    return raw ? raw.toLowerCase() : undefined;
+  };
+
   const renderField = (key: string, value: string, isRequired: boolean) => {
     const helpText = FIELD_HELP[key];
-    const fieldType = key.includes('dob') || key.includes('date') ? 'date' : 
-                     key.includes('gender') ? 'select' : 
-                     key === 'kind' || key === 'level' || key === 'eligibility' ? 'select' : 'text';
+    const fieldType =
+      key.includes('dob') || key.includes('date')
+        ? 'date'
+        : key.includes('gender')
+        ? 'select'
+        : key === 'kind' || key === 'level' || key === 'eligibility'
+        ? 'select'
+        : 'text';
+    const confidence = getConfidence(key);
+    const badgeClass = confidence ? CONFIDENCE_BADGE_CLASSES[confidence] || '' : '';
+    const inputHighlightClass = confidence
+      ? CONFIDENCE_INPUT_CLASSES[confidence] || ''
+      : '';
+    const needsReview = confidence === 'medium' || confidence === 'low';
 
     return (
       <div key={key} className="space-y-2">
@@ -123,6 +189,16 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
             {key.replace(/_/g, ' ')}
             {isRequired && <span className="text-destructive ml-1">*</span>}
           </Label>
+          {confidence && (
+            <span
+              className={cn(
+                'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
+                badgeClass
+              )}
+            >
+              {CONFIDENCE_LABELS[confidence] || 'Confidence'}
+            </span>
+          )}
           {helpText && (
             <TooltipProvider>
               <Tooltip>
@@ -141,7 +217,10 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
             id={key}
             value={value}
             onChange={(e) => handleChange(key, e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+              'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+              inputHighlightClass
+            )}
             aria-invalid={!!errors[key]}
             aria-required={isRequired}
           >
@@ -186,6 +265,7 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
             type={fieldType}
             value={value}
             onChange={(e) => handleChange(key, e.target.value)}
+            className={inputHighlightClass}
             aria-invalid={!!errors[key]}
             aria-required={isRequired}
             aria-describedby={errors[key] ? `${key}-error` : helpText ? `${key}-help` : undefined}
@@ -201,6 +281,11 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
             {helpText}
           </p>
         )}
+        {needsReview && !errors[key] && (
+          <p className="text-xs text-amber-700">
+            Please confirm this value from your card.
+          </p>
+        )}
       </div>
     );
   };
@@ -212,18 +297,36 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Enter Insurance Information Manually</CardTitle>
+        <CardTitle>
+          {hasConfidenceData ? 'Review Extracted Insurance Information' : 'Enter Insurance Information Manually'}
+        </CardTitle>
         <CardDescription>
-          Please fill in your insurance information. Fields marked with * are required.
+          {hasConfidenceData
+            ? 'We pre-filled these fields from your insurance card. Please double-check everything before continuing.'
+            : 'Please fill in your insurance information. Fields marked with * are required.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {hasConfidenceData && (
+          <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            We captured {prefilledCount} field{prefilledCount === 1 ? '' : 's'} from your card.
+            {needsReviewCount > 0
+              ? ` ${needsReviewCount} field${needsReviewCount === 1 ? ' needs' : 's need'} your review (highlighted in orange).`
+              : ' Please verify everything looks correct before you continue.'}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Insurance Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Basic Insurance Information</h3>
             <div className="grid gap-4 sm:grid-cols-2">
-              {basicFields.map((key) => renderField(key, formData[key as keyof typeof formData], key === 'payer_name' || key === 'member_id'))}
+              {basicFields.map((key) =>
+                renderField(
+                  key,
+                  formData[key as keyof typeof formData],
+                  key === 'payer_name' || key === 'member_id'
+                )
+              )}
             </div>
           </div>
 
@@ -251,16 +354,24 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Policy Details</h3>
             <div className="grid gap-4 sm:grid-cols-3">
-              {metadataFields.map((key) => renderField(key, formData[key as keyof typeof formData], false))}
+              {metadataFields.map((key) =>
+                renderField(key, formData[key as keyof typeof formData], false)
+              )}
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1">
-              Save Insurance Information
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            Please review all information carefully before confirming. Fields highlighted in orange need your attention.
+          </div>
+
+          <div className={cn('flex gap-3 pt-4', onCancel ? 'flex-col-reverse sm:flex-row' : 'justify-end')}>
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel} className={onCancel ? 'flex-1 sm:flex-none' : ''}>
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" className={onCancel ? 'flex-1 sm:flex-none' : 'w-full sm:w-auto'}>
+              {submitLabel}
             </Button>
           </div>
         </form>
@@ -268,4 +379,5 @@ export const ManualInsuranceForm: React.FC<ManualInsuranceFormProps> = ({
     </Card>
   );
 };
+
 

@@ -7,6 +7,7 @@ class Parent < ApplicationRecord
   # Associations
   has_many :students, dependent: :destroy
   has_many :onboarding_sessions, dependent: :destroy
+  has_many :availability_windows, as: :owner, dependent: :destroy
   has_many :referral_members, as: :user, dependent: :destroy
   has_many :referrals, foreign_key: 'submitter_id', dependent: :destroy
   has_many :kinships_as_user_0, class_name: 'Kinship', as: :user_0, dependent: :destroy

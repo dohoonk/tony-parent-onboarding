@@ -11,6 +11,8 @@ module Importers
       # Parse supervisor relationships (will be handled after import)
       supervisor_id = parse_uuid(row, 'supervisor_id')
       associate_supervisor_id = parse_uuid(row, 'associate_supervisor_id')
+      supervisor_id = nil if supervisor_id.present? && !Therapist.exists?(id: supervisor_id)
+      associate_supervisor_id = nil if associate_supervisor_id.present? && !Therapist.exists?(id: associate_supervisor_id)
       
       # Parse arrays
       specialties = parse_array_field(row, 'specialties', default: [])
@@ -26,6 +28,14 @@ module Importers
       profile_data = parse_json_field(row, 'profile_data', default: {})
       migration_details = parse_json_field(row, 'migration_details', default: {})
       
+      employment_type = row['employment_type'].presence
+      allowed_employment_types = ['W2 Hourly', '1099 Contractor', 'Full-time', 'Part-time', 'Contractor']
+      employment_type = nil unless allowed_employment_types.include?(employment_type)
+
+      clinical_role = row['clinical_role'].presence
+      allowed_clinical_roles = ['Therapist', 'Clinician', 'Supervisor', 'Associate']
+      clinical_role = nil unless allowed_clinical_roles.include?(clinical_role)
+
       {
         id: row['id'],
         healthie_id: row['healthie_id'].presence,
@@ -51,7 +61,6 @@ module Importers
         primary_ethnicity_code: row['primary_ethnicity_code'].presence,
         primary_race: row['primary_race'].presence,
         primary_race_code: row['primary_race_code'].presence,
-        religion: row['religion'].presence,
         religions: religions,
         preferred_language: row['preferred_language'].presence,
         care_languages: care_languages,
@@ -61,11 +70,9 @@ module Importers
         licenses: licenses,
         licensed_states: licensed_states,
         primary_state: row['primary_state'].presence,
-        employment_type: row['employment_type'].presence,
-        clinical_role: row['clinical_role'].presence,
+        employment_type: employment_type,
+        clinical_role: clinical_role,
         care_provider_status: row['care_provider_status'].presence,
-        is_first_time_provider: parse_boolean(row, 'is_first_time_provider', default: false),
-        can_see_insurance_authorization: parse_boolean(row, 'can_see_insurance_authorization', default: false),
         is_super_admin: parse_boolean(row, 'is_super_admin', default: false),
         supervisor_id: supervisor_id,
         associate_supervisor_id: associate_supervisor_id,

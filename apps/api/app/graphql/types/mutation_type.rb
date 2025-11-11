@@ -4,6 +4,9 @@ module Types
 
     field :signup, mutation: Mutations::Signup
     field :login, mutation: Mutations::Login
+    field :create_student, mutation: Mutations::CreateStudent
+    field :create_availability_window, mutation: Mutations::CreateAvailabilityWindow
+    field :create_intake_message, mutation: Mutations::CreateIntakeMessage
     field :start_onboarding, mutation: Mutations::StartOnboarding
     field :ai_intake_message, mutation: Mutations::AiIntakeMessage
     field :stream_ai_intake_message, mutation: Mutations::StreamAiIntakeMessage

@@ -13,9 +13,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface WelcomeStepProps {
   onNext: () => void;
+  onAuthSuccess?: (info: { firstName: string; lastName: string; email: string }) => void;
 }
 
-export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
+export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext, onAuthSuccess }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   
@@ -57,6 +58,12 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
       if (data?.signup?.token) {
         // Store token in localStorage
         localStorage.setItem('auth_token', data.signup.token);
+        const parent = data.signup.parent;
+        onAuthSuccess?.({
+          firstName: parent?.firstName || signupFirstName,
+          lastName: parent?.lastName || signupLastName,
+          email: parent?.email || signupEmail
+        });
         setIsAuthenticated(true);
         // Small delay to show success, then proceed
         setTimeout(() => {
@@ -88,6 +95,12 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
       if (data?.login?.token) {
         // Store token in localStorage
         localStorage.setItem('auth_token', data.login.token);
+        const parent = data.login.parent;
+        onAuthSuccess?.({
+          firstName: parent?.firstName || '',
+          lastName: parent?.lastName || '',
+          email: parent?.email || loginEmail
+        });
         setIsAuthenticated(true);
         // Small delay to show success, then proceed
         setTimeout(() => {

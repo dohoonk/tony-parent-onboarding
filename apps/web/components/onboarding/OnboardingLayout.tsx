@@ -4,11 +4,12 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Stepper, Step } from './Stepper';
 import { ProgressBar } from './ProgressBar';
-import { ETADisplay } from './ETADisplay';
 import { InlineFAQ } from './InlineFAQ';
 import { ReassuranceBanner } from './ReassuranceBanner';
 import { useReassurance } from '@/hooks/useReassurance';
 import { cn } from '@/lib/utils';
+import { Clock } from 'lucide-react';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface OnboardingLayoutProps {
   children: React.ReactNode;
@@ -65,8 +66,7 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
         <ReassuranceBanner
           message={reassuranceMessage}
           onDismiss={clearReassurance}
-          autoHide={true}
-          hideAfter={6000}
+          autoHide={false}
         />
       )}
 
@@ -81,8 +81,14 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
               <p className="mt-1 text-sm text-muted-foreground sm:text-base">{description}</p>
             )}
           </div>
-          {estimatedSeconds && estimatedSeconds > 0 && (
-            <ETADisplay estimatedSeconds={estimatedSeconds} />
+          {currentStep === 1 && (
+            <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm">
+              <Clock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <span className="font-medium">Estimated time:</span>
+              <span className="text-muted-foreground">
+                About 15 minutes to complete
+              </span>
+            </div>
           )}
         </div>
 
@@ -91,10 +97,52 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
 
         {/* Stepper */}
         <div className="hidden md:block">
-          <Stepper steps={steps} currentStep={currentStep} orientation="horizontal" />
+          <ScrollArea orientation="horizontal" className="w-full pb-2">
+            <div className="min-w-max pr-6">
+              <Stepper
+                steps={steps}
+                currentStep={currentStep}
+                orientation="horizontal"
+                className="pr-8"
+              />
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </div>
-        <div className="md:hidden">
-          <Stepper steps={steps} currentStep={currentStep} orientation="vertical" />
+        <div className="md:hidden space-y-3">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>
+              Step {currentStep} of {totalSteps}
+            </span>
+            <span>{progressPercent}% complete</span>
+          </div>
+          <div className="flex overflow-x-auto gap-3 pb-2">
+            {steps.map((step) => {
+              const isCurrent = step.id === currentStep;
+              const isComplete = step.id < currentStep;
+
+              return (
+                <div
+                  key={step.id}
+                  className={cn(
+                    'min-w-[130px] rounded-md border px-3 py-2 text-xs',
+                    isCurrent && 'border-primary bg-primary/10 text-primary',
+                    isComplete && 'border-primary/60 bg-primary/5 text-primary/80'
+                  )}
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Step {step.id}
+                  </div>
+                  <div className="mt-1 font-medium text-foreground">{step.title}</div>
+                  {step.description && (
+                    <div className="mt-1 text-[11px] text-muted-foreground line-clamp-2">
+                      {step.description}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 

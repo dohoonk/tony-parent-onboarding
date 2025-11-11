@@ -12,7 +12,7 @@ module Authentication
   end
 
   def authenticate_from_token
-    token = extract_token_from_header
+    token = extract_token_from_header || extract_token_from_params
     return nil unless token
 
     begin
@@ -78,6 +78,16 @@ module Authentication
     return nil unless parts.length == 2 && parts[0] == 'Bearer'
 
     parts[1]
+  end
+
+  def extract_token_from_params
+    token_param = params[:token] || params[:auth_token] || params[:access_token]
+
+    if Rails.env.development?
+      Rails.logger.debug("Token param: #{token_param ? token_param[0..20] + '...' : 'MISSING'}")
+    end
+
+    token_param
   end
 
   def current_user

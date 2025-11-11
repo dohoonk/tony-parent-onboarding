@@ -16,8 +16,8 @@ class StreamingController < ApplicationController
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['X-Accel-Buffering'] = 'no' # Disable nginx buffering
 
-    # Get conversation history
-    messages = session.intake_messages.where.not(id: user_message.id).order(:created_at)
+    # Get conversation history including the most recent user message
+    messages = session.intake_messages.order(:created_at)
     conversation_messages = IntakePromptService.build_messages(messages)
 
     # Stream AI response

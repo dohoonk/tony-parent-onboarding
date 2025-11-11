@@ -46,6 +46,8 @@ class TherapistMatchingService
         availability_window: availability_window,
         insurance_policy: insurance_policy
       )
+      availability_match_count = score[:details]&.dig(:availability_match, :match_count).to_i
+      next nil if availability_match_count.zero?
       
       {
         therapist: therapist,
@@ -53,7 +55,7 @@ class TherapistMatchingService
         rationale: score[:rationale],
         match_details: score[:details]
       }
-    end
+    end.compact
 
     # Sort by score and return top matches
     scored_therapists
