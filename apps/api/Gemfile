@@ -48,6 +48,8 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.0"
   gem "faker", "~> 3.0"
   gem "shoulda-matchers", "~> 6.0"
+  # Load .env file automatically
+  gem "dotenv-rails", "~> 2.8"
 end
 
 group :development do
