@@ -7,7 +7,6 @@ class InsuranceCard < ApplicationRecord
 
   # Validations
   validates :front_image_url, presence: true
-  validates :back_image_url, allow_blank: true
   validate :front_image_url_must_be_valid
   validate :back_image_url_must_be_valid
 
