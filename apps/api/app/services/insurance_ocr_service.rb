@@ -406,6 +406,12 @@ class InsuranceOcrService
   def self.prepare_image_for_openai(image_url)
     return nil if image_url.blank?
     
+    # Skip fake/example URLs (for testing/development)
+    if image_url.include?('example.com') || image_url.include?('localhost') || image_url.include?('127.0.0.1')
+      Rails.logger.warn("Skipping OCR for fake/example URL: #{image_url}")
+      raise ServiceError.new("Invalid image URL: Please upload a real image first")
+    end
+    
     # Check if it's an S3 URL (private bucket)
     if image_url.include?('amazonaws.com') || image_url.include?('s3.')
       Rails.logger.info("Detected S3 URL, downloading and encoding as base64: #{image_url}")

@@ -89,6 +89,13 @@ module Mutations
           Rails.logger.info("Card ID: #{card.id}")
           Rails.logger.info("Saved OCR data to database")
           Rails.logger.info("=" * 80)
+        rescue InsuranceOcrService::ServiceError => e
+          Rails.logger.warn("=" * 80)
+          Rails.logger.warn("OCR EXTRACTION SKIPPED")
+          Rails.logger.warn("Card ID: #{card.id}")
+          Rails.logger.warn("Reason: #{e.message}")
+          Rails.logger.warn("=" * 80)
+          # Don't fail the upload if OCR is skipped - user can manually enter
         rescue StandardError => e
           Rails.logger.error("=" * 80)
           Rails.logger.error("OCR EXTRACTION FAILED")
