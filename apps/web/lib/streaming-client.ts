@@ -72,7 +72,22 @@ export class StreamingClient {
 
     this.eventSource.onerror = (error) => {
       console.error('EventSource error:', error);
-      this.onError('Connection error');
+      
+      // Check the ready state to determine the error type
+      if (this.eventSource?.readyState === EventSource.CLOSED) {
+        // Connection was closed - could be auth error, server error, or network issue
+        this.onError('Unable to connect to the server. Please check your connection and try again.');
+      } else if (this.eventSource?.readyState === EventSource.CONNECTING) {
+        // Still connecting - wait a bit before showing error
+        setTimeout(() => {
+          if (this.eventSource?.readyState !== EventSource.OPEN) {
+            this.onError('Connection timeout. The server may be unavailable.');
+            this.stop();
+          }
+        }, 5000);
+      } else {
+        this.onError('Connection error. Please try again.');
+      }
       this.stop();
     };
   }

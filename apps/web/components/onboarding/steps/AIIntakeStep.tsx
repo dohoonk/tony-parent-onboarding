@@ -80,6 +80,54 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       return;
     }
 
+    // Check if this is a temporary session ID (development mode)
+    const isTempSession = sessionId.startsWith('temp-session-');
+    
+    if (isTempSession) {
+      // Development mode: Simulate AI response since we don't have a real backend session
+      setIsStreaming(true);
+      
+      // Simulate streaming response
+      const simulatedResponse = "Thank you for sharing that. I understand that anxiety at school can be really challenging for children. Can you tell me a bit more about when you first noticed these concerns, and how it's been affecting your child's daily life?";
+      
+      // Simulate chunked streaming
+      const words = simulatedResponse.split(' ');
+      let currentContent = '';
+      
+      for (let i = 0; i < words.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
+        currentContent += (i > 0 ? ' ' : '') + words[i];
+        
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          if (lastMessage?.role === 'assistant' && lastMessage.id === 'streaming') {
+            return [...prev.slice(0, -1), { ...lastMessage, content: currentContent }];
+          } else {
+            return [...prev, {
+              id: 'streaming',
+              role: 'assistant',
+              content: currentContent,
+              timestamp: new Date()
+            }];
+          }
+        });
+      }
+      
+      // Mark as complete
+      setMessages((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage?.id === 'streaming') {
+          return [...prev.slice(0, -1), { ...lastMessage, id: Date.now().toString() }];
+        }
+        return prev;
+      });
+      
+      setIsStreaming(false);
+      setIsLoading(false);
+      return;
+    }
+
+    // Production mode: Use real streaming
     // TODO: Get auth token from context/store
     const token = localStorage.getItem('auth_token') || '';
     
@@ -113,11 +161,13 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
           return prev;
         });
         setIsStreaming(false);
+        setIsLoading(false);
       },
       // onError
       (error: string) => {
         setError(error);
         setIsStreaming(false);
+        setIsLoading(false);
         // Remove streaming message on error
         setMessages((prev) => prev.filter(msg => msg.id !== 'streaming'));
       }
