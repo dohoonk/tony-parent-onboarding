@@ -226,14 +226,20 @@ class InsuranceOcrService
   private
 
   def self.parse_extraction_response(content)
-    # Try to extract JSON from response
+    Rails.logger.debug("Parsing OCR response...")
+    
+    # Try to extract JSON from response (may have markdown code blocks)
     json_match = content.match(/```json\s*(\{.*?\})\s*```/m) || content.match(/(\{.*\})/m)
     
     if json_match
+      Rails.logger.debug("Found JSON in response, parsing...")
       data = JSON.parse(json_match[1], symbolize_names: true)
+      Rails.logger.debug("Parsed JSON keys: #{data.keys.join(', ')}")
       structure_extracted_data(data)
     else
-      raise JSON::ParserError, "No valid JSON found in OCR response"
+      Rails.logger.error("No valid JSON found in OCR response")
+      Rails.logger.error("Response content preview: #{content.first(500)}")
+      raise JSON::ParserError, "No valid JSON found in OCR response. Response preview: #{content.first(200)}"
     end
   end
 
