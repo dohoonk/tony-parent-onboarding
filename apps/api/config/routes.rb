@@ -7,8 +7,9 @@ Rails.application.routes.draw do
   # Streaming endpoint for AI intake
   get "/api/stream/intake/:session_id/:message_id", to: "streaming#stream_intake", as: :stream_intake
   
-  # Test OCR endpoint (development only)
+  # Test OCR endpoints (development only)
   if Rails.env.development?
+    get "/test_ocr/validate_key", to: "test_ocr#validate_key"
     post "/test_ocr", to: "test_ocr#extract"
   end
   
