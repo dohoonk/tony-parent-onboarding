@@ -25,23 +25,37 @@ module Authentication
       parent = Parent.find_by(id: parent_id)
       
       if parent
+        Rails.logger.info("✅ Authentication successful for parent: #{parent.id} (#{parent.email})")
         # Log successful authentication
         AuditLog.log_access(
           actor: parent,
           action: 'authenticate',
           entity: parent
         )
+      else
+        Rails.logger.warn("⚠️  Parent not found for ID: #{parent_id}")
       end
 
       parent
-    rescue JWT::DecodeError, JWT::ExpiredSignature => e
-      Rails.logger.warn("JWT authentication failed: #{e.message}")
+    rescue JWT::DecodeError => e
+      Rails.logger.warn("❌ JWT decode error: #{e.message}")
+      nil
+    rescue JWT::ExpiredSignature => e
+      Rails.logger.warn("❌ JWT expired: #{e.message}")
+      nil
+    rescue StandardError => e
+      Rails.logger.error("❌ Authentication error: #{e.class.name} - #{e.message}")
       nil
     end
   end
 
   def extract_token_from_header
     auth_header = request.headers['Authorization']
+    
+    if Rails.env.development?
+      Rails.logger.debug("Authorization header: #{auth_header ? auth_header[0..20] + '...' : 'MISSING'}")
+    end
+    
     return nil unless auth_header
 
     # Expected format: "Bearer <token>"
