@@ -20,10 +20,17 @@ function makeClient() {
       console.log('[Apollo] Auth token from localStorage:', token ? `${token.substring(0, 20)}...` : 'NOT FOUND')
     }
     
+    const authHeaders = token ? { authorization: `Bearer ${token}` } : {}
+    
+    // Log in development to verify header is being set
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development' && token) {
+      console.log('[Apollo] Setting Authorization header:', `Bearer ${token.substring(0, 20)}...`)
+    }
+    
     return {
       headers: {
         ...headers,
-        ...(token ? { authorization: `Bearer ${token}` } : {}),
+        ...authHeaders,
       }
     }
   })
