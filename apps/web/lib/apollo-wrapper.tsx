@@ -15,6 +15,11 @@ function makeClient() {
     // Get token from localStorage (or wherever it's stored)
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
     
+    // Log in development to debug
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log('[Apollo] Auth token from localStorage:', token ? `${token.substring(0, 20)}...` : 'NOT FOUND')
+    }
+    
     return {
       headers: {
         ...headers,
