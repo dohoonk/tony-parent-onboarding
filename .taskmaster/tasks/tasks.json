@@ -1365,5 +1365,446 @@
       "updated": "2025-11-10T23:22:07.256Z",
       "description": "Tasks for master context"
     }
+  },
+  "frontend-redesign": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Phase 1: Foundation & Design Tokens",
+        "description": "Implement the Daybreak Health design system foundation including color palette, typography, spacing, shadows, and install missing base shadcn/ui components",
+        "details": "Update globals.css with new color variables (Primary Blue HSL 210 75% 50%, Primary Teal HSL 180 60% 45%, semantic colors). Add custom typography scale to Tailwind config. Verify spacing system. Install missing shadcn components: textarea, separator, progress, skeleton, avatar, aspect-ratio. Ensure WCAG AA color contrast compliance.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update Color System in globals.css",
+            "description": "Update all HSL color values in globals.css with Daybreak Health brand palette",
+            "details": "Replace CSS variables in apps/web/app/globals.css: Primary (210 75% 50%), Primary Teal (180 60% 45%), Primary Dark (222 47% 11%), Success (142 71% 45%), Warning (38 92% 50%), Destructive (0 84% 60%), Info (210 75% 50%). Update background, foreground, muted, accent, border colors. Test color contrast ratios for WCAG AA compliance (4.5:1 for normal text, 3:1 for large text).",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 2,
+            "title": "Add Custom Typography Scale to Tailwind Config",
+            "description": "Extend Tailwind config with custom typography classes for display, headings, body text, and captions",
+            "details": "In apps/web/tailwind.config.ts, extend fontSize with: display (3.5rem/2.5rem mobile), h1 (2.5rem/2rem mobile), h2 (2rem/1.75rem mobile), h3 (1.5rem/1.25rem mobile), h4 (1.25rem/1.125rem mobile), body-large (1.125rem), body (1rem), body-small (0.875rem), caption (0.75rem). Include lineHeight, letterSpacing, and fontWeight for each. Verify Inter font loads properly with weights 400, 500, 600, 700.",
+            "status": "done",
+            "dependencies": [
+              "1.1"
+            ],
+            "parentTaskId": 1
+          },
+          {
+            "id": 3,
+            "title": "Install Missing shadcn/ui Base Components",
+            "description": "Install textarea, separator, progress, skeleton, avatar, and aspect-ratio components",
+            "details": "Run commands in apps/web directory: npx shadcn@latest add textarea separator progress skeleton avatar aspect-ratio. Verify each component renders correctly. Update components to use new design system colors and spacing. Test that components match design specifications (rounded-md for inputs/buttons, rounded-lg for cards, proper padding).",
+            "status": "done",
+            "dependencies": [
+              "1.1"
+            ],
+            "parentTaskId": 1
+          },
+          {
+            "id": 4,
+            "title": "Verify Spacing System and Update Components",
+            "description": "Verify Tailwind spacing scale matches PRD and update component padding/margins consistently",
+            "details": "Confirm 4px base unit spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96px). Apply usage guidelines: component padding 16-24px (p-4 to p-6), section spacing 48-64px (space-y-12 to space-y-16), card spacing 24-32px (p-6 to p-8), form field spacing 16-20px (space-y-4 to space-y-5), button padding 12-16px horizontal. Update existing onboarding components to use consistent spacing.",
+            "status": "done",
+            "dependencies": [
+              "1.2"
+            ],
+            "parentTaskId": 1
+          },
+          {
+            "id": 5,
+            "title": "Test WCAG AA Compliance and Accessibility",
+            "description": "Test color contrast ratios and verify accessibility compliance for all design tokens",
+            "details": "Use browser DevTools or WebAIM Contrast Checker to verify all color combinations meet WCAG AA standards: 4.5:1 for normal text, 3:1 for large text (18pt+). Test primary blue on white, primary dark on white, muted foreground on backgrounds. Check button text on primary/secondary backgrounds. Document any issues. Update colors if needed. Test keyboard focus states are visible. Verify dark mode colors work correctly if implemented.",
+            "status": "done",
+            "dependencies": [
+              "1.1",
+              "1.2",
+              "1.3",
+              "1.4"
+            ],
+            "parentTaskId": 1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Phase 2: Navigation & Layout Components",
+        "description": "Install navigation shadcn components and build core layout components including Header, Hero, and Section wrapper",
+        "details": "Install navigation-menu, dropdown-menu, and sheet components. Create Header component with desktop navigation (navigation-menu) and mobile navigation (sheet). Build Hero component with large headlines, dual CTAs, and responsive spacing. Create reusable Section wrapper component with consistent max-widths and padding. Add Logo component. Ensure accessibility with skip links and keyboard navigation.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Navigation shadcn Components",
+            "description": "Install navigation-menu, dropdown-menu, and sheet components from shadcn/ui",
+            "details": "Run in apps/web: npx shadcn@latest add navigation-menu dropdown-menu sheet. Verify components are installed in components/ui/. Test each component renders correctly with default styling. Ensure components use design system colors and match Daybreak Health brand.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2
+          },
+          {
+            "id": 2,
+            "title": "Create Logo Component",
+            "description": "Build reusable Logo component for Daybreak Health branding",
+            "details": "Create components/layout/Logo.tsx with Daybreak Health logo. Support size variants (sm, md, lg). Make clickable with link to homepage. Use Next.js Image component for optimization. Include proper alt text for accessibility. Export for use in Header and other components.",
+            "status": "done",
+            "dependencies": [
+              "2.1"
+            ],
+            "parentTaskId": 2
+          },
+          {
+            "id": 3,
+            "title": "Build Header Component with Desktop Navigation",
+            "description": "Create Header component with horizontal navigation menu for desktop",
+            "details": "Create components/layout/Header.tsx. Use navigation-menu for desktop nav. Add Logo on left. Navigation items: Programs, Resources, About (center/right aligned). Primary CTA button \"Sign Up\" on right. Add skip link for accessibility (aria-label=\"Skip to main content\"). Use sticky positioning. Responsive breakpoint at md (768px). Match Daybreak Health header style.",
+            "status": "done",
+            "dependencies": [
+              "2.2"
+            ],
+            "parentTaskId": 2
+          },
+          {
+            "id": 4,
+            "title": "Add Mobile Navigation with Sheet",
+            "description": "Implement hamburger menu and mobile navigation drawer using Sheet component",
+            "details": "Add hamburger menu button (visible on mobile only, hidden on md+). Use Sheet component for mobile drawer. Include Logo, navigation links (Programs, Resources, About), and Sign Up button. Ensure touch targets are 44x44px minimum. Add smooth slide-in animation. Test keyboard navigation and screen reader support. Close drawer on navigation.",
+            "status": "done",
+            "dependencies": [
+              "2.3"
+            ],
+            "parentTaskId": 2
+          },
+          {
+            "id": 5,
+            "title": "Build Hero Component",
+            "description": "Create Hero section component with large headlines, subheading, and dual CTAs",
+            "details": "Create components/layout/Hero.tsx. Large headline using text-display class (3.5rem/2.5rem mobile). Subheading with text-body-large. Dual CTA buttons: primary \"Schools - Book a Demo\" and secondary \"Families - Sign Up\". Clean white background. Generous vertical padding (py-20 to py-32). Center-aligned content. Max-width container. Responsive on all devices. Match Daybreak Health hero style.",
+            "status": "done",
+            "dependencies": [
+              "2.1"
+            ],
+            "parentTaskId": 2
+          },
+          {
+            "id": 6,
+            "title": "Create Section Wrapper Component",
+            "description": "Build reusable Section component for consistent page layout and spacing",
+            "details": "Create components/layout/Section.tsx. Support variant prop (default, accent, muted). Optional background prop (white, gray, blue-subtle). Consistent max-width (container mx-auto max-w-7xl). Standard padding (px-4 py-12 to py-16). Optional separator between sections. Support children composition. Make fully responsive. Export for use throughout the app.",
+            "status": "done",
+            "dependencies": [
+              "2.1"
+            ],
+            "parentTaskId": 2
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Phase 3: Content Components",
+        "description": "Build content display components including StatsGrid, TrustSection, TestimonialCard, VideoCard, and ProgramCard",
+        "details": "Install carousel component. Create StatsGrid with responsive grid layout (3-4 columns desktop, 1-2 mobile) and large number displays. Build TrustSection with logo carousel and smooth scrolling. Create TestimonialCard with avatar, quote, and attribution. Build VideoCard with aspect-ratio container, play button overlay, and dialog modal. Create ProgramCard with icons, titles, descriptions, CTAs, and hover effects.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          2
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Carousel Component",
+            "description": "Install carousel component from shadcn/ui for logo scrolling and testimonials",
+            "details": "Run in apps/web: npx shadcn@latest add carousel. Verify installation in components/ui/carousel.tsx. Test basic carousel functionality with sample content. Ensure smooth scrolling and responsive behavior. Check that it uses design system styling.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          },
+          {
+            "id": 2,
+            "title": "Build StatsGrid and StatCard Components",
+            "description": "Create statistics display components with responsive grid layout",
+            "details": "Create components/content/StatsGrid.tsx and StatCard.tsx. Grid layout: 3-4 columns desktop, 1-2 mobile. StatCard with large number display (text-display or text-h1), descriptive label (text-body-small), optional icon. Use card styling with subtle background. Responsive gap spacing. Example stats: \"80% school staff report improvements\", \"50K+ students supported\".",
+            "status": "done",
+            "dependencies": [
+              "3.1"
+            ],
+            "parentTaskId": 3
+          },
+          {
+            "id": 3,
+            "title": "Build TrustSection Component with Logo Carousel",
+            "description": "Create trust indicators section with partner/insurance logos in scrolling carousel",
+            "details": "Create components/content/TrustSection.tsx. Header: \"Trusted by top school districts and insurance providers\". Use Carousel for logo scrolling. Make logos grayscale with hover color effect. Consistent logo sizing (h-12 to h-16). Smooth auto-scroll with pause on hover. Responsive: horizontal scroll on mobile. Add padding and spacing per design system.",
+            "status": "done",
+            "dependencies": [
+              "3.1"
+            ],
+            "parentTaskId": 3
+          },
+          {
+            "id": 4,
+            "title": "Build TestimonialCard Component",
+            "description": "Create testimonial display component with avatar, quote, and attribution",
+            "details": "Create components/content/TestimonialCard.tsx. Use Avatar component for profile image. Quote text: text-body-large, italic styling. Attribution: Name (font-semibold) and Role (text-muted-foreground). Card styling with shadow-md. Optional video play button overlay. Add hover effect (shadow-lg). Responsive layout. Example: \"Daybreak saved my son's life!\" - Clifford's Mom, Parent.",
+            "status": "done",
+            "dependencies": [
+              "3.1"
+            ],
+            "parentTaskId": 3
+          },
+          {
+            "id": 5,
+            "title": "Build VideoCard Component",
+            "description": "Create video embed component with aspect ratio container and modal playback",
+            "details": "Create components/content/VideoCard.tsx. Use AspectRatio component (16:9) for container. Thumbnail image with play button overlay. Dialog component for video modal. Support YouTube/Vimeo embeds. Play button: large, centered, with hover effect. Optional title/description below video. Responsive sizing. Handle keyboard (Enter/Space) and click events.",
+            "status": "done",
+            "dependencies": [
+              "3.1"
+            ],
+            "parentTaskId": 3
+          },
+          {
+            "id": 6,
+            "title": "Build ProgramCard Component",
+            "description": "Create service/program feature cards with icons, descriptions, and CTAs",
+            "details": "Create components/content/ProgramCard.tsx. Icon or image at top. Title: text-h3. Description: text-body, 2-3 lines. CTA button at bottom (Learn More). Card: rounded-lg, shadow-md, p-6. Hover effect: shadow-lg, slight elevation. Responsive grid layout. Examples: \"Teletherapy for ages 5-19\", \"Crisis Support 24/7\", \"Family Therapy Sessions\".",
+            "status": "done",
+            "dependencies": [
+              "3.1"
+            ],
+            "parentTaskId": 3
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Phase 4: Onboarding Enhancements",
+        "description": "Enhance existing onboarding components with new design system styling and improved UX",
+        "details": "Update ProgressBar with new styling, smooth animations, and percentage display. Enhance ETADisplay with improved typography and visual indicators. Update ReassuranceBanner using alert component with icons and improved animations. Add skeleton loaders and spinner components to async steps. Enhance form components with better error states, improved mobile experience, and field grouping. Ensure all components match the new design system.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Enhance ProgressBar Component",
+            "description": "Update progress bar with new design system styling and smooth animations",
+            "details": "Update components/onboarding/ProgressBar.tsx. Use Progress component from shadcn. Apply primary color gradient. Add smooth transition animations (transition-all duration-300). Optional percentage display. Height: h-2 or h-3. Rounded corners (rounded-full). Ensure ARIA attributes (aria-valuenow, aria-valuemin, aria-valuemax). Match design system colors.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          },
+          {
+            "id": 2,
+            "title": "Enhance ReassuranceBanner Component",
+            "description": "Update reassurance banner using Alert component with improved styling",
+            "details": "Update components/onboarding/ReassuranceBanner.tsx. Use Alert component from shadcn. Add info icon (Circle with i or Info icon). Improve typography (text-body-small). Warm, supportive tone. Smooth fade-in/fade-out animations. Info variant styling (blue background). Optional dismiss button. Match design system colors. Examples: \"Your information is HIPAA compliant and secure\", \"We're here to help your family\".",
+            "status": "done",
+            "dependencies": [
+              "4.1"
+            ],
+            "parentTaskId": 4
+          },
+          {
+            "id": 3,
+            "title": "Add Skeleton Loaders to Async Steps",
+            "description": "Implement skeleton loading states for better UX during async operations",
+            "details": "Add Skeleton component to: AIIntakeStep (while processing), SchedulingStep (while loading therapists), InsuranceStep (while uploading/OCR). Match component layouts. Use skeleton for cards, text, buttons. Animate with pulse effect. Replace spinners with contextual skeletons. Ensure smooth transition from skeleton to actual content.",
+            "status": "done",
+            "dependencies": [
+              "4.1"
+            ],
+            "parentTaskId": 4
+          },
+          {
+            "id": 4,
+            "title": "Enhance Form Components Styling",
+            "description": "Update all form inputs, labels, and error states to match design system",
+            "details": "Update forms in components/onboarding/steps/. Apply consistent input styling: h-10, px-3, rounded-md, border-input. Label typography: text-body-small, font-medium. Error states: text-destructive, border-destructive, with error icon. Add field grouping with proper spacing (space-y-4). Improve mobile experience: larger touch targets, better keyboard handling. Add helpful placeholder text. Ensure accessibility (aria-invalid, aria-describedby).",
+            "status": "done",
+            "dependencies": [
+              "4.2",
+              "4.3"
+            ],
+            "parentTaskId": 4
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Phase 5: Homepage & Landing Pages",
+        "description": "Redesign homepage to match Daybreak Health style with hero, statistics, trust indicators, and program sections",
+        "details": "Replace current centered card homepage with new hero section. Add statistics section with large numbers and grid layout. Add trust indicators section with partner/insurance logos. Add program cards section showcasing services. Optional testimonial section. Create reusable landing page section components. Ensure responsive design and fast loading. Add footer if needed.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          2,
+          3
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Redesign Homepage with Hero Section",
+            "description": "Replace current homepage with new Daybreak Health style hero section",
+            "details": "Update apps/web/app/page.tsx. Remove current centered card. Add Header component. Add Hero component with headline \"Mental health support for every student\", subheading about Daybreak's mission, dual CTAs (Schools/Families). Use clean white background. Ensure responsive design. Add semantic HTML (main, section tags). Match Daybreak Health homepage style.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 2,
+            "title": "Add Statistics Section to Homepage",
+            "description": "Add statistics/metrics section showcasing Daybreak Health's impact",
+            "details": "Add Section component to page.tsx. Use StatsGrid component with 3-4 key metrics. Examples: \"80% of school staff report improvements\", \"50K+ students supported\", \"95% parent satisfaction\", \"24/7 crisis support\". Large numbers with descriptive text. Use accent background. Add separator before/after section.",
+            "status": "done",
+            "dependencies": [
+              "5.1"
+            ],
+            "parentTaskId": 5
+          },
+          {
+            "id": 3,
+            "title": "Add Trust Indicators Section",
+            "description": "Add section showcasing partner school districts and insurance providers",
+            "details": "Add TrustSection component to page.tsx. Header: \"Trusted by leading school districts and accepted by major insurances\". Include placeholder logos for school districts and insurance companies. Use grayscale logos with hover color. Smooth scrolling carousel. White background. Proper spacing (py-16).",
+            "status": "done",
+            "dependencies": [
+              "5.2"
+            ],
+            "parentTaskId": 5
+          },
+          {
+            "id": 4,
+            "title": "Add Programs/Services Section",
+            "description": "Add section showcasing Daybreak Health's programs using ProgramCard components",
+            "details": "Add Section to page.tsx. Title: \"Our Programs\". Grid of ProgramCard components (3 columns desktop, 1-2 mobile). Programs: \"Teletherapy (ages 5-19)\", \"Crisis Support 24/7\", \"Family Therapy\", \"Group Sessions\", \"Parent Support\". Each card with icon, title, description, Learn More CTA. Accent background. Proper grid gap (gap-6).",
+            "status": "done",
+            "dependencies": [
+              "5.3"
+            ],
+            "parentTaskId": 5
+          },
+          {
+            "id": 5,
+            "title": "Add Testimonials Section (Optional)",
+            "description": "Add testimonial section with parent/student success stories",
+            "details": "Add Section to page.tsx. Title: \"Families Love Daybreak\". Grid or carousel of TestimonialCard components (2-3 visible). Include diverse testimonials from parents, students, school staff. Each with avatar, quote, attribution. Optional video testimonials. White background. Add CTA: \"Read More Stories\".",
+            "status": "done",
+            "dependencies": [
+              "5.4"
+            ],
+            "parentTaskId": 5
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Phase 6: Polish & Optimization",
+        "description": "Add animations, optimize performance, ensure accessibility, cross-browser testing, and complete documentation",
+        "details": "Add smooth page transitions, hover effects, and fade-in animations (60fps). Test on real devices (iOS/Android), ensure 44x44px touch targets. Run accessibility audit (axe, WAVE), achieve WCAG AA compliance, test screen readers and keyboard navigation. Optimize images (WebP, lazy loading), implement code splitting, optimize fonts. Test in Chrome, Firefox, Safari, Edge. Create design system documentation, component usage guide, and style guide. Target Lighthouse score > 90.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add Animations and Transitions",
+            "description": "Implement smooth animations for page transitions, hover effects, and content reveals",
+            "details": "Add smooth page transitions using Framer Motion or CSS transitions. Card hover effects: shadow-lg, scale-105, duration-200. Fade-in animations for sections on scroll (intersection observer). Loading animations for async content. Button hover/active states. Ensure 60fps performance. Use transform and opacity (GPU-accelerated). Add motion-reduce media query for accessibility.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
+          },
+          {
+            "id": 2,
+            "title": "Mobile Testing and Optimization",
+            "description": "Test on real devices and optimize mobile experience",
+            "details": "Test on iOS (iPhone) and Android devices. Verify touch targets are 44x44px minimum. Test safe area insets (notch, home indicator). Check horizontal scrolling issues. Optimize tap delays. Test form inputs (keyboard handling, autocomplete). Verify mobile navigation (hamburger menu, drawer). Test performance on slower devices. Fix any mobile-specific issues.",
+            "status": "done",
+            "dependencies": [
+              "6.1"
+            ],
+            "parentTaskId": 6
+          },
+          {
+            "id": 3,
+            "title": "Accessibility Audit and Compliance",
+            "description": "Run comprehensive accessibility audit and achieve WCAG AA compliance",
+            "details": "Run axe DevTools and WAVE scans. Fix all WCAG AA violations. Test with screen readers (NVDA, JAWS, VoiceOver). Verify keyboard navigation (Tab, Enter, Escape, Arrow keys). Check focus management in modals/dialogs. Verify ARIA labels (navigation, buttons, forms). Test color contrast (all combinations). Add alt text to images. Ensure semantic HTML structure. Document accessibility features.",
+            "status": "done",
+            "dependencies": [
+              "6.1"
+            ],
+            "parentTaskId": 6
+          },
+          {
+            "id": 4,
+            "title": "Performance Optimization",
+            "description": "Optimize images, fonts, bundle size, and achieve Lighthouse score > 90",
+            "details": "Optimize images: convert to WebP, add lazy loading, use Next.js Image component. Optimize fonts: subset Inter font, add font-display: swap, preload critical fonts. Code splitting: dynamic imports for large components. Reduce bundle size: analyze with webpack-bundle-analyzer, remove unused dependencies. Test Core Web Vitals: LCP < 2.5s, FID < 100ms, CLS < 0.1. Run Lighthouse audit. Target score > 90 for Performance, Accessibility, Best Practices, SEO.",
+            "status": "done",
+            "dependencies": [
+              "6.2",
+              "6.3"
+            ],
+            "parentTaskId": 6
+          },
+          {
+            "id": 5,
+            "title": "Cross-Browser Testing",
+            "description": "Test and fix issues across all major browsers and different screen sizes",
+            "details": "Test in Chrome, Firefox, Safari, Edge. Check different screen sizes (mobile 375px, tablet 768px, desktop 1280px, large 1920px). Verify CSS Grid/Flexbox compatibility. Test JavaScript features. Check for browser-specific bugs. Test print styles (optional). Use BrowserStack for cross-browser testing. Document any browser-specific workarounds. Ensure consistent appearance across browsers.",
+            "status": "done",
+            "dependencies": [
+              "6.4"
+            ],
+            "parentTaskId": 6
+          },
+          {
+            "id": 6,
+            "title": "Create Design System Documentation",
+            "description": "Document design system, component usage, and create comprehensive style guide",
+            "details": "Create apps/web/docs/design-system.md with color palette, typography scale, spacing system, shadows, border radius. Create apps/web/docs/components.md with usage examples for all custom components (Header, Hero, Section, StatsGrid, etc.). Create apps/web/docs/style-guide.md with coding standards, accessibility guidelines, responsive design patterns. Include code examples. Add Storybook (optional) for component showcase. Document in Markdown with proper formatting.",
+            "status": "done",
+            "dependencies": [
+              "6.5"
+            ],
+            "parentTaskId": 6
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-11T17:45:53.614Z",
+      "updated": "2025-11-11T18:35:45.730Z",
+      "description": "Daybreak Health Design System & UI Implementation - Complete frontend redesign to match brand identity"
+    }
   }
 }

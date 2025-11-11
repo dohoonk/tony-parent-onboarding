@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2, Calendar, User, CheckCircle2 } from 'lucide-react';
+import { Loader2, Calendar, User, CheckCircle2, Award } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MATCH_THERAPISTS, BOOK_APPOINTMENT, CREATE_AVAILABILITY_WINDOW } from '@/lib/graphql/mutations';
 
 interface TherapistMatch {
@@ -30,6 +31,21 @@ interface SchedulingStepProps {
   onPrev: () => void;
   sessionId?: string;
 }
+
+const USER_TIMEZONE = 'America/Los_Angeles';
+
+const toISOStringInUserTimezone = (dateString: string, timeString: string) => {
+  const localDate = new Date(`${dateString}T${timeString}:00`);
+
+  const demoTimezoneDate = new Date(
+    localDate.toLocaleString('en-US', { timeZone: USER_TIMEZONE })
+  );
+
+  const offset = localDate.getTime() - demoTimezoneDate.getTime();
+  const targetDate = new Date(localDate.getTime() + offset);
+
+  return targetDate.toISOString();
+};
 
 export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   onNext,
@@ -113,9 +129,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
     setError(null);
 
     try {
-      const timezone =
-        (typeof Intl !== 'undefined' && Intl.DateTimeFormat().resolvedOptions().timeZone) ||
-        'America/Los_Angeles';
+      const timezone = USER_TIMEZONE;
       const cacheKey = `${selectedDate}|${startTime}-${endTime}|${timezone}`;
       let windowId = availabilityWindowCacheRef.current[cacheKey];
 
@@ -205,16 +219,12 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
     setError(null);
 
     try {
-      const [startHour, startMinute] = startTime.split(':').map(Number);
-      const scheduledDate = new Date(`${selectedDate}T00:00:00`);
-      scheduledDate.setHours(startHour || 0, startMinute || 0, 0, 0);
-
       const { data, errors } = await bookAppointment({
         variables: {
           input: {
             sessionId,
             therapistId: selectedTherapist,
-            scheduledAt: scheduledDate.toISOString(),
+            scheduledAt: toISOStringInUserTimezone(selectedDate, startTime),
             durationMinutes: 50
           }
         }
@@ -364,58 +374,94 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
                 {therapistMatches.map((therapist) => (
                   <Card
                     key={therapist.id}
-                    className={selectedTherapist === therapist.id ? 'border-primary' : ''}
+                    className={`transition-all duration-200 hover:shadow-md ${
+                      selectedTherapist === therapist.id ? 'border-primary border-2' : ''
+                    }`}
                   >
                     <CardContent className="pt-6">
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-semibold">{therapist.name}</h4>
+                      <div className="space-y-4">
+                        {/* Header with Avatar */}
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-16 w-16 border-2 border-border">
+                            <AvatarImage 
+                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${therapist.id}`} 
+                              alt={therapist.name}
+                            />
+                            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                              {therapist.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h4 className="font-semibold text-lg">{therapist.name}</h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Badge variant="secondary" className="text-xs">
+                                    <Award className="h-3 w-3 mr-1" />
+                                    LCSW
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">8+ years</span>
+                                </div>
+                              </div>
+                              <Badge variant="default" className="shrink-0">
+                                {therapist.matchScore}% match
+                              </Badge>
+                            </div>
+                            
                             {therapist.bio && (
-                              <p className="text-sm text-muted-foreground mt-1">
+                              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                                 {therapist.bio}
                               </p>
                             )}
                           </div>
-                          <Badge variant="secondary">
-                            {therapist.matchScore}% match
-                          </Badge>
                         </div>
                         
+                        {/* Specialties */}
                         <div className="flex flex-wrap gap-2">
                           {therapist.specialties.map((specialty) => (
-                            <Badge key={specialty} variant="outline">
+                            <Badge key={specialty} variant="outline" className="text-xs">
                               {specialty}
                             </Badge>
                           ))}
                         </div>
 
+                        {/* Languages */}
                         {therapist.languages.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            <span className="text-xs text-muted-foreground">Languages:</span>
+                          <div className="flex items-center flex-wrap gap-2">
+                            <span className="text-xs font-medium text-muted-foreground">Languages:</span>
                             {therapist.languages.map((lang) => (
-                              <Badge key={lang} variant="outline" className="text-xs">
+                              <Badge key={lang} variant="secondary" className="text-xs">
                                 {lang}
                               </Badge>
                             ))}
                           </div>
                         )}
 
-                        <div className="text-xs text-muted-foreground">
-                          <strong>Why this match:</strong> {therapist.matchRationale}
+                        {/* Match Rationale */}
+                        <div className="rounded-md bg-muted/50 p-3">
+                          <p className="text-xs text-muted-foreground">
+                            <strong className="text-foreground">Why this match:</strong> {therapist.matchRationale}
+                          </p>
                         </div>
 
+                        {/* Availability */}
                         {therapist.capacityAvailable > 0 && (
-                          <div className="text-xs text-muted-foreground">
-                            <strong>Availability:</strong> {therapist.capacityAvailable} spots available
+                          <div className="flex items-center gap-2 text-sm text-success">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span>{therapist.capacityAvailable} spots available</span>
                           </div>
                         )}
 
+                        {/* Selection Radio */}
                         <RadioGroup value={selectedTherapist} onValueChange={setSelectedTherapist}>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 rounded-md border border-input p-3 hover:bg-accent/50 transition-colors">
                             <RadioGroupItem value={therapist.id} id={`therapist-${therapist.id}`} />
-                            <Label htmlFor={`therapist-${therapist.id}`} className="font-normal cursor-pointer">
-                              Select this therapist
+                            <Label 
+                              htmlFor={`therapist-${therapist.id}`} 
+                              className="flex-1 font-medium cursor-pointer"
+                            >
+                              Select {therapist.name.split(' ')[0]} as my therapist
                             </Label>
                           </div>
                         </RadioGroup>

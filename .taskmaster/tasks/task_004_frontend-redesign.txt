@@ -1,0 +1,37 @@
+# Task ID: 4
+# Title: Phase 4: Onboarding Enhancements
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Enhance existing onboarding components with new design system styling and improved UX
+# Details:
+Update ProgressBar with new styling, smooth animations, and percentage display. Enhance ETADisplay with improved typography and visual indicators. Update ReassuranceBanner using alert component with icons and improved animations. Add skeleton loaders and spinner components to async steps. Enhance form components with better error states, improved mobile experience, and field grouping. Ensure all components match the new design system.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Enhance ProgressBar Component [done]
+### Dependencies: None
+### Description: Update progress bar with new design system styling and smooth animations
+### Details:
+Update components/onboarding/ProgressBar.tsx. Use Progress component from shadcn. Apply primary color gradient. Add smooth transition animations (transition-all duration-300). Optional percentage display. Height: h-2 or h-3. Rounded corners (rounded-full). Ensure ARIA attributes (aria-valuenow, aria-valuemin, aria-valuemax). Match design system colors.
+
+## 2. Enhance ReassuranceBanner Component [done]
+### Dependencies: 4.1
+### Description: Update reassurance banner using Alert component with improved styling
+### Details:
+Update components/onboarding/ReassuranceBanner.tsx. Use Alert component from shadcn. Add info icon (Circle with i or Info icon). Improve typography (text-body-small). Warm, supportive tone. Smooth fade-in/fade-out animations. Info variant styling (blue background). Optional dismiss button. Match design system colors. Examples: "Your information is HIPAA compliant and secure", "We're here to help your family".
+
+## 3. Add Skeleton Loaders to Async Steps [done]
+### Dependencies: 4.1
+### Description: Implement skeleton loading states for better UX during async operations
+### Details:
+Add Skeleton component to: AIIntakeStep (while processing), SchedulingStep (while loading therapists), InsuranceStep (while uploading/OCR). Match component layouts. Use skeleton for cards, text, buttons. Animate with pulse effect. Replace spinners with contextual skeletons. Ensure smooth transition from skeleton to actual content.
+
+## 4. Enhance Form Components Styling [done]
+### Dependencies: 4.2, 4.3
+### Description: Update all form inputs, labels, and error states to match design system
+### Details:
+Update forms in components/onboarding/steps/. Apply consistent input styling: h-10, px-3, rounded-md, border-input. Label typography: text-body-small, font-medium. Error states: text-destructive, border-destructive, with error icon. Add field grouping with proper spacing (space-y-4). Improve mobile experience: larger touch targets, better keyboard handling. Add helpful placeholder text. Ensure accessibility (aria-invalid, aria-describedby).
+

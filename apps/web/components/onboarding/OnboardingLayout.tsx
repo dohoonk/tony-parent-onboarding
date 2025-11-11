@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Stepper, Step } from './Stepper';
 import { ProgressBar } from './ProgressBar';
-import { InlineFAQ } from './InlineFAQ';
 import { ReassuranceBanner } from './ReassuranceBanner';
 import { useReassurance } from '@/hooks/useReassurance';
 import { cn } from '@/lib/utils';
@@ -156,15 +155,6 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
         </CardHeader>
         <CardContent>{children}</CardContent>
       </Card>
-
-      {/* Inline FAQ */}
-      <InlineFAQ
-        context={{
-          stepName: currentStepData?.title,
-          progressPercent,
-          timeSpent: estimatedSeconds ? `${Math.floor(estimatedSeconds / 60)} min` : undefined
-        }}
-      />
     </div>
   );
 };

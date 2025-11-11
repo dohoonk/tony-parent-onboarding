@@ -167,3 +167,4 @@ This fix also resolves:
 - The backend mutation `uploadInsuranceCard` had a workaround for temp IDs (lines 17-44), which is no longer needed but won't cause issues
 - Consider cleaning up that workaround in a future PR for code clarity
 
+

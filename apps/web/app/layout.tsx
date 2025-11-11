@@ -5,7 +5,11 @@ import { SkipLink } from "@/components/onboarding/SkipLink";
 import { SupportChat } from "@/components/support/SupportChat";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Daybreak Health - Parent Onboarding",

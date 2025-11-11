@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
 interface ProgressBarProps {
@@ -21,26 +22,18 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <div className={cn('w-full', className)}>
       {showLabel && (
-        <div className="mb-2 flex justify-between text-sm">
-          <span className="font-medium">
+        <div className="mb-3 flex justify-between text-body-small">
+          <span className="font-semibold text-foreground">
             Step {current} of {total}
           </span>
-          <span className="text-muted-foreground">{percentage}% complete</span>
+          <span className="font-medium text-muted-foreground">{percentage}% complete</span>
         </div>
       )}
-      <div
-        className="h-2 w-full overflow-hidden rounded-full bg-muted"
-        role="progressbar"
-        aria-valuenow={percentage}
-        aria-valuemin={0}
-        aria-valuemax={100}
+      <Progress 
+        value={percentage} 
+        className="h-2.5"
         aria-label={`Onboarding progress: ${percentage}% complete, step ${current} of ${total}`}
-      >
-        <div
-          className="h-full bg-primary transition-all duration-300 ease-in-out"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
+      />
     </div>
   );
 };

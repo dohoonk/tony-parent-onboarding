@@ -1,0 +1,43 @@
+# Task ID: 5
+# Title: Phase 5: Homepage & Landing Pages
+# Status: done
+# Dependencies: 2, 3
+# Priority: medium
+# Description: Redesign homepage to match Daybreak Health style with hero, statistics, trust indicators, and program sections
+# Details:
+Replace current centered card homepage with new hero section. Add statistics section with large numbers and grid layout. Add trust indicators section with partner/insurance logos. Add program cards section showcasing services. Optional testimonial section. Create reusable landing page section components. Ensure responsive design and fast loading. Add footer if needed.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Redesign Homepage with Hero Section [done]
+### Dependencies: None
+### Description: Replace current homepage with new Daybreak Health style hero section
+### Details:
+Update apps/web/app/page.tsx. Remove current centered card. Add Header component. Add Hero component with headline "Mental health support for every student", subheading about Daybreak's mission, dual CTAs (Schools/Families). Use clean white background. Ensure responsive design. Add semantic HTML (main, section tags). Match Daybreak Health homepage style.
+
+## 2. Add Statistics Section to Homepage [done]
+### Dependencies: 5.1
+### Description: Add statistics/metrics section showcasing Daybreak Health's impact
+### Details:
+Add Section component to page.tsx. Use StatsGrid component with 3-4 key metrics. Examples: "80% of school staff report improvements", "50K+ students supported", "95% parent satisfaction", "24/7 crisis support". Large numbers with descriptive text. Use accent background. Add separator before/after section.
+
+## 3. Add Trust Indicators Section [done]
+### Dependencies: 5.2
+### Description: Add section showcasing partner school districts and insurance providers
+### Details:
+Add TrustSection component to page.tsx. Header: "Trusted by leading school districts and accepted by major insurances". Include placeholder logos for school districts and insurance companies. Use grayscale logos with hover color. Smooth scrolling carousel. White background. Proper spacing (py-16).
+
+## 4. Add Programs/Services Section [done]
+### Dependencies: 5.3
+### Description: Add section showcasing Daybreak Health's programs using ProgramCard components
+### Details:
+Add Section to page.tsx. Title: "Our Programs". Grid of ProgramCard components (3 columns desktop, 1-2 mobile). Programs: "Teletherapy (ages 5-19)", "Crisis Support 24/7", "Family Therapy", "Group Sessions", "Parent Support". Each card with icon, title, description, Learn More CTA. Accent background. Proper grid gap (gap-6).
+
+## 5. Add Testimonials Section (Optional) [done]
+### Dependencies: 5.4
+### Description: Add testimonial section with parent/student success stories
+### Details:
+Add Section to page.tsx. Title: "Families Love Daybreak". Grid or carousel of TestimonialCard components (2-3 visible). Include diverse testimonials from parents, students, school staff. Each with avatar, quote, attribution. Optional video testimonials. White background. Add CTA: "Read More Stories".
+

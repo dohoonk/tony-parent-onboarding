@@ -4,7 +4,7 @@ module Mutations
 
     argument :input, Types::Inputs::BookAppointmentInput, required: true
 
-    field :appointment, Types::AppointmentType, null: false
+    field :appointment, Types::AppointmentType, null: true
     field :errors, [String], null: false
 
     def resolve(input:)
@@ -16,7 +16,7 @@ module Mutations
         return { appointment: nil, errors: ["Session not found"] }
       end
 
-      student = session.students.first
+      student = session.student
       
       unless student
         return { appointment: nil, errors: ["Student not found"] }
@@ -37,12 +37,20 @@ module Mutations
       # Check therapist availability (basic check - can be enhanced)
       scheduled_time = input.scheduled_at
       if scheduled_time.present?
-        # Check if therapist has availability window that includes this time
-        day_name = scheduled_time.strftime('%A')
-        time_str = scheduled_time.strftime('%H:%M:%S')
-        
         therapist_available = therapist.availability_windows.any? do |window|
-          window.uses_json_format? && window.available_at_time?(day_name, time_str)
+          next false unless window.uses_json_format?
+
+          timezone_name = window.timezone.presence || therapist.try(:timezone) || Time.zone.name
+          localized_time = scheduled_time.in_time_zone(timezone_name)
+
+          # Ensure the date falls within the window's active range
+          next false if window.start_date.present? && localized_time.to_date < window.start_date
+          next false if window.end_date.present? && localized_time.to_date > window.end_date
+
+          day_name = localized_time.strftime('%A')
+          time_str = localized_time.strftime('%H:%M:%S')
+
+          window.available_at_time?(day_name, time_str)
         end
         
         unless therapist_available

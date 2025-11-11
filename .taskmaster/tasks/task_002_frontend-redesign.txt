@@ -1,0 +1,49 @@
+# Task ID: 2
+# Title: Phase 2: Navigation & Layout Components
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Install navigation shadcn components and build core layout components including Header, Hero, and Section wrapper
+# Details:
+Install navigation-menu, dropdown-menu, and sheet components. Create Header component with desktop navigation (navigation-menu) and mobile navigation (sheet). Build Hero component with large headlines, dual CTAs, and responsive spacing. Create reusable Section wrapper component with consistent max-widths and padding. Add Logo component. Ensure accessibility with skip links and keyboard navigation.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Install Navigation shadcn Components [done]
+### Dependencies: None
+### Description: Install navigation-menu, dropdown-menu, and sheet components from shadcn/ui
+### Details:
+Run in apps/web: npx shadcn@latest add navigation-menu dropdown-menu sheet. Verify components are installed in components/ui/. Test each component renders correctly with default styling. Ensure components use design system colors and match Daybreak Health brand.
+
+## 2. Create Logo Component [done]
+### Dependencies: 2.1
+### Description: Build reusable Logo component for Daybreak Health branding
+### Details:
+Create components/layout/Logo.tsx with Daybreak Health logo. Support size variants (sm, md, lg). Make clickable with link to homepage. Use Next.js Image component for optimization. Include proper alt text for accessibility. Export for use in Header and other components.
+
+## 3. Build Header Component with Desktop Navigation [done]
+### Dependencies: 2.2
+### Description: Create Header component with horizontal navigation menu for desktop
+### Details:
+Create components/layout/Header.tsx. Use navigation-menu for desktop nav. Add Logo on left. Navigation items: Programs, Resources, About (center/right aligned). Primary CTA button "Sign Up" on right. Add skip link for accessibility (aria-label="Skip to main content"). Use sticky positioning. Responsive breakpoint at md (768px). Match Daybreak Health header style.
+
+## 4. Add Mobile Navigation with Sheet [done]
+### Dependencies: 2.3
+### Description: Implement hamburger menu and mobile navigation drawer using Sheet component
+### Details:
+Add hamburger menu button (visible on mobile only, hidden on md+). Use Sheet component for mobile drawer. Include Logo, navigation links (Programs, Resources, About), and Sign Up button. Ensure touch targets are 44x44px minimum. Add smooth slide-in animation. Test keyboard navigation and screen reader support. Close drawer on navigation.
+
+## 5. Build Hero Component [done]
+### Dependencies: 2.1
+### Description: Create Hero section component with large headlines, subheading, and dual CTAs
+### Details:
+Create components/layout/Hero.tsx. Large headline using text-display class (3.5rem/2.5rem mobile). Subheading with text-body-large. Dual CTA buttons: primary "Schools - Book a Demo" and secondary "Families - Sign Up". Clean white background. Generous vertical padding (py-20 to py-32). Center-aligned content. Max-width container. Responsive on all devices. Match Daybreak Health hero style.
+
+## 6. Create Section Wrapper Component [done]
+### Dependencies: 2.1
+### Description: Build reusable Section component for consistent page layout and spacing
+### Details:
+Create components/layout/Section.tsx. Support variant prop (default, accent, muted). Optional background prop (white, gray, blue-subtle). Consistent max-width (container mx-auto max-w-7xl). Standard padding (px-4 py-12 to py-16). Optional separator between sections. Support children composition. Make fully responsive. Export for use throughout the app.
+

@@ -1,0 +1,49 @@
+# Task ID: 3
+# Title: Phase 3: Content Components
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Build content display components including StatsGrid, TrustSection, TestimonialCard, VideoCard, and ProgramCard
+# Details:
+Install carousel component. Create StatsGrid with responsive grid layout (3-4 columns desktop, 1-2 mobile) and large number displays. Build TrustSection with logo carousel and smooth scrolling. Create TestimonialCard with avatar, quote, and attribution. Build VideoCard with aspect-ratio container, play button overlay, and dialog modal. Create ProgramCard with icons, titles, descriptions, CTAs, and hover effects.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Install Carousel Component [done]
+### Dependencies: None
+### Description: Install carousel component from shadcn/ui for logo scrolling and testimonials
+### Details:
+Run in apps/web: npx shadcn@latest add carousel. Verify installation in components/ui/carousel.tsx. Test basic carousel functionality with sample content. Ensure smooth scrolling and responsive behavior. Check that it uses design system styling.
+
+## 2. Build StatsGrid and StatCard Components [done]
+### Dependencies: 3.1
+### Description: Create statistics display components with responsive grid layout
+### Details:
+Create components/content/StatsGrid.tsx and StatCard.tsx. Grid layout: 3-4 columns desktop, 1-2 mobile. StatCard with large number display (text-display or text-h1), descriptive label (text-body-small), optional icon. Use card styling with subtle background. Responsive gap spacing. Example stats: "80% school staff report improvements", "50K+ students supported".
+
+## 3. Build TrustSection Component with Logo Carousel [done]
+### Dependencies: 3.1
+### Description: Create trust indicators section with partner/insurance logos in scrolling carousel
+### Details:
+Create components/content/TrustSection.tsx. Header: "Trusted by top school districts and insurance providers". Use Carousel for logo scrolling. Make logos grayscale with hover color effect. Consistent logo sizing (h-12 to h-16). Smooth auto-scroll with pause on hover. Responsive: horizontal scroll on mobile. Add padding and spacing per design system.
+
+## 4. Build TestimonialCard Component [done]
+### Dependencies: 3.1
+### Description: Create testimonial display component with avatar, quote, and attribution
+### Details:
+Create components/content/TestimonialCard.tsx. Use Avatar component for profile image. Quote text: text-body-large, italic styling. Attribution: Name (font-semibold) and Role (text-muted-foreground). Card styling with shadow-md. Optional video play button overlay. Add hover effect (shadow-lg). Responsive layout. Example: "Daybreak saved my son's life!" - Clifford's Mom, Parent.
+
+## 5. Build VideoCard Component [done]
+### Dependencies: 3.1
+### Description: Create video embed component with aspect ratio container and modal playback
+### Details:
+Create components/content/VideoCard.tsx. Use AspectRatio component (16:9) for container. Thumbnail image with play button overlay. Dialog component for video modal. Support YouTube/Vimeo embeds. Play button: large, centered, with hover effect. Optional title/description below video. Responsive sizing. Handle keyboard (Enter/Space) and click events.
+
+## 6. Build ProgramCard Component [done]
+### Dependencies: 3.1
+### Description: Create service/program feature cards with icons, descriptions, and CTAs
+### Details:
+Create components/content/ProgramCard.tsx. Icon or image at top. Title: text-h3. Description: text-body, 2-3 lines. CTA button at bottom (Learn More). Card: rounded-lg, shadow-md, p-6. Hover effect: shadow-lg, slight elevation. Responsive grid layout. Examples: "Teletherapy for ages 5-19", "Crisis Support 24/7", "Family Therapy Sessions".
+

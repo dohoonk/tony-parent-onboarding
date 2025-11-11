@@ -1,0 +1,1220 @@
+# Frontend PRD: Daybreak Health Design System & UI Implementation
+
+## Document Purpose
+This PRD documents the complete design system, component specifications, and implementation plan for aligning the Parent Onboarding AI frontend with Daybreak Health's brand identity and design language.
+
+**Reference**: [Daybreak Health Website](https://www.daybreakhealth.com/)
+
+---
+
+## 1. Design System Foundation
+
+### 1.1 Color Palette
+
+#### Primary Colors (Healthcare Blue/Teal)
+Based on Daybreak Health's brand, we'll use a warm, approachable healthcare palette:
+
+**Primary Blue** (Main brand color - buttons, links, CTAs):
+- HSL: `210 75% 50%` (Bright, trustworthy blue)
+- Hex: `#3B82F6` (approximately)
+- Usage: Primary buttons, links, active states, brand elements
+- Foreground: `210 40% 98%` (White/off-white text)
+
+**Primary Teal** (Secondary brand accent):
+- HSL: `180 60% 45%` (Professional teal)
+- Hex: `#14B8A6` (approximately)
+- Usage: Secondary CTAs, highlights, success states
+- Foreground: `0 0% 100%` (White text)
+
+**Primary Dark** (Headings, important text):
+- HSL: `222 47% 11%` (Deep slate)
+- Hex: `#0F172A` (approximately)
+- Usage: Headings, body text, foreground elements
+
+#### Neutral Colors
+
+**Background**:
+- Light: `0 0% 100%` (Pure white)
+- Light Muted: `210 40% 98%` (Off-white, subtle gray)
+- Dark: `222 47% 11%` (For dark mode - deep slate)
+
+**Foreground**:
+- Light: `222 47% 11%` (Deep slate for text)
+- Muted: `215 16% 47%` (Medium gray for secondary text)
+- Subtle: `215 20% 65%` (Light gray for tertiary text)
+
+**Borders & Dividers**:
+- Default: `214 31% 91%` (Light gray borders)
+- Muted: `210 40% 96%` (Very light gray)
+
+#### Semantic Colors
+
+**Success** (Positive actions, confirmations):
+- HSL: `142 71% 45%` (Green)
+- Hex: `#10B981` (approximately)
+- Foreground: `0 0% 100%`
+
+**Warning** (Cautions, important notices):
+- HSL: `38 92% 50%` (Amber)
+- Hex: `#F59E0B` (approximately)
+- Foreground: `0 0% 100%`
+
+**Destructive** (Errors, deletions):
+- HSL: `0 84% 60%` (Red)
+- Hex: `#EF4444` (approximately)
+- Foreground: `0 0% 100%`
+
+**Info** (Informational messages):
+- HSL: `210 75% 50%` (Same as primary, lighter variant)
+- Hex: `#3B82F6`
+- Foreground: `0 0% 100%`
+
+#### Accent Colors
+
+**Accent** (Hover states, subtle highlights):
+- HSL: `210 40% 96%` (Very light blue-gray)
+- Usage: Hover backgrounds, subtle highlights
+
+**Muted** (Disabled states, subtle backgrounds):
+- HSL: `210 40% 96%` (Light gray)
+- Foreground: `215 16% 47%` (Medium gray text)
+
+### 1.2 Typography System
+
+#### Font Family
+**Primary Font**: Inter (Current - keep)
+- Source: Google Fonts
+- Weights: 400 (Regular), 500 (Medium), 600 (Semi-bold), 700 (Bold)
+- Usage: All body text, UI elements, buttons
+
+**Display Font** (Optional - for hero sections):
+- Font: Inter (same, but with larger sizes and tighter letter-spacing)
+- Alternative consideration: System font stack for performance
+
+#### Type Scale
+
+**Display** (Hero headlines):
+- Size: `3.5rem` (56px) / `2.5rem` (40px) mobile
+- Line Height: `1.1`
+- Weight: `700` (Bold)
+- Letter Spacing: `-0.02em`
+- Usage: Main hero headlines, landing page titles
+
+**H1** (Page titles):
+- Size: `2.5rem` (40px) / `2rem` (32px) mobile
+- Line Height: `1.2`
+- Weight: `700` (Bold)
+- Letter Spacing: `-0.01em`
+- Usage: Page titles, major section headers
+
+**H2** (Section headers):
+- Size: `2rem` (32px) / `1.75rem` (28px) mobile
+- Line Height: `1.3`
+- Weight: `600` (Semi-bold)
+- Letter Spacing: `0`
+- Usage: Section headers, card titles
+
+**H3** (Subsection headers):
+- Size: `1.5rem` (24px) / `1.25rem` (20px) mobile
+- Line Height: `1.4`
+- Weight: `600` (Semi-bold)
+- Letter Spacing: `0`
+- Usage: Subsection headers, feature titles
+
+**H4** (Component headers):
+- Size: `1.25rem` (20px) / `1.125rem` (18px) mobile
+- Line Height: `1.5`
+- Weight: `600` (Semi-bold)
+- Letter Spacing: `0`
+- Usage: Card headers, form section titles
+
+**Body Large** (Emphasized body text):
+- Size: `1.125rem` (18px) / `1rem` (16px) mobile
+- Line Height: `1.6`
+- Weight: `400` (Regular)
+- Usage: Lead paragraphs, important descriptions
+
+**Body** (Default body text):
+- Size: `1rem` (16px)
+- Line Height: `1.6`
+- Weight: `400` (Regular)
+- Usage: All body text, paragraphs, descriptions
+
+**Body Small** (Secondary text):
+- Size: `0.875rem` (14px)
+- Line Height: `1.5`
+- Weight: `400` (Regular)
+- Usage: Captions, helper text, metadata
+
+**Caption** (Tiny text):
+- Size: `0.75rem` (12px)
+- Line Height: `1.4`
+- Weight: `400` (Regular)
+- Usage: Labels, timestamps, fine print
+
+### 1.3 Spacing System
+
+Based on 4px base unit (Tailwind default):
+
+**Scale**:
+- `0`: `0px`
+- `1`: `0.25rem` (4px)
+- `2`: `0.5rem` (8px)
+- `3`: `0.75rem` (12px)
+- `4`: `1rem` (16px)
+- `5`: `1.25rem` (20px)
+- `6`: `1.5rem` (24px)
+- `8`: `2rem` (32px)
+- `10`: `2.5rem` (40px)
+- `12`: `3rem` (48px)
+- `16`: `4rem` (64px)
+- `20`: `5rem` (80px)
+- `24`: `6rem` (96px)
+
+**Usage Guidelines**:
+- Component padding: `4-6` (16-24px)
+- Section spacing: `12-16` (48-64px)
+- Card spacing: `6-8` (24-32px)
+- Form field spacing: `4-5` (16-20px)
+- Button padding: `3-4` horizontal, `2-3` vertical (12-16px)
+
+### 1.4 Border Radius
+
+**Scale**:
+- `none`: `0px`
+- `sm`: `0.25rem` (4px) - Small elements, badges
+- `md`: `0.375rem` (6px) - Default buttons, inputs
+- `lg`: `0.5rem` (8px) - Cards, containers (current default)
+- `xl`: `0.75rem` (12px) - Large cards, modals
+- `2xl`: `1rem` (16px) - Hero sections, large containers
+- `full`: `9999px` - Pills, avatars
+
+**Usage**:
+- Buttons: `md` (6px)
+- Cards: `lg` (8px)
+- Inputs: `md` (6px)
+- Modals/Dialogs: `xl` (12px)
+- Badges: `sm` (4px) or `full` for pills
+
+### 1.5 Shadows
+
+**Elevation Levels**:
+- `sm`: `0 1px 2px 0 rgb(0 0 0 / 0.05)` - Subtle elevation
+- `default`: `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` - Cards
+- `md`: `0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)` - Elevated cards
+- `lg`: `0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)` - Modals
+- `xl`: `0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)` - Dropdowns
+
+**Usage**:
+- Cards: `default` or `md`
+- Modals/Dialogs: `lg`
+- Dropdowns: `xl`
+- Buttons: `sm` on hover (optional)
+
+### 1.6 Breakpoints (Responsive Design)
+
+**Mobile First Approach**:
+- `sm`: `640px` - Small tablets, large phones
+- `md`: `768px` - Tablets
+- `lg`: `1024px` - Small desktops
+- `xl`: `1280px` - Desktops
+- `2xl`: `1536px` - Large desktops
+
+**Container Max Widths**:
+- Mobile: Full width with padding
+- Tablet: `640px` max
+- Desktop: `1024px` max
+- Large Desktop: `1280px` max
+
+---
+
+## 2. Component Specifications
+
+### 2.1 Required shadcn/ui Components
+
+#### Phase 1 (Foundation)
+1. ✅ `button` - Already installed
+2. ✅ `card` - Already installed
+3. ✅ `input` - Already installed
+4. ✅ `label` - Already installed
+5. ✅ `checkbox` - Already installed
+6. ✅ `radio-group` - Already installed
+7. ✅ `select` - Already installed
+8. ✅ `textarea` - Need to add
+9. ✅ `dialog` - Already installed
+10. ✅ `tabs` - Already installed
+11. ✅ `tooltip` - Already installed
+12. ✅ `alert` - Already installed
+13. ✅ `badge` - Already installed
+14. ✅ `scroll-area` - Already installed
+
+#### Phase 2 (Navigation & Layout)
+15. `navigation-menu` - Main navigation
+16. `dropdown-menu` - Navigation dropdowns
+17. `separator` - Section dividers
+18. `sheet` or `drawer` - Mobile navigation
+
+#### Phase 3 (Content & Media)
+19. `avatar` - User profiles, testimonials
+20. `carousel` - Logo scrolling, testimonials
+21. `aspect-ratio` - Video containers, images
+22. `skeleton` - Loading states
+23. `progress` - Enhanced progress indicators
+24. `spinner` - Loading spinners
+
+#### Phase 4 (Enhancements)
+25. `form` - Form integration (React Hook Form)
+26. `hover-card` - Program previews
+27. `popover` - Additional tooltips/help
+28. `accordion` - Expandable content sections
+
+### 2.2 Custom Components to Build
+
+#### Layout Components
+1. **Header** - Main navigation with logo, menu, CTAs
+2. **Hero** - Landing page hero section
+3. **Section** - Reusable section wrapper
+4. **Container** - Max-width container wrapper
+5. **Footer** - Site footer (if needed)
+
+#### Content Components
+6. **StatsGrid** - Statistics/metrics display
+7. **TrustSection** - Partner/insurance logos
+8. **TestimonialCard** - Testimonial display
+9. **VideoCard** - Video embed with play button
+10. **ProgramCard** - Service/program feature cards
+11. **FeatureGrid** - Grid of feature cards
+
+#### Onboarding Enhancements
+12. **EnhancedProgressBar** - Improved progress indicator
+13. **StepIndicator** - Visual step navigation
+14. **ReassuranceMessage** - Enhanced reassurance banner
+15. **ETACountdown** - Time remaining display
+
+---
+
+## 3. Design Patterns from Daybreak Health
+
+### 3.1 Hero Section Pattern
+- Large, centered headline (Display size)
+- Subheading (Body Large)
+- Dual CTAs (Primary + Secondary buttons)
+- Clean background (white or subtle gradient)
+- Optional: Background image or illustration
+- Generous padding (vertical: 80-120px)
+
+### 3.2 Statistics Display Pattern
+- Large numbers (Display or H1 size)
+- Descriptive text below (Body Small)
+- Grid layout (3-4 columns desktop, 1-2 mobile)
+- Subtle card backgrounds or borders
+- Icon or visual element optional
+
+### 3.3 Trust Indicators Pattern
+- Logo carousel (horizontal scroll)
+- "Trusted by" or "Partnered with" header
+- Grayscale logos (optional)
+- Consistent logo sizing
+- Smooth scrolling animation
+
+### 3.4 Testimonial Pattern
+- Card-based layout
+- Avatar image
+- Quote text (Body Large, italic)
+- Attribution (Name, role)
+- Optional: Video play button overlay
+
+### 3.5 Program/Service Card Pattern
+- Card container with shadow
+- Icon or image at top
+- Title (H3)
+- Description (Body)
+- CTA button (Primary or Secondary)
+- Hover effect (slight elevation increase)
+
+### 3.6 Navigation Pattern
+- Horizontal menu (desktop)
+- Logo on left
+- Menu items center or right
+- CTA button on right
+- Mobile: Hamburger menu → Sheet/Drawer
+
+---
+
+## 4. Implementation Phases
+
+### Phase 1: Foundation & Design Tokens (Week 1)
+
+#### 1.1 Update Color System
+**Tasks**:
+- [ ] Update `apps/web/app/globals.css` with new color palette
+- [ ] Replace all HSL color values with Daybreak Health palette
+- [ ] Add semantic color variables (success, warning, info)
+- [ ] Test color contrast ratios (WCAG AA compliance)
+- [ ] Update dark mode colors (if needed)
+
+**Files to Modify**:
+- `apps/web/app/globals.css`
+- `apps/web/tailwind.config.ts` (if needed)
+
+**Acceptance Criteria**:
+- All color variables updated
+- Contrast ratios meet WCAG AA standards
+- Colors match Daybreak Health brand
+- Dark mode works correctly
+
+#### 1.2 Typography System
+**Tasks**:
+- [ ] Verify Inter font is properly loaded
+- [ ] Add custom typography scale to Tailwind config
+- [ ] Create typography utility classes
+- [ ] Update existing components with new type scale
+- [ ] Test readability on all screen sizes
+
+**Files to Modify**:
+- `apps/web/tailwind.config.ts`
+- `apps/web/app/globals.css`
+
+**Acceptance Criteria**:
+- Typography scale matches specification
+- All text is readable and accessible
+- Font weights load correctly
+- Responsive typography works
+
+#### 1.3 Spacing & Layout System
+**Tasks**:
+- [ ] Verify spacing scale in Tailwind config
+- [ ] Document spacing usage guidelines
+- [ ] Update component padding/margins
+- [ ] Ensure consistent spacing throughout
+
+**Files to Modify**:
+- `apps/web/tailwind.config.ts`
+- Component files (as needed)
+
+**Acceptance Criteria**:
+- Spacing is consistent across components
+- Layouts feel spacious and uncluttered
+- Mobile spacing is appropriate
+
+#### 1.4 Install Missing Base Components
+**Tasks**:
+- [ ] Install `textarea` component
+- [ ] Install `separator` component
+- [ ] Install `progress` component
+- [ ] Install `skeleton` component
+- [ ] Install `spinner` component
+- [ ] Install `avatar` component
+- [ ] Install `aspect-ratio` component
+
+**Commands**:
+```bash
+cd apps/web
+npx shadcn@latest add textarea
+npx shadcn@latest add separator
+npx shadcn@latest add progress
+npx shadcn@latest add skeleton
+npx shadcn@latest add spinner
+npx shadcn@latest add avatar
+npx shadcn@latest add aspect-ratio
+```
+
+**Acceptance Criteria**:
+- All components installed successfully
+- Components render correctly
+- Components match design system
+
+### Phase 2: Navigation & Layout Components (Week 2)
+
+#### 2.1 Install Navigation Components
+**Tasks**:
+- [ ] Install `navigation-menu` component
+- [ ] Install `dropdown-menu` component
+- [ ] Install `sheet` component (for mobile nav)
+
+**Commands**:
+```bash
+cd apps/web
+npx shadcn@latest add navigation-menu
+npx shadcn@latest add dropdown-menu
+npx shadcn@latest add sheet
+```
+
+#### 2.2 Build Header Component
+**Tasks**:
+- [ ] Create `components/layout/Header.tsx`
+- [ ] Implement desktop navigation with navigation-menu
+- [ ] Implement mobile navigation with sheet
+- [ ] Add Daybreak Health logo
+- [ ] Add primary CTA button
+- [ ] Make responsive (mobile hamburger menu)
+- [ ] Add skip link for accessibility
+
+**Component Structure**:
+```typescript
+<Header>
+  <Logo />
+  <NavigationMenu>
+    <NavigationMenuItem>Programs</NavigationMenuItem>
+    <NavigationMenuItem>Resources</NavigationMenuItem>
+    <NavigationMenuItem>About</NavigationMenuItem>
+  </NavigationMenu>
+  <Button>Sign Up</Button>
+  <Sheet> {/* Mobile menu */} </Sheet>
+</Header>
+```
+
+**Files to Create**:
+- `apps/web/components/layout/Header.tsx`
+- `apps/web/components/layout/Logo.tsx` (if not exists)
+
+**Acceptance Criteria**:
+- Header matches Daybreak Health style
+- Navigation works on desktop and mobile
+- Logo displays correctly
+- CTA button is prominent
+- Accessible (keyboard navigation, screen readers)
+
+#### 2.3 Build Hero Component
+**Tasks**:
+- [ ] Create `components/layout/Hero.tsx`
+- [ ] Implement large headline
+- [ ] Add subheading
+- [ ] Add dual CTAs (primary + secondary)
+- [ ] Add responsive spacing
+- [ ] Make mobile-friendly
+
+**Component Structure**:
+```typescript
+<Hero>
+  <h1>Mental health support...</h1>
+  <p>Daybreak partners with schools...</p>
+  <div>
+    <Button>Schools - Book a Demo</Button>
+    <Button variant="secondary">Families - Sign Up</Button>
+  </div>
+</Hero>
+```
+
+**Files to Create**:
+- `apps/web/components/layout/Hero.tsx`
+
+**Acceptance Criteria**:
+- Hero matches Daybreak Health style
+- Typography is large and readable
+- CTAs are prominent
+- Responsive on all devices
+- Accessible
+
+#### 2.4 Build Section Wrapper Component
+**Tasks**:
+- [ ] Create `components/layout/Section.tsx`
+- [ ] Implement consistent max-widths
+- [ ] Add consistent padding
+- [ ] Add optional background variants
+- [ ] Add separator option
+
+**Component Structure**:
+```typescript
+<Section variant="default" background="white">
+  <SectionTitle>...</SectionTitle>
+  {children}
+</Section>
+```
+
+**Files to Create**:
+- `apps/web/components/layout/Section.tsx`
+
+**Acceptance Criteria**:
+- Consistent spacing and width
+- Flexible for different content types
+- Responsive
+
+### Phase 3: Content Components (Week 3)
+
+#### 3.1 Install Content Components
+**Tasks**:
+- [ ] Install `carousel` component
+- [ ] Verify `avatar` is installed
+- [ ] Verify `aspect-ratio` is installed
+
+**Commands**:
+```bash
+cd apps/web
+npx shadcn@latest add carousel
+```
+
+#### 3.2 Build StatsGrid Component
+**Tasks**:
+- [ ] Create `components/content/StatsGrid.tsx`
+- [ ] Implement grid layout (3-4 columns desktop, 1-2 mobile)
+- [ ] Add large number display
+- [ ] Add descriptive text
+- [ ] Add optional icons
+- [ ] Add card styling
+
+**Component Structure**:
+```typescript
+<StatsGrid>
+  <StatCard>
+    <StatNumber>80</StatNumber>
+    <StatLabel>school staff report improvements</StatLabel>
+  </StatCard>
+  {/* More stat cards */}
+</StatsGrid>
+```
+
+**Files to Create**:
+- `apps/web/components/content/StatsGrid.tsx`
+- `apps/web/components/content/StatCard.tsx`
+
+**Acceptance Criteria**:
+- Matches Daybreak Health statistics display
+- Responsive grid layout
+- Numbers are large and readable
+- Accessible
+
+#### 3.3 Build TrustSection Component
+**Tasks**:
+- [ ] Create `components/content/TrustSection.tsx`
+- [ ] Implement logo carousel
+- [ ] Add "Trusted by" header
+- [ ] Add smooth scrolling
+- [ ] Make logos grayscale (optional)
+- [ ] Ensure consistent logo sizing
+
+**Component Structure**:
+```typescript
+<TrustSection>
+  <h2>Trusted by top school districts...</h2>
+  <Carousel>
+    {/* Logo images */}
+  </Carousel>
+</TrustSection>
+```
+
+**Files to Create**:
+- `apps/web/components/content/TrustSection.tsx`
+
+**Acceptance Criteria**:
+- Carousel scrolls smoothly
+- Logos are consistently sized
+- Responsive
+- Accessible
+
+#### 3.4 Build TestimonialCard Component
+**Tasks**:
+- [ ] Create `components/content/TestimonialCard.tsx`
+- [ ] Add avatar image
+- [ ] Add quote text (large, italic)
+- [ ] Add attribution (name, role)
+- [ ] Add card styling
+- [ ] Add optional video play button
+
+**Component Structure**:
+```typescript
+<TestimonialCard>
+  <Avatar src="..." />
+  <Quote>"Daybreak saved my son's life!"</Quote>
+  <Attribution>
+    <Name>Clifford's Mom</Name>
+    <Role>Parent</Role>
+  </Attribution>
+  <PlayButton /> {/* Optional */}
+</TestimonialCard>
+```
+
+**Files to Create**:
+- `apps/web/components/content/TestimonialCard.tsx`
+
+**Acceptance Criteria**:
+- Matches Daybreak Health testimonial style
+- Avatar displays correctly
+- Quote is prominent
+- Responsive
+
+#### 3.5 Build VideoCard Component
+**Tasks**:
+- [ ] Create `components/content/VideoCard.tsx`
+- [ ] Use aspect-ratio for video container
+- [ ] Add play button overlay
+- [ ] Add dialog for video modal
+- [ ] Add thumbnail image
+- [ ] Add title/description
+
+**Component Structure**:
+```typescript
+<VideoCard>
+  <AspectRatio ratio={16/9}>
+    <Thumbnail src="..." />
+    <PlayButton />
+  </AspectRatio>
+  <Dialog>
+    <VideoPlayer src="..." />
+  </Dialog>
+</VideoCard>
+```
+
+**Files to Create**:
+- `apps/web/components/content/VideoCard.tsx`
+
+**Acceptance Criteria**:
+- Video displays in correct aspect ratio
+- Play button is prominent
+- Modal opens correctly
+- Responsive
+
+#### 3.6 Build ProgramCard Component
+**Tasks**:
+- [ ] Create `components/content/ProgramCard.tsx`
+- [ ] Add icon or image
+- [ ] Add title (H3)
+- [ ] Add description (Body)
+- [ ] Add CTA button
+- [ ] Add hover effects
+- [ ] Add card styling
+
+**Component Structure**:
+```typescript
+<ProgramCard>
+  <Icon />
+  <Title>Teletherapy for ages 5-19</Title>
+  <Description>An evidence-based program...</Description>
+  <Button>Learn More</Button>
+</ProgramCard>
+```
+
+**Files to Create**:
+- `apps/web/components/content/ProgramCard.tsx`
+
+**Acceptance Criteria**:
+- Matches Daybreak Health program cards
+- Hover effects work
+- Responsive
+- Accessible
+
+### Phase 4: Onboarding Enhancements (Week 4)
+
+#### 4.1 Enhance Progress Components
+**Tasks**:
+- [ ] Update `components/onboarding/ProgressBar.tsx` with new styling
+- [ ] Add smooth animations
+- [ ] Improve visual design
+- [ ] Ensure accessibility
+- [ ] Add percentage display (optional)
+
+**Files to Modify**:
+- `apps/web/components/onboarding/ProgressBar.tsx`
+
+**Acceptance Criteria**:
+- Progress bar matches design system
+- Animations are smooth
+- Accessible
+
+#### 4.2 Enhance ETA Display
+**Tasks**:
+- [ ] Update `components/onboarding/ETADisplay.tsx` with new styling
+- [ ] Improve typography
+- [ ] Add visual indicators
+- [ ] Make more prominent
+
+**Files to Modify**:
+- `apps/web/components/onboarding/ETADisplay.tsx`
+
+**Acceptance Criteria**:
+- ETA is clear and readable
+- Matches design system
+
+#### 4.3 Enhance Reassurance Banner
+**Tasks**:
+- [ ] Update `components/onboarding/ReassuranceBanner.tsx` with new styling
+- [ ] Use alert component
+- [ ] Improve typography
+- [ ] Add icons (optional)
+- [ ] Improve animations
+
+**Files to Modify**:
+- `apps/web/components/onboarding/ReassuranceBanner.tsx`
+
+**Acceptance Criteria**:
+- Banner is warm and supportive
+- Matches design system
+- Animations are smooth
+
+#### 4.4 Add Loading States
+**Tasks**:
+- [ ] Add skeleton loaders to async steps
+- [ ] Add spinner components where needed
+- [ ] Improve loading UX
+- [ ] Add progress indicators for long operations
+
+**Files to Create/Modify**:
+- Various onboarding step components
+- `apps/web/components/ui/skeleton.tsx` (already installed)
+- `apps/web/components/ui/spinner.tsx` (already installed)
+
+**Acceptance Criteria**:
+- Loading states are clear
+- Users understand what's happening
+- No jarring transitions
+
+#### 4.5 Enhance Form Components
+**Tasks**:
+- [ ] Update form styling to match design system
+- [ ] Improve input styling
+- [ ] Add better error states
+- [ ] Improve mobile form experience
+- [ ] Add field grouping
+
+**Files to Modify**:
+- Form components in `apps/web/components/onboarding/steps/`
+
+**Acceptance Criteria**:
+- Forms match design system
+- Error states are clear
+- Mobile experience is excellent
+- Accessible
+
+### Phase 5: Homepage & Landing Pages (Week 5)
+
+#### 5.1 Redesign Homepage
+**Tasks**:
+- [ ] Replace current centered card with hero section
+- [ ] Add statistics section
+- [ ] Add trust indicators section
+- [ ] Add program cards section
+- [ ] Add testimonial section (optional)
+- [ ] Add footer (if needed)
+
+**Files to Modify**:
+- `apps/web/app/page.tsx`
+
+**Acceptance Criteria**:
+- Homepage matches Daybreak Health style
+- All sections are present
+- Responsive
+- Accessible
+- Fast loading
+
+#### 5.2 Create Landing Page Components
+**Tasks**:
+- [ ] Create reusable landing page sections
+- [ ] Document component usage
+- [ ] Ensure consistency
+
+**Files to Create**:
+- `apps/web/components/landing/` directory
+- Various landing page components
+
+**Acceptance Criteria**:
+- Components are reusable
+- Consistent styling
+- Well-documented
+
+### Phase 6: Polish & Optimization (Week 6)
+
+#### 6.1 Animations & Transitions
+**Tasks**:
+- [ ] Add smooth page transitions
+- [ ] Add hover effects to cards
+- [ ] Add fade-in animations for sections
+- [ ] Add loading animations
+- [ ] Ensure animations are performant
+
+**Files to Modify**:
+- Various component files
+- `apps/web/app/globals.css`
+
+**Acceptance Criteria**:
+- Animations are smooth (60fps)
+- No janky transitions
+- Animations enhance UX, don't distract
+
+#### 6.2 Mobile Experience
+**Tasks**:
+- [ ] Test on real devices (iOS, Android)
+- [ ] Fix any mobile-specific issues
+- [ ] Ensure touch targets are 44x44px minimum
+- [ ] Test safe area insets
+- [ ] Optimize for mobile performance
+
+**Acceptance Criteria**:
+- Works perfectly on mobile
+- Touch targets are appropriate
+- Performance is good
+
+#### 6.3 Accessibility Audit
+**Tasks**:
+- [ ] Run accessibility audit (axe, WAVE)
+- [ ] Fix any WCAG AA violations
+- [ ] Test with screen readers
+- [ ] Test keyboard navigation
+- [ ] Ensure color contrast meets standards
+- [ ] Add ARIA labels where needed
+
+**Tools**:
+- axe DevTools
+- WAVE
+- Screen reader testing (NVDA, JAWS, VoiceOver)
+
+**Acceptance Criteria**:
+- WCAG AA compliant
+- Screen reader friendly
+- Keyboard navigable
+- Color contrast meets standards
+
+#### 6.4 Performance Optimization
+**Tasks**:
+- [ ] Optimize images (WebP, lazy loading)
+- [ ] Code splitting
+- [ ] Reduce bundle size
+- [ ] Optimize fonts (subset, preload)
+- [ ] Add loading states
+- [ ] Test Core Web Vitals
+
+**Acceptance Criteria**:
+- Lighthouse score > 90
+- Fast First Contentful Paint
+- Fast Largest Contentful Paint
+- Good Time to Interactive
+
+#### 6.5 Cross-Browser Testing
+**Tasks**:
+- [ ] Test in Chrome, Firefox, Safari, Edge
+- [ ] Fix any browser-specific issues
+- [ ] Test on different screen sizes
+- [ ] Test on different devices
+
+**Acceptance Criteria**:
+- Works in all major browsers
+- Consistent appearance
+- No browser-specific bugs
+
+#### 6.6 Documentation
+**Tasks**:
+- [ ] Document design system
+- [ ] Document component usage
+- [ ] Create style guide
+- [ ] Document color palette
+- [ ] Document typography
+- [ ] Document spacing system
+
+**Files to Create**:
+- `apps/web/docs/design-system.md`
+- `apps/web/docs/components.md`
+- `apps/web/docs/style-guide.md`
+
+**Acceptance Criteria**:
+- Documentation is complete
+- Easy to understand
+- Includes examples
+
+---
+
+## 5. Design System Implementation Details
+
+### 5.1 CSS Variables (globals.css)
+
+```css
+@layer base {
+  :root {
+    /* Primary Colors */
+    --primary: 210 75% 50%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary Colors */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    
+    /* Background */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    
+    /* Muted */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    /* Accent */
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Success */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Warning */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* Info */
+    --info: 210 75% 50%;
+    --info-foreground: 0 0% 100%;
+    
+    /* Borders */
+    --border: 214 31% 91%;
+    --input: 214 31% 91%;
+    --ring: 210 75% 50%;
+    
+    /* Radius */
+    --radius: 0.5rem;
+  }
+}
+```
+
+### 5.2 Typography Classes (tailwind.config.ts)
+
+```typescript
+extend: {
+  fontSize: {
+    'display': ['3.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
+    'display-mobile': ['2.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
+    'h1': ['2.5rem', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '700' }],
+    'h1-mobile': ['2rem', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '700' }],
+    'h2': ['2rem', { lineHeight: '1.3', fontWeight: '600' }],
+    'h2-mobile': ['1.75rem', { lineHeight: '1.3', fontWeight: '600' }],
+    'h3': ['1.5rem', { lineHeight: '1.4', fontWeight: '600' }],
+    'h3-mobile': ['1.25rem', { lineHeight: '1.4', fontWeight: '600' }],
+    'h4': ['1.25rem', { lineHeight: '1.5', fontWeight: '600' }],
+    'h4-mobile': ['1.125rem', { lineHeight: '1.5', fontWeight: '600' }],
+    'body-large': ['1.125rem', { lineHeight: '1.6', fontWeight: '400' }],
+    'body': ['1rem', { lineHeight: '1.6', fontWeight: '400' }],
+    'body-small': ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],
+    'caption': ['0.75rem', { lineHeight: '1.4', fontWeight: '400' }],
+  }
+}
+```
+
+### 5.3 Component Styling Guidelines
+
+#### Buttons
+- Primary: `bg-primary text-primary-foreground`
+- Secondary: `bg-secondary text-secondary-foreground`
+- Size: `h-10 px-4 py-2` (default), `h-11 px-8` (large)
+- Radius: `rounded-md` (6px)
+- Hover: Slight elevation increase
+
+#### Cards
+- Background: `bg-card`
+- Padding: `p-6` (24px)
+- Radius: `rounded-lg` (8px)
+- Shadow: `shadow-md`
+- Hover: `shadow-lg` transition
+
+#### Inputs
+- Height: `h-10` (40px)
+- Padding: `px-3 py-2`
+- Radius: `rounded-md` (6px)
+- Border: `border border-input`
+- Focus: `ring-2 ring-ring`
+
+---
+
+## 6. Accessibility Requirements
+
+### 6.1 WCAG AA Compliance
+- **Color Contrast**: Minimum 4.5:1 for normal text, 3:1 for large text
+- **Keyboard Navigation**: All interactive elements must be keyboard accessible
+- **Screen Readers**: Proper ARIA labels and roles
+- **Focus Indicators**: Visible focus states on all interactive elements
+- **Touch Targets**: Minimum 44x44px on mobile
+
+### 6.2 Semantic HTML
+- Use proper heading hierarchy (h1 → h2 → h3)
+- Use semantic elements (`<nav>`, `<main>`, `<section>`, `<article>`)
+- Use proper form labels
+- Use alt text for images
+
+### 6.3 ARIA Labels
+- Navigation menus: `aria-label="Main navigation"`
+- Buttons: Descriptive text or `aria-label`
+- Form fields: Associated labels or `aria-label`
+- Modals: `aria-labelledby` and `aria-describedby`
+
+---
+
+## 7. Performance Requirements
+
+### 7.1 Core Web Vitals
+- **LCP (Largest Contentful Paint)**: < 2.5s
+- **FID (First Input Delay)**: < 100ms
+- **CLS (Cumulative Layout Shift)**: < 0.1
+
+### 7.2 Loading Performance
+- **First Contentful Paint**: < 1.8s
+- **Time to Interactive**: < 3.8s
+- **Total Blocking Time**: < 200ms
+
+### 7.3 Optimization Strategies
+- Image optimization (WebP, lazy loading)
+- Font subsetting and preloading
+- Code splitting
+- Tree shaking
+- Bundle size optimization
+
+---
+
+## 8. Testing Requirements
+
+### 8.1 Visual Testing
+- [ ] Compare with Daybreak Health website
+- [ ] Test on different screen sizes
+- [ ] Test in different browsers
+- [ ] Test dark mode (if implemented)
+
+### 8.2 Functional Testing
+- [ ] All components work correctly
+- [ ] Navigation works
+- [ ] Forms submit correctly
+- [ ] Buttons trigger correct actions
+- [ ] Modals open/close correctly
+
+### 8.3 Accessibility Testing
+- [ ] Screen reader testing
+- [ ] Keyboard navigation testing
+- [ ] Color contrast testing
+- [ ] ARIA label verification
+
+### 8.4 Performance Testing
+- [ ] Lighthouse audit
+- [ ] Bundle size analysis
+- [ ] Load time testing
+- [ ] Mobile performance testing
+
+---
+
+## 9. Success Metrics
+
+### 9.1 Design System Metrics
+- [ ] 100% of components use design system colors
+- [ ] 100% of components use design system typography
+- [ ] 100% of components use design system spacing
+- [ ] WCAG AA compliance achieved
+- [ ] Lighthouse score > 90
+
+### 9.2 User Experience Metrics
+- [ ] Visual alignment with Daybreak Health brand
+- [ ] Consistent look and feel across all pages
+- [ ] Smooth animations and transitions
+- [ ] Fast loading times
+- [ ] Excellent mobile experience
+
+---
+
+## 10. Maintenance & Updates
+
+### 10.1 Design System Updates
+- Document any design system changes
+- Update this PRD when changes are made
+- Communicate changes to team
+
+### 10.2 Component Library
+- Keep shadcn/ui components updated
+- Document custom components
+- Maintain component examples
+
+### 10.3 Style Guide
+- Keep style guide up to date
+- Add new patterns as they emerge
+- Document design decisions
+
+---
+
+## 11. Resources & References
+
+### 11.1 Design References
+- [Daybreak Health Website](https://www.daybreakhealth.com/)
+- shadcn/ui Documentation: https://ui.shadcn.com/
+- Tailwind CSS Documentation: https://tailwindcss.com/
+
+### 11.2 Tools
+- Figma (if design files exist)
+- Chrome DevTools
+- Lighthouse
+- axe DevTools
+- WAVE
+
+### 11.3 Documentation
+- This PRD
+- Component documentation
+- Style guide (to be created)
+
+---
+
+## Appendix A: Color Palette Reference
+
+### Primary Colors
+| Name | HSL | Hex | Usage |
+|------|-----|-----|-------|
+| Primary Blue | `210 75% 50%` | `#3B82F6` | Buttons, links, CTAs |
+| Primary Teal | `180 60% 45%` | `#14B8A6` | Secondary CTAs, accents |
+| Primary Dark | `222 47% 11%` | `#0F172A` | Headings, text |
+
+### Semantic Colors
+| Name | HSL | Hex | Usage |
+|------|-----|-----|-------|
+| Success | `142 71% 45%` | `#10B981` | Success states |
+| Warning | `38 92% 50%` | `#F59E0B` | Warnings |
+| Destructive | `0 84% 60%` | `#EF4444` | Errors |
+| Info | `210 75% 50%` | `#3B82F6` | Information |
+
+---
+
+## Appendix B: Component Checklist
+
+### Base Components
+- [x] button
+- [x] card
+- [x] input
+- [x] label
+- [x] checkbox
+- [x] radio-group
+- [x] select
+- [ ] textarea
+- [x] dialog
+- [x] tabs
+- [x] tooltip
+- [x] alert
+- [x] badge
+- [x] scroll-area
+
+### Navigation Components
+- [ ] navigation-menu
+- [ ] dropdown-menu
+- [ ] sheet
+- [ ] separator
+
+### Content Components
+- [ ] avatar
+- [ ] carousel
+- [ ] aspect-ratio
+- [ ] skeleton
+- [ ] progress
+- [ ] spinner
+
+### Enhancement Components
+- [ ] form
+- [ ] hover-card
+- [ ] popover
+- [ ] accordion
+
+### Custom Components
+- [ ] Header
+- [ ] Hero
+- [ ] Section
+- [ ] StatsGrid
+- [ ] TrustSection
+- [ ] TestimonialCard
+- [ ] VideoCard
+- [ ] ProgramCard
+
+---
+
+**Document Version**: 1.0  
+**Last Updated**: 2024-11-10  
+**Owner**: Frontend Team  
+**Status**: Planning Phase
+

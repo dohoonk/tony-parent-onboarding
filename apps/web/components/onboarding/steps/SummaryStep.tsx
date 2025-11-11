@@ -149,27 +149,6 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
               </div>
             </CardContent>
           </Card>
-
-          {/* Support Information */}
-          <Card className="bg-muted/50">
-            <CardHeader>
-              <CardTitle className="text-lg">Need Help?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                If you have any questions or need to make changes to your appointment, 
-                please reach out to our support team. We&apos;re here to help!
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button variant="outline" className="flex-1">
-                  Contact Support
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  View Appointment Details
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </>
       )}
 
