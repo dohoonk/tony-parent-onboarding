@@ -1,5 +1,35 @@
 import { gql } from '@apollo/client';
 
+export const SIGNUP = gql`
+  mutation Signup($email: String!, $password: String!, $firstName: String!, $lastName: String!) {
+    signup(email: $email, password: $password, firstName: $firstName, lastName: $lastName) {
+      parent {
+        id
+        email
+        first_name
+        last_name
+      }
+      token
+      errors
+    }
+  }
+`;
+
+export const LOGIN = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      parent {
+        id
+        email
+        first_name
+        last_name
+      }
+      token
+      errors
+    }
+  }
+`;
+
 export const MATCH_THERAPISTS = gql`
   mutation MatchTherapists(
     $sessionId: ID!

@@ -2,6 +2,8 @@ module Types
   class MutationType < Types::BaseObject
     description "The mutation root of this schema"
 
+    field :signup, mutation: Mutations::Signup
+    field :login, mutation: Mutations::Login
     field :start_onboarding, mutation: Mutations::StartOnboarding
     field :ai_intake_message, mutation: Mutations::AiIntakeMessage
     field :stream_ai_intake_message, mutation: Mutations::StreamAiIntakeMessage

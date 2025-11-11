@@ -1,5 +1,8 @@
 class Parent < ApplicationRecord
   include Authorizable
+  
+  # Password authentication
+  has_secure_password
 
   # Associations
   has_many :students, dependent: :destroy
@@ -22,7 +25,7 @@ class Parent < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :auth_provider, presence: true, inclusion: { in: %w[magic_link] }
+  validates :auth_provider, presence: true, inclusion: { in: %w[magic_link password] }
   validates :preferred_language, inclusion: { in: %w[eng es fr zh ja ko] }, allow_nil: true
   validate :birthdate_is_valid
 

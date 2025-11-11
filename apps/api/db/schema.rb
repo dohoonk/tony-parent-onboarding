@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_231926) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_11_013946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -343,6 +343,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_231926) do
     t.jsonb "profile_data", default: {}
     t.jsonb "migration_details", default: {}
     t.jsonb "supabase_metadata", default: {}
+    t.string "password_digest"
     t.index ["account_status"], name: "index_parents_on_account_status"
     t.index ["address"], name: "index_parents_on_address", using: :gin
     t.index ["birthdate"], name: "index_parents_on_birthdate"
