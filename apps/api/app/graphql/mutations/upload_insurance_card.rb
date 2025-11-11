@@ -14,10 +14,41 @@ module Mutations
         return { insurance_card: nil, errors: ["Authentication required"] }
       end
 
-      session = parent.onboarding_sessions.find_by(id: input.session_id)
-      
-      unless session
-        return { insurance_card: nil, errors: ["Session not found"] }
+      # Handle temporary session IDs (from frontend before real session is created)
+      # If session_id starts with "temp-session-", create or find an active session
+      if input.session_id&.start_with?('temp-session-')
+        # Find or create an active session for this parent
+        # Use the first student, or create a temporary one if none exists
+        student = parent.students.first
+        
+        unless student
+          # Create a temporary student for testing
+          student = parent.students.create!(
+            first_name: 'Temporary',
+            last_name: 'Student',
+            date_of_birth: 10.years.ago,
+            language: 'en'
+          )
+        end
+        
+        # Find existing active/draft session, or create a new one
+        session = parent.onboarding_sessions.in_progress.where(student: student).first
+        
+        unless session
+          # Create new session (validation ensures only one active session per parent+student)
+          session = parent.onboarding_sessions.create!(
+            student: student,
+            status: 'active',
+            current_step: 5 # Insurance step
+          )
+        end
+      else
+        # Look up real session by ID
+        session = parent.onboarding_sessions.find_by(id: input.session_id)
+        
+        unless session
+          return { insurance_card: nil, errors: ["Session not found"] }
+        end
       end
 
       # Create insurance card record
