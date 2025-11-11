@@ -1,5 +1,10 @@
 require_relative "boot"
 
+# Load .env file early (before Rails loads)
+if defined?(Dotenv)
+  Dotenv.load
+end
+
 require "rails"
 # Pick the frameworks you want:
 require "active_model/railtie"
