@@ -35,12 +35,18 @@ module Authentication
       
       if parent
         Rails.logger.info("✅ Authentication successful for parent: #{parent.id} (#{parent.email})")
-        # Log successful authentication
-        AuditLog.log_access(
-          actor: parent,
-          action: 'authenticate',
-          entity: parent
-        )
+        # Log successful authentication (using 'read' action since 'authenticate' is not in allowed list)
+        # Authentication is essentially reading/verifying the parent's identity
+        begin
+          AuditLog.log_access(
+            actor: parent,
+            action: 'read',
+            entity: parent
+          )
+        rescue StandardError => e
+          # Don't fail authentication if audit logging fails
+          Rails.logger.warn("Failed to log authentication to audit log: #{e.message}")
+        end
       else
         Rails.logger.warn("⚠️  Parent not found for ID: #{parent_id}")
       end
