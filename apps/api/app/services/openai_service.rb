@@ -44,7 +44,12 @@ class OpenaiService
       parse_response(response)
     end
   rescue OpenAI::Error => e
-    Rails.logger.error("OpenAI API error: #{e.message}")
+    Rails.logger.error("=" * 80)
+    Rails.logger.error("OpenAI API Error")
+    Rails.logger.error("Error Type: #{e.class.name}")
+    Rails.logger.error("Message: #{e.message}")
+    Rails.logger.error("Status: #{e.response&.dig('status') || 'unknown'}")
+    Rails.logger.error("=" * 80)
     raise ServiceError.new("AI service unavailable: #{e.message}")
   end
 
@@ -67,7 +72,22 @@ class OpenaiService
   private
 
   def api_key
-    Rails.application.credentials.openai_api_key || ENV['OPENAI_API_KEY']
+    key = Rails.application.credentials.openai_api_key || ENV['OPENAI_API_KEY']
+    
+    if key.blank?
+      Rails.logger.error("=" * 80)
+      Rails.logger.error("OPENAI API KEY MISSING!")
+      Rails.logger.error("Set OPENAI_API_KEY environment variable or add to Rails credentials")
+      Rails.logger.error("=" * 80)
+      raise ServiceError.new("OpenAI API key is not configured. Set OPENAI_API_KEY environment variable.")
+    end
+    
+    # Log first few characters for debugging (but not the full key)
+    if Rails.env.development?
+      Rails.logger.debug("OpenAI API key found: #{key[0..10]}... (length: #{key.length})")
+    end
+    
+    key
   end
 
   def parse_response(response)
