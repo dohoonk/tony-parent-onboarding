@@ -87,8 +87,47 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       // Development mode: Simulate AI response since we don't have a real backend session
       setIsStreaming(true);
       
-      // Simulate streaming response
-      const simulatedResponse = "Thank you for sharing that. I understand that anxiety at school can be really challenging for children. Can you tell me a bit more about when you first noticed these concerns, and how it's been affecting your child's daily life?";
+      // Get the last user message to generate context-aware response
+      const lastUserMessage = messages.findLast(msg => msg.role === 'user');
+      const userInput = lastUserMessage?.content.toLowerCase() || '';
+      
+      // Count conversation turns to track progress
+      const userMessageCount = messages.filter(msg => msg.role === 'user').length;
+      
+      // Generate context-aware response based on user input and conversation progress
+      let simulatedResponse = '';
+      
+      if (userMessageCount === 1) {
+        // First user response - acknowledge and ask about duration/impact
+        if (userInput.includes('anxiety') || userInput.includes('worr') || userInput.includes('stress')) {
+          simulatedResponse = "Thank you for sharing that. I understand that anxiety can be really challenging for children. Can you tell me a bit more about when you first noticed these concerns, and how it's been affecting your child's daily life?";
+        } else if (userInput.includes('depress') || userInput.includes('sad') || userInput.includes('down')) {
+          simulatedResponse = "I appreciate you sharing that with me. It takes courage to talk about these concerns. Can you help me understand when you first noticed these changes, and what impact they've had on your child's daily activities?";
+        } else if (userInput.includes('behavior') || userInput.includes('act') || userInput.includes('tantrum')) {
+          simulatedResponse = "Thank you for opening up about this. Behavioral changes can be concerning for parents. When did you first start noticing these behaviors, and how have they been affecting your child's relationships or school performance?";
+        } else {
+          simulatedResponse = "Thank you for sharing that. I'd like to understand more about your child's situation. Can you tell me when you first noticed these concerns, and how they've been impacting your child's daily life?";
+        }
+      } else if (userMessageCount === 2) {
+        // Second user response - acknowledge timeline and ask about specific impacts
+        if (userInput.includes('year') || userInput.includes('month') || userInput.includes('week') || userInput.includes('ago')) {
+          simulatedResponse = "I see. That's helpful context. How has this been affecting your child's school performance, friendships, or family relationships?";
+        } else if (userInput.includes('grade') || userInput.includes('school') || userInput.includes('academic')) {
+          simulatedResponse = "Thank you for that detail. School can be a big source of stress. Besides academics, have you noticed changes in how your child interacts with friends or family members?";
+        } else {
+          simulatedResponse = "I appreciate you sharing more details. Can you help me understand what specific areas of your child's life have been most affected by these concerns?";
+        }
+      } else if (userMessageCount === 3) {
+        // Third user response - acknowledge impacts and ask about goals
+        simulatedResponse = "Thank you for providing that context. It sounds like this has been affecting multiple areas of your child's life. What are you hoping therapy might help your child achieve? What would success look like for your family?";
+      } else {
+        // Fourth+ response - acknowledge and ask about goals or wrap up
+        if (userInput.includes('goal') || userInput.includes('hope') || userInput.includes('want') || userInput.includes('need')) {
+          simulatedResponse = "That's really helpful to know. Thank you for sharing your hopes and goals. Is there anything else you'd like me to know about your child's situation before we move forward?";
+        } else {
+          simulatedResponse = "I appreciate you sharing that. You've given me a good understanding of your child's situation. Is there anything else you'd like to add, or are you ready to move on to the next step?";
+        }
+      }
       
       // Simulate chunked streaming
       const words = simulatedResponse.split(' ');
