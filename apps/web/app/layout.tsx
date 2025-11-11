@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SkipLink } from "@/components/onboarding/SkipLink";
 import { SupportChat } from "@/components/support/SupportChat";
+import { ApolloWrapper } from "@/lib/apollo-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
