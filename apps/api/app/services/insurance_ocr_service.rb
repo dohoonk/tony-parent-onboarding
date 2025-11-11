@@ -1,3 +1,6 @@
+require 'base64'
+require 'open-uri'
+
 class InsuranceOcrService
   EXTRACTION_SCHEMA = {
     type: 'object',
@@ -89,11 +92,16 @@ class InsuranceOcrService
   }.freeze
 
   # Extract insurance information from card images using OpenAI Vision
-  # @param front_image_url [String] S3 URL of front image
-  # @param back_image_url [String] Optional S3 URL of back image
+  # @param front_image_url [String] S3 URL or public URL of front image
+  # @param back_image_url [String] Optional S3 URL or public URL of back image
   # @return [Hash] Extracted data with confidence scores
   def self.extract(front_image_url:, back_image_url: nil)
     openai_service = OpenaiService.new
+    
+    # Convert S3 URLs to base64-encoded images for OpenAI
+    # OpenAI can't access private S3 URLs, so we need to download and encode
+    front_image_data = prepare_image_for_openai(front_image_url)
+    back_image_data = prepare_image_for_openai(back_image_url) if back_image_url
     
     # Build messages for vision API
     messages = [
@@ -185,20 +193,14 @@ class InsuranceOcrService
               Always try to extract payer_name and member_id at minimum - these are critical fields.
             PROMPT
           },
-          {
-            type: 'image_url',
-            image_url: { url: front_image_url }
-          }
+          front_image_data
         ]
       }
     ]
 
     # Add back image if provided
-    if back_image_url
-      messages[0][:content] << {
-        type: 'image_url',
-        image_url: { url: back_image_url }
-      }
+    if back_image_data
+      messages[0][:content] << back_image_data
     end
 
     # Call OpenAI Vision API
@@ -320,6 +322,132 @@ class InsuranceOcrService
       end
     end
     nil
+  end
+
+  # Prepare image for OpenAI Vision API
+  # Downloads image if it's an S3 URL and converts to base64, or uses URL directly if public
+  # @param image_url [String] S3 URL or public URL
+  # @return [Hash] Image content hash for OpenAI API
+  def self.prepare_image_for_openai(image_url)
+    return nil if image_url.blank?
+    
+    # Check if it's an S3 URL (private bucket)
+    if image_url.include?('amazonaws.com') || image_url.include?('s3.')
+      Rails.logger.info("Detected S3 URL, downloading and encoding as base64: #{image_url}")
+      
+      begin
+        # Download image from S3
+        image_data = download_image_from_s3(image_url)
+        
+        # Convert to base64
+        base64_data = Base64.strict_encode64(image_data)
+        
+        # Determine content type from URL or default to jpeg
+        content_type = determine_content_type(image_url)
+        
+        {
+          type: 'image_url',
+          image_url: {
+            url: "data:#{content_type};base64,#{base64_data}"
+          }
+        }
+      rescue StandardError => e
+        Rails.logger.error("Failed to download/encode S3 image: #{e.message}")
+        # Fallback: try using URL directly (might work if bucket is public)
+        {
+          type: 'image_url',
+          image_url: { url: image_url }
+        }
+      end
+    else
+      # Public URL - use directly
+      Rails.logger.debug("Using public URL directly: #{image_url}")
+      {
+        type: 'image_url',
+        image_url: { url: image_url }
+      }
+    end
+  end
+
+  # Download image from S3 URL
+  # @param s3_url [String] S3 URL (can be presigned or regular S3 URL)
+  # @return [String] Image binary data
+  def self.download_image_from_s3(s3_url)
+    require 'open-uri'
+    require 'net/http'
+    
+    # Parse S3 URL to extract bucket and key, or use presigned URL
+    if s3_url.include?('?') && (s3_url.include?('X-Amz') || s3_url.include?('Signature'))
+      # Presigned URL - download directly via HTTP
+      Rails.logger.debug("Downloading from presigned URL")
+      URI.open(s3_url, 'rb', read_timeout: 30).read
+    else
+      # Regular S3 URL - generate presigned read URL or use AWS SDK
+      # Extract bucket and key from URL
+      uri = URI.parse(s3_url)
+      
+      # Handle different S3 URL formats:
+      # https://bucket.s3.region.amazonaws.com/key
+      # https://s3.region.amazonaws.com/bucket/key
+      # https://bucket.s3.amazonaws.com/key
+      if uri.host.include?('.s3.')
+        # Format: bucket.s3.region.amazonaws.com or bucket.s3.amazonaws.com
+        parts = uri.host.split('.')
+        bucket_name = parts[0]
+        key = uri.path[1..-1] # Remove leading slash
+      elsif uri.host.start_with?('s3.')
+        # Format: s3.region.amazonaws.com/bucket/key
+        path_parts = uri.path.split('/')
+        bucket_name = path_parts[1]
+        key = path_parts[2..-1].join('/')
+      else
+        raise ServiceError.new("Unable to parse S3 URL: #{s3_url}")
+      end
+      
+      Rails.logger.debug("Downloading from S3: bucket=#{bucket_name}, key=#{key}")
+      
+      # Try to generate presigned URL first (more efficient)
+      begin
+        s3_service = S3Service.new
+        presigned_url = s3_service.presigned_read_url(key: key, expiration: 300) # 5 minutes
+        Rails.logger.debug("Generated presigned URL, downloading...")
+        URI.open(presigned_url, 'rb', read_timeout: 30).read
+      rescue StandardError => presign_error
+        Rails.logger.warn("Presigned URL generation failed, using AWS SDK: #{presign_error.message}")
+        
+        # Fallback: use AWS SDK directly
+        s3_client = Aws::S3::Client.new(
+          region: ENV.fetch('AWS_REGION', 'us-east-1'),
+          access_key_id: ENV['AWS_ACCESS_KEY_ID'] || Rails.application.credentials.aws_access_key_id,
+          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'] || Rails.application.credentials.aws_secret_access_key
+        )
+        
+        response = s3_client.get_object(bucket: bucket_name, key: key)
+        response.body.read
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error("S3 download failed: #{e.message}")
+    Rails.logger.error("S3 URL was: #{s3_url}")
+    raise ServiceError.new("Failed to download image from S3: #{e.message}")
+  end
+
+  # Determine content type from URL or file extension
+  # @param url [String] Image URL
+  # @return [String] MIME type
+  def self.determine_content_type(url)
+    case url.downcase
+    when /\.png/
+      'image/png'
+    when /\.jpg|\.jpeg/
+      'image/jpeg'
+    when /\.gif/
+      'image/gif'
+    when /\.webp/
+      'image/webp'
+    else
+      'image/jpeg' # Default
+    end
   end
 
   class ServiceError < StandardError; end
