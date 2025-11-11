@@ -4,7 +4,9 @@ require "bundler/setup" # Set up gems listed in the Gemfile.
 
 # Load .env file before anything else
 begin
-  require "dotenv/rails-now"
+  require "dotenv"
+  env_file = File.expand_path("../.env", __dir__)
+  Dotenv.load(env_file) if File.exist?(env_file)
 rescue LoadError
   # dotenv-rails not available, skip
 end
