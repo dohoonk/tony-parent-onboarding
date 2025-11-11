@@ -17,10 +17,18 @@ class OpenaiService
     request_messages = messages.dup
     request_messages.unshift({ role: 'system', content: system_prompt }) if system_prompt
 
+    # Detect if this is a vision request (has image_url in content)
+    has_images = request_messages.any? do |msg|
+      msg[:content].is_a?(Array) && msg[:content].any? { |item| item.is_a?(Hash) && item[:type] == 'image_url' }
+    end
+    
+    model = has_images ? VISION_MODEL : MODEL
+    max_tokens = has_images ? 2000 : MAX_TOKENS # Vision responses need more tokens
+
     params = {
-      model: MODEL,
+      model: model,
       messages: request_messages,
-      max_tokens: MAX_TOKENS,
+      max_tokens: max_tokens,
       temperature: TEMPERATURE,
       stream: stream
     }

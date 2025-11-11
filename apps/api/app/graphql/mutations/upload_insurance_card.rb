@@ -28,8 +28,26 @@ module Mutations
       )
 
       if card.save
-        # TODO: Enqueue OCR job
-        # OcrJob.perform_later(card.id)
+        # Perform OCR extraction immediately
+        begin
+          extraction_result = InsuranceOcrService.extract(
+            front_image_url: card.front_image_url,
+            back_image_url: card.back_image_url
+          )
+          
+          # Save OCR results
+          card.update!(
+            ocr_json: extraction_result[:extracted_data],
+            confidence_json: extraction_result[:confidence_scores]
+          )
+          
+          Rails.logger.info("OCR extraction successful for card #{card.id}")
+          Rails.logger.debug("Extracted data: #{extraction_result[:extracted_data].inspect}")
+        rescue StandardError => e
+          Rails.logger.error("OCR extraction failed for card #{card.id}: #{e.message}")
+          Rails.logger.error(e.backtrace.join("\n"))
+          # Don't fail the upload if OCR fails - user can manually enter
+        end
 
         # Log audit trail
         AuditLog.log_access(

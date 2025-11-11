@@ -193,15 +193,33 @@ class InsuranceOcrService
     end
 
     # Call OpenAI Vision API
+    Rails.logger.info("Calling OpenAI Vision API for OCR extraction")
+    Rails.logger.debug("Front image URL: #{front_image_url}")
+    Rails.logger.debug("Back image URL: #{back_image_url}") if back_image_url
+    
     response = openai_service.chat_completion(
       messages: messages,
       system_prompt: "You are an expert at reading insurance cards. Extract information accurately and provide confidence levels for each field."
     )
 
+    Rails.logger.debug("OpenAI Vision API response received")
+    Rails.logger.debug("Response content length: #{response[:content]&.length || 0} characters")
+    
     # Parse and structure response
-    parse_extraction_response(response[:content])
+    result = parse_extraction_response(response[:content])
+    
+    Rails.logger.info("OCR extraction completed successfully")
+    Rails.logger.info("Extracted fields: #{result[:extracted_data].keys.join(', ')}")
+    Rails.logger.debug("Full extraction result: #{result.inspect}")
+    
+    result
+  rescue JSON::ParserError => e
+    Rails.logger.error("OCR JSON parsing failed: #{e.message}")
+    Rails.logger.error("Raw response content: #{response[:content]&.first(500)}") if defined?(response)
+    raise ServiceError.new("Failed to parse OCR response: #{e.message}")
   rescue StandardError => e
-    Rails.logger.error("OCR extraction failed: #{e.message}")
+    Rails.logger.error("OCR extraction failed: #{e.class.name} - #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
     raise ServiceError.new("Failed to extract insurance information: #{e.message}")
   end
 
