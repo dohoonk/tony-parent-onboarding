@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_11_013946) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_11_015343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -150,8 +150,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_11_013946) do
 
   create_table "insurance_cards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "onboarding_session_id", null: false
-    t.string "front_image_url", null: false
-    t.string "back_image_url"
+    t.text "front_image_url", null: false
+    t.text "back_image_url"
     t.jsonb "ocr_json"
     t.jsonb "confidence_json"
     t.datetime "created_at", precision: nil, null: false
