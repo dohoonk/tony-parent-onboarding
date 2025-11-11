@@ -65,7 +65,11 @@ export const ConsentStep: React.FC<ConsentStepProps> = ({ onNext, onPrev }) => {
                 <p className="text-sm">
                   I consent to mental health treatment for my child through Daybreak Health. I understand
                   that treatment may include therapy sessions, assessments, and other clinically
-                  appropriate interventions...
+                  appropriate interventions. I acknowledge that I have been informed about the nature of 
+                  services, potential risks and benefits, confidentiality limitations, and my right to 
+                  withdraw consent. I understand that information shared in therapy is confidential, with 
+                  exceptions as required by law (including risk of harm, suspected abuse, and court orders). 
+                  I have had the opportunity to ask questions and voluntarily consent to treatment.
                 </p>
               </ScrollArea>
             </div>
