@@ -105,6 +105,8 @@ class InsuranceOcrService
             text: <<~PROMPT
               Extract insurance card information from these images. Ignore any "SAMPLE" watermarks or overlays - extract the actual information that would be on a real card.
               
+              **CRITICAL: Read the EXACT text from the card. Do NOT make up, guess, or use placeholder values. Extract only what you can actually see on the card.**
+              
               **IMPORTANT:** Look carefully at the card layout. Common insurance card formats:
               - Blue Cross Blue Shield: Look for "Member Name", "Identification Number" or "ID Number", "Group Number"
               - Cards may have information in different sections (top, middle, bottom)
@@ -156,8 +158,15 @@ class InsuranceOcrService
               - Read all text carefully, even if partially obscured by watermarks
               - Look in all sections of the card (top, middle, bottom, left, right)
               - Member ID and Group Number are critical - make sure to extract these accurately
+              - **DO NOT use placeholder values like "Member Name", "ABC123", or "123456" - extract the ACTUAL values from the card**
               - If you see a name, extract it even if you can't determine first/last - we'll handle splitting
               - For dates, extract exactly as shown and we'll parse the format
+              - If a field is not visible or unclear, set confidence to "low" or omit it - do NOT guess
+              
+              **Before returning JSON, verify:**
+              - subscriber_name should be an actual name (not "Member Name" or "Subscriber Name")
+              - member_id should be the actual ID number from the card (not "ABC123" or placeholder)
+              - group_number should be the actual group number (not "123456" or placeholder)
               
               For each field, provide a confidence level: "high", "medium", or "low" based on how clearly the information is visible.
               
