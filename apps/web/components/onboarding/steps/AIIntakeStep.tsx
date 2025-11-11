@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Send, Loader2 } from 'lucide-react';
 import { ChatMessage } from './AIIntakeChat';
 import { AIChatPanel } from './AIChatPanel';
+import { IntakeSummaryReview } from './IntakeSummaryReview';
 
 interface AIIntakeStepProps {
   onNext: () => void;
@@ -24,6 +25,13 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [summary, setSummary] = useState<{
+    concerns: string[];
+    goals: string[];
+    risk_flags: string[];
+    summary_text: string;
+  } | null>(null);
 
   // Initialize with welcome message
   useEffect(() => {
@@ -121,13 +129,21 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
         // Third user response - acknowledge impacts and ask about goals
         simulatedResponse = "Thank you for providing that context. It sounds like this has been affecting multiple areas of your child's life. What are you hoping therapy might help your child achieve? What would success look like for your family?";
       } else {
-        // Fourth+ response - acknowledge and ask about goals or wrap up
-        if (userInput.includes('goal') || userInput.includes('hope') || userInput.includes('want') || userInput.includes('need')) {
-          simulatedResponse = "That's really helpful to know. Thank you for sharing your hopes and goals. Is there anything else you'd like me to know about your child's situation before we move forward?";
+        // Fourth+ response - check if user wants to finish or continue
+        if (userInput.includes('ready') || userInput.includes('done') || userInput.includes('complete') || 
+            userInput.includes('next step') || userInput.includes('move on') || userInput.includes('finish')) {
+          // User wants to finish - extract summary
+          simulatedResponse = "Perfect! I have enough information to help match your child with the right therapist. Let me prepare a summary of what we've discussed.";
+        } else if (userInput.includes('goal') || userInput.includes('hope') || userInput.includes('want') || userInput.includes('need')) {
+          simulatedResponse = "That's really helpful to know. Thank you for sharing your hopes and goals. Is there anything else you'd like me to know about your child's situation, or are you ready to review what we've discussed?";
         } else {
-          simulatedResponse = "I appreciate you sharing that. You've given me a good understanding of your child's situation. Is there anything else you'd like to add, or are you ready to move on to the next step?";
+          simulatedResponse = "I appreciate you sharing that. You've given me a good understanding of your child's situation. Is there anything else you'd like to add, or are you ready to review what we've discussed?";
         }
       }
+      
+      // Check if user wants to finish (after getting updated messages)
+      const shouldExtractSummary = userInput.includes('ready') || userInput.includes('done') || userInput.includes('complete') || 
+            userInput.includes('next step') || userInput.includes('move on') || userInput.includes('finish');
       
       // Simulate chunked streaming
       const words = simulatedResponse.split(' ');
@@ -163,6 +179,15 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
       
       setIsStreaming(false);
       setIsLoading(false);
+      
+      // Extract summary if user indicated they're ready
+      if (shouldExtractSummary) {
+        // Wait a bit for state to update, then extract summary
+        setTimeout(() => {
+          extractSummary();
+        }, 500);
+      }
+      
       return;
     }
 
@@ -215,17 +240,100 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
     streamClient.start(sessionId, userMessageId, token);
   };
 
+  // Extract summary from conversation messages
+  const extractSummary = () => {
+    // Get current messages from state
+    setMessages((currentMessages) => {
+      const userMessages = currentMessages.filter(msg => msg.role === 'user').map(msg => msg.content);
+      const allText = userMessages.join(' ').toLowerCase();
+    
+    // Simple extraction logic for dev mode
+    const concerns: string[] = [];
+    const goals: string[] = [];
+    const risk_flags: string[] = [];
+    
+    // Extract concerns
+    if (allText.includes('anxiety') || allText.includes('worr') || allText.includes('stress')) {
+      concerns.push('Anxiety and worry');
+    }
+    if (allText.includes('depress') || allText.includes('sad') || allText.includes('down')) {
+      concerns.push('Depression or sadness');
+    }
+    if (allText.includes('behavior') || allText.includes('act') || allText.includes('tantrum')) {
+      concerns.push('Behavioral challenges');
+    }
+    if (allText.includes('school') || allText.includes('grade') || allText.includes('academic')) {
+      concerns.push('School-related difficulties');
+    }
+    if (concerns.length === 0) {
+      concerns.push('General mental health support needed');
+    }
+    
+    // Extract goals
+    if (allText.includes('cope') || allText.includes('manage')) {
+      goals.push('Develop coping strategies');
+    }
+    if (allText.includes('feel better') || allText.includes('happier')) {
+      goals.push('Improve overall well-being');
+    }
+    if (allText.includes('school') || allText.includes('grade')) {
+      goals.push('Improve school performance');
+    }
+    if (allText.includes('relationship') || allText.includes('friend')) {
+      goals.push('Improve social relationships');
+    }
+    if (goals.length === 0) {
+      goals.push('Support child\'s mental health journey');
+    }
+    
+      // Generate summary text
+      const summary_text = `Based on our conversation, your child has been experiencing ${concerns.join(' and ').toLowerCase()}. You're hoping therapy will help with ${goals.join(' and ').toLowerCase()}.`;
+      
+      const extractedSummary = {
+        concerns,
+        goals,
+        risk_flags,
+        summary_text
+      };
+      
+      setSummary(extractedSummary);
+      setShowSummary(true);
+      
+      // TODO: In production, call GraphQL mutation to save summary
+      // await extractIntakeSummaryMutation(sessionId, extractedSummary);
+      
+      return currentMessages; // Return unchanged messages
+    });
+  };
+
   const handleContinue = () => {
-    // TODO: Extract summary before continuing
+    // Save summary data to context/store
+    // TODO: Save to backend via GraphQL mutation
     onNext();
   };
+
+  const handleEdit = () => {
+    // Return to conversation
+    setShowSummary(false);
+  };
+
+  // Show summary review if available
+  if (showSummary && summary) {
+    return (
+      <IntakeSummaryReview
+        summary={summary}
+        onEdit={handleEdit}
+        onContinue={handleContinue}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div className="rounded-md border bg-muted/50 p-4">
         <h3 className="font-semibold">AI-Powered Intake Conversation</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Have a natural conversation with our AI assistant. Share what's on your mind about your child's mental health needs.
+          Have a natural conversation with our AI assistant. Share what's on your mind about your child's mental health needs. When you're ready, say "ready" or "done" to review your summary.
         </p>
       </div>
 
@@ -244,11 +352,15 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
           Back
         </Button>
         <Button
-          onClick={handleContinue}
+          onClick={() => {
+            if (messages.length >= 2) {
+              extractSummary();
+            }
+          }}
           disabled={messages.length < 2}
           className="w-full sm:w-auto"
         >
-          Continue to Next Step
+          Review Summary
         </Button>
       </div>
     </div>
