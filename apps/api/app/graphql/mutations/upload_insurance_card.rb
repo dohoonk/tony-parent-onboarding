@@ -28,12 +28,24 @@ module Mutations
       )
 
       if card.save
+        Rails.logger.info("=" * 80)
+        Rails.logger.info("INSURANCE CARD UPLOADED - Starting OCR Extraction")
+        Rails.logger.info("Card ID: #{card.id}")
+        Rails.logger.info("Front Image URL: #{card.front_image_url}")
+        Rails.logger.info("Back Image URL: #{card.back_image_url || 'N/A'}")
+        Rails.logger.info("=" * 80)
+        
         # Perform OCR extraction immediately
         begin
+          Rails.logger.info(">>> Calling InsuranceOcrService.extract...")
           extraction_result = InsuranceOcrService.extract(
             front_image_url: card.front_image_url,
             back_image_url: card.back_image_url
           )
+          
+          Rails.logger.info(">>> OCR extraction completed successfully!")
+          Rails.logger.info(">>> Extracted fields: #{extraction_result[:extracted_data].keys.join(', ')}")
+          Rails.logger.info(">>> Full extracted data: #{extraction_result[:extracted_data].inspect}")
           
           # Save OCR results
           card.update!(
@@ -41,11 +53,19 @@ module Mutations
             confidence_json: extraction_result[:confidence_scores]
           )
           
-          Rails.logger.info("OCR extraction successful for card #{card.id}")
-          Rails.logger.debug("Extracted data: #{extraction_result[:extracted_data].inspect}")
+          Rails.logger.info("=" * 80)
+          Rails.logger.info("OCR EXTRACTION SUCCESSFUL")
+          Rails.logger.info("Card ID: #{card.id}")
+          Rails.logger.info("Saved OCR data to database")
+          Rails.logger.info("=" * 80)
         rescue StandardError => e
-          Rails.logger.error("OCR extraction failed for card #{card.id}: #{e.message}")
+          Rails.logger.error("=" * 80)
+          Rails.logger.error("OCR EXTRACTION FAILED")
+          Rails.logger.error("Card ID: #{card.id}")
+          Rails.logger.error("Error: #{e.class.name} - #{e.message}")
+          Rails.logger.error("Backtrace:")
           Rails.logger.error(e.backtrace.join("\n"))
+          Rails.logger.error("=" * 80)
           # Don't fail the upload if OCR fails - user can manually enter
         end
 
