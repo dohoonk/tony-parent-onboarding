@@ -246,46 +246,46 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
     setMessages((currentMessages) => {
       const userMessages = currentMessages.filter(msg => msg.role === 'user').map(msg => msg.content);
       const allText = userMessages.join(' ').toLowerCase();
-    
-    // Simple extraction logic for dev mode
-    const concerns: string[] = [];
-    const goals: string[] = [];
-    const risk_flags: string[] = [];
-    
-    // Extract concerns
-    if (allText.includes('anxiety') || allText.includes('worr') || allText.includes('stress')) {
-      concerns.push('Anxiety and worry');
-    }
-    if (allText.includes('depress') || allText.includes('sad') || allText.includes('down')) {
-      concerns.push('Depression or sadness');
-    }
-    if (allText.includes('behavior') || allText.includes('act') || allText.includes('tantrum')) {
-      concerns.push('Behavioral challenges');
-    }
-    if (allText.includes('school') || allText.includes('grade') || allText.includes('academic')) {
-      concerns.push('School-related difficulties');
-    }
-    if (concerns.length === 0) {
-      concerns.push('General mental health support needed');
-    }
-    
-    // Extract goals
-    if (allText.includes('cope') || allText.includes('manage')) {
-      goals.push('Develop coping strategies');
-    }
-    if (allText.includes('feel better') || allText.includes('happier')) {
-      goals.push('Improve overall well-being');
-    }
-    if (allText.includes('school') || allText.includes('grade')) {
-      goals.push('Improve school performance');
-    }
-    if (allText.includes('relationship') || allText.includes('friend')) {
-      goals.push('Improve social relationships');
-    }
-    if (goals.length === 0) {
-      goals.push('Support child\'s mental health journey');
-    }
-    
+      
+      // Simple extraction logic for dev mode
+      const concerns: string[] = [];
+      const goals: string[] = [];
+      const risk_flags: string[] = [];
+      
+      // Extract concerns
+      if (allText.includes('anxiety') || allText.includes('worr') || allText.includes('stress')) {
+        concerns.push('Anxiety and worry');
+      }
+      if (allText.includes('depress') || allText.includes('sad') || allText.includes('down')) {
+        concerns.push('Depression or sadness');
+      }
+      if (allText.includes('behavior') || allText.includes('act') || allText.includes('tantrum')) {
+        concerns.push('Behavioral challenges');
+      }
+      if (allText.includes('school') || allText.includes('grade') || allText.includes('academic')) {
+        concerns.push('School-related difficulties');
+      }
+      if (concerns.length === 0) {
+        concerns.push('General mental health support needed');
+      }
+      
+      // Extract goals
+      if (allText.includes('cope') || allText.includes('manage')) {
+        goals.push('Develop coping strategies');
+      }
+      if (allText.includes('feel better') || allText.includes('happier')) {
+        goals.push('Improve overall well-being');
+      }
+      if (allText.includes('school') || allText.includes('grade')) {
+        goals.push('Improve school performance');
+      }
+      if (allText.includes('relationship') || allText.includes('friend')) {
+        goals.push('Improve social relationships');
+      }
+      if (goals.length === 0) {
+        goals.push('Support child\'s mental health journey');
+      }
+      
       // Generate summary text
       const summary_text = `Based on our conversation, your child has been experiencing ${concerns.join(' and ').toLowerCase()}. You're hoping therapy will help with ${goals.join(' and ').toLowerCase()}.`;
       
