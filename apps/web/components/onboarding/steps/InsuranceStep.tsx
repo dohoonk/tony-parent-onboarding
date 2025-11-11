@@ -151,9 +151,14 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
         return;
       }
 
-      const extractedDataFromAPI = data?.uploadInsuranceCard?.insuranceCard?.extractedData;
+      if (!data?.uploadInsuranceCard?.insuranceCard) {
+        setError('Failed to upload insurance card. Please try again or enter manually.');
+        return;
+      }
+
+      const extractedDataFromAPI = data.uploadInsuranceCard.insuranceCard.extractedData;
       
-      if (extractedDataFromAPI) {
+      if (extractedDataFromAPI && Object.keys(extractedDataFromAPI).length > 0) {
         // Data is already in the correct format: { payer_name: { value: "...", confidence: "high" }, ... }
         setExtractedData(extractedDataFromAPI);
       } else {

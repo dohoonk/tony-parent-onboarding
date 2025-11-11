@@ -4,7 +4,7 @@ module Mutations
 
     argument :input, Types::Inputs::UploadInsuranceCardInput, required: true
 
-    field :insurance_card, Types::InsuranceCardType, null: false
+    field :insurance_card, Types::InsuranceCardType, null: true
     field :errors, [String], null: false
 
     def resolve(input:)
