@@ -122,7 +122,7 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
   };
 
   const handleExtract = async () => {
-    if (!frontImage?.url) {
+    if (!frontImage) {
       setError('Please upload at least the front of your insurance card');
       return;
     }
@@ -136,12 +136,14 @@ export const InsuranceStep: React.FC<InsuranceStepProps> = ({
     setError(null);
 
     try {
+      // Use the base64 data URL (preview) instead of the fake S3 URL
+      // This allows OCR to work immediately without needing to upload to S3 first
       const { data } = await uploadInsuranceCard({
         variables: {
           input: {
             sessionId: sessionId,
-            frontImageUrl: frontImage.url,
-            backImageUrl: backImage?.url || null
+            frontImageUrl: frontImage.preview, // Use base64 data URL
+            backImageUrl: backImage?.preview || null // Use base64 data URL
           }
         }
       });

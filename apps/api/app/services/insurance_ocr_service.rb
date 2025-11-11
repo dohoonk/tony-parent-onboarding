@@ -401,19 +401,26 @@ class InsuranceOcrService
 
   # Prepare image for OpenAI Vision API
   # Downloads image if it's an S3 URL and converts to base64, or uses URL directly if public
-  # @param image_url [String] S3 URL or public URL
+  # Also handles base64 data URLs directly
+  # @param image_url [String] S3 URL, public URL, or base64 data URL
   # @return [Hash] Image content hash for OpenAI API
   def self.prepare_image_for_openai(image_url)
     return nil if image_url.blank?
     
-    # Skip fake/example URLs (for testing/development)
-    if image_url.include?('example.com') || image_url.include?('localhost') || image_url.include?('127.0.0.1')
-      Rails.logger.warn("Skipping OCR for fake/example URL: #{image_url}")
-      raise ServiceError.new("Invalid image URL: Please upload a real image first")
+    # Handle base64 data URLs (data:image/jpeg;base64,...)
+    if image_url.start_with?('data:image/')
+      Rails.logger.info("Detected base64 data URL, using directly")
+      # OpenAI Vision API expects the data URL as-is
+      return {
+        type: 'image_url',
+        image_url: {
+          url: image_url
+        }
+      }
     end
     
-    # Check if it's an S3 URL (private bucket)
-    if image_url.include?('amazonaws.com') || image_url.include?('s3.')
+    # Check if it's an S3 URL (private bucket) or fake URL that we should try to download
+    if image_url.include?('amazonaws.com') || image_url.include?('s3.') || image_url.include?('example.com')
       Rails.logger.info("Detected S3 URL, downloading and encoding as base64: #{image_url}")
       
       begin
