@@ -29,8 +29,9 @@ class AuditLog < ApplicationRecord
 
   # Instance methods
   def readonly?
-    # Audit logs should never be modified or deleted
-    true
+    # Audit logs should never be modified or deleted once saved
+    # But allow creation of new records
+    persisted?
   end
 
   def before_destroy
