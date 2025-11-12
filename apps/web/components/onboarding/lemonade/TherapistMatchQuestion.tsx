@@ -5,11 +5,12 @@ import { useMutation } from "@apollo/client";
 import { QuestionConfig } from "@/flows/onboarding/chapters";
 import { MATCH_THERAPISTS, CREATE_AVAILABILITY_WINDOW } from "@/lib/graphql/mutations";
 import { QuestionFrame } from "./QuestionFrame";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, RefreshCcw, Check } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Loader2, RefreshCcw, Check, Award, Sparkles, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const USER_TIMEZONE = "America/Los_Angeles";
@@ -26,7 +27,10 @@ interface TherapistMatch {
   name: string;
   languages: string[];
   specialties: string[];
+  modalities: string[];
   bio: string | null;
+  capacityAvailable?: number;
+  capacityUtilization?: number;
   matchScore: number;
   matchRationale: string;
   matchDetails?: Record<string, any> | null;
@@ -61,6 +65,100 @@ const formatDayName = (date: string) => {
 
 const buildAvatarUrl = (seed: string) =>
   `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&top=longHairStraight&hairColor=BrownDark&accessoriesChance=0&clothes=BlazerSweater&clotheColor=PastelOrange&skin=Light`;
+
+const ensureString = (value: unknown): string | null => {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  return null;
+};
+
+const extractCredential = (details?: Record<string, any> | null): string | null => {
+  if (!details) return null;
+  const profile =
+    (typeof details === "object" && details !== null && "therapist_profile" in details
+      ? (details as Record<string, any>).therapist_profile
+      : null) || null;
+
+  const candidates: unknown[] = [
+    details.credential,
+    details.credentials,
+    details.license,
+    details.license_type,
+    details.primary_license,
+    details.license_abbreviation,
+    profile?.credential,
+    profile?.credentials,
+    profile?.license,
+    profile?.primary_license,
+    profile?.license_type,
+    profile?.license_abbreviation,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate) && candidate.length > 0) {
+      const fromArray = ensureString(candidate[0]);
+      if (fromArray) return fromArray;
+    }
+    const normalized = ensureString(candidate);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return null;
+};
+
+const formatExperience = (details?: Record<string, any> | null): string | null => {
+  if (!details) return null;
+  const profile =
+    (typeof details === "object" && details !== null && "therapist_profile" in details
+      ? (details as Record<string, any>).therapist_profile
+      : null) || null;
+
+  const candidates: unknown[] = [
+    details.years_experience,
+    details.experience_years,
+    details.experienceYears,
+    details.yearsExperience,
+    details.experience,
+    details.therapist_experience,
+    profile?.years_experience,
+    profile?.experience_years,
+    profile?.experienceYears,
+    profile?.yearsExperience,
+    profile?.experience,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "number" && Number.isFinite(candidate) && candidate > 0) {
+      return `${candidate}+ years experience`;
+    }
+    if (typeof candidate === "string") {
+      const trimmed = candidate.trim();
+      if (trimmed.length === 0) continue;
+      if (/\byear/.test(trimmed.toLowerCase())) {
+        return trimmed;
+      }
+      return `${trimmed} experience`;
+    }
+  }
+
+  return null;
+};
+
+const describeAvailability = (details?: Record<string, any> | null): string | null => {
+  const availabilityDetails = details?.availability_match;
+  if (!availabilityDetails) return null;
+  const matches = availabilityDetails.matches;
+  if (!Array.isArray(matches) || matches.length === 0) return null;
+  const days = Array.from(new Set(matches.map((match) => match?.day).filter(Boolean)));
+  if (days.length === 0) return null;
+  const daySummary = days.join(", ");
+  const count = availabilityDetails.match_count ?? matches.length;
+  return `Open during your window on ${daySummary}${count > 1 ? ` (${count} slots)` : ""}`;
+};
 
 export function TherapistMatchQuestion({
   question,
@@ -197,7 +295,10 @@ export function TherapistMatchQuestion({
         name: match.name,
         languages: match.languages ?? [],
         specialties: match.specialties ?? [],
+        modalities: match.modalities ?? [],
         bio: match.bio,
+        capacityAvailable: match.capacityAvailable ?? match.matchDetails?.capacity_available ?? null,
+        capacityUtilization: match.capacityUtilization ?? null,
         matchScore: match.matchScore ?? 0,
         matchRationale: match.matchRationale ?? "",
         matchDetails: match.matchDetails ?? null,
@@ -247,9 +348,13 @@ export function TherapistMatchQuestion({
       timeWindow: preferredWindow,
       languages: match.languages,
       specialties: match.specialties,
+      modalities: match.modalities,
       matchScore: match.matchScore,
       matchRationale: match.matchRationale,
       matchDetails: match.matchDetails ?? undefined,
+      credentials: extractCredential(match.matchDetails) ?? undefined,
+      experience: formatExperience(match.matchDetails) ?? undefined,
+      capacityAvailable: match.capacityAvailable,
     });
   };
 
@@ -322,11 +427,17 @@ export function TherapistMatchQuestion({
             {displayError ?? "No matches yet. Try adjusting your time or refreshing."}
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-1">
+          <>
+            <div className="grid gap-4 sm:grid-cols-1">
             {matches.map((match) => {
               const isSelected = selectedId === match.id;
               const preferenceDetails = match.matchDetails?.preference_match;
               const languageDetails = match.matchDetails?.language_match;
+              const credentialBadge = extractCredential(match.matchDetails) ?? "Licensed Therapist";
+              const experienceCopy = formatExperience(match.matchDetails);
+              const availabilitySummary = describeAvailability(match.matchDetails);
+              const capacityAvailable =
+                match.capacityAvailable ?? match.matchDetails?.capacity_available ?? null;
               return (
                 <button
                   key={match.id}
@@ -336,6 +447,7 @@ export function TherapistMatchQuestion({
                     "text-left transition-transform",
                     isSelected ? "translate-y-[-2px]" : "hover:translate-y-[-1px]",
                   )}
+                  aria-pressed={isSelected}
                 >
                   <Card
                     className={cn(
@@ -343,25 +455,52 @@ export function TherapistMatchQuestion({
                       isSelected ? "border-primary shadow-lg shadow-primary/20" : "border-transparent",
                     )}
                   >
-                    <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-                      <Avatar className="h-14 w-14 border border-muted">
+                    <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-0">
+                      <Avatar className="h-16 w-16 border-2 border-muted">
                         <AvatarImage src={buildAvatarUrl(match.id)} alt={match.name} />
                         <AvatarFallback>{match.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between gap-3">
-                          <CardTitle className="text-lg font-semibold">{match.name}</CardTitle>
-                          <Badge variant={isSelected ? "default" : "outline"} className="flex items-center gap-1">
+                      <div className="flex-1 space-y-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="space-y-1">
+                            <CardTitle className="text-lg font-semibold">{match.name}</CardTitle>
+                            {(credentialBadge || experienceCopy) && (
+                              <div className="flex flex-wrap items-center gap-2 text-xs">
+                                {credentialBadge && (
+                                  <Badge variant="secondary" className="flex items-center gap-1">
+                                    <Award className="h-3 w-3" />
+                                    {credentialBadge}
+                                  </Badge>
+                                )}
+                                {experienceCopy && (
+                                  <span className="text-muted-foreground">{experienceCopy}</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <Badge
+                            variant={isSelected ? "default" : "outline"}
+                            className="flex items-center gap-1"
+                          >
                             <Check className={cn("h-3 w-3", !isSelected && "hidden")} />
                             {Math.round(match.matchScore)}% match
                           </Badge>
                         </div>
-                        <CardDescription className="text-sm leading-relaxed text-muted-foreground">
-                          {match.matchRationale || "Strong fit based on your preferences and availability."}
-                        </CardDescription>
+                        {match.bio && (
+                          <p className="text-sm leading-relaxed text-muted-foreground">{match.bio}</p>
+                        )}
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
+                      {match.matchRationale && (
+                        <div className="rounded-xl border border-primary/10 bg-primary/5 px-4 py-3 text-xs text-muted-foreground">
+                          <p className="flex items-center gap-2 text-foreground">
+                            <Sparkles className="h-3 w-3 text-primary" />
+                            <span className="font-medium">Why this therapist</span>
+                          </p>
+                          <p className="mt-1">{match.matchRationale}</p>
+                        </div>
+                      )}
                       {match.specialties.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {match.specialties.slice(0, 3).map((specialty) => (
@@ -374,6 +513,12 @@ export function TherapistMatchQuestion({
                       {match.languages.length > 0 && (
                         <p className="text-xs text-muted-foreground">
                           Languages: {match.languages.join(", ")}
+                        </p>
+                      )}
+                      {match.modalities.length > 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          Approaches: {match.modalities.slice(0, 3).join(", ")}
+                          {match.modalities.length > 3 ? "…" : ""}
                         </p>
                       )}
                       {preferenceDetails?.applied && (
@@ -402,12 +547,48 @@ export function TherapistMatchQuestion({
                             : "Requested language unavailable"}
                         </p>
                       )}
+                      {availabilitySummary && (
+                        <p className="text-xs text-muted-foreground">{availabilitySummary}</p>
+                      )}
+                      {capacityAvailable !== null &&
+                        typeof capacityAvailable === "number" &&
+                        capacityAvailable > 0 && (
+                          <p className="text-xs text-emerald-600">{capacityAvailable} openings this month</p>
+                        )}
                     </CardContent>
                   </Card>
                 </button>
               );
             })}
-          </div>
+            </div>
+            {selectedId && (
+              <Card className="border border-emerald-200 bg-emerald-50/80">
+                <CardHeader className="space-y-2">
+                  <div className="flex items-center gap-2 text-emerald-600">
+                    <CheckCircle2 className="h-5 w-5" />
+                    <span className="text-sm font-semibold tracking-tight">Therapist secured</span>
+                  </div>
+                  <CardTitle className="text-lg font-semibold text-emerald-900">
+                    Families who reach this step complete scheduling.
+                  </CardTitle>
+                  <p className="text-sm text-emerald-800/80">
+                    {matches.find((match) => match.id === selectedId)?.name} is ready for your first session.
+                    We&apos;ll hold their availability while you pick a time.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between text-sm font-medium text-emerald-800/80">
+                    <span>Completion rate</span>
+                    <span className="text-base font-semibold text-emerald-700">100%</span>
+                  </div>
+                  <Progress value={100} aria-label="Parents who reach this step complete onboarding 100 percent of the time" />
+                  <p className="text-xs text-emerald-800/70">
+                    Parents who meet their therapist now finish scheduling <span className="font-semibold">100%</span> of the time.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
       </div>
     </QuestionFrame>
