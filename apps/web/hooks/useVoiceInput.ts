@@ -8,12 +8,15 @@ interface UseVoiceInputOptions {
   continuous?: boolean;
   interimResults?: boolean;
   language?: string;
+  autoTranslate?: boolean;
+  targetLanguage?: string;
 }
 
 interface UseVoiceInputReturn {
   isListening: boolean;
   isSupported: boolean;
   transcript: string;
+  isTranslating: boolean;
   startListening: () => void;
   stopListening: () => void;
   toggleListening: () => void;
@@ -26,10 +29,13 @@ export function useVoiceInput({
   continuous = false,
   interimResults = true,
   language = "en-US",
+  autoTranslate = false,
+  targetLanguage = "en",
 }: UseVoiceInputOptions = {}): UseVoiceInputReturn {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [isTranslating, setIsTranslating] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
@@ -56,7 +62,7 @@ export function useVoiceInput({
       setIsListening(true);
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = async (event: SpeechRecognitionEvent) => {
       let finalTranscript = "";
       let interimTranscript = "";
 
@@ -72,9 +78,47 @@ export function useVoiceInput({
       const currentTranscript = finalTranscript || interimTranscript;
       setTranscript(currentTranscript.trim());
 
-      // Call onResult callback with final transcript
+      // Handle final transcript with optional translation
       if (finalTranscript && onResult) {
-        onResult(finalTranscript.trim());
+        const trimmedTranscript = finalTranscript.trim();
+        
+        // If auto-translate is enabled and not already in target language
+        if (autoTranslate && language !== `${targetLanguage}-US` && language !== targetLanguage) {
+          setIsTranslating(true);
+          try {
+            // Extract language code from full locale (e.g., "ko-KR" -> "ko")
+            const sourceLang = language.split("-")[0];
+            
+            const response = await fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                text: trimmedTranscript,
+                sourceLanguage: sourceLang,
+                targetLanguage: targetLanguage,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Translation failed");
+            }
+
+            const result = await response.json();
+            onResult(result.translatedText);
+          } catch (error: any) {
+            console.error("Translation error:", error);
+            // Fall back to original transcript if translation fails
+            onResult(trimmedTranscript);
+            if (onError) {
+              onError("Translation failed. Using original text.");
+            }
+          } finally {
+            setIsTranslating(false);
+          }
+        } else {
+          // No translation needed
+          onResult(trimmedTranscript);
+        }
       }
     };
 
@@ -162,6 +206,7 @@ export function useVoiceInput({
     isListening,
     isSupported,
     transcript,
+    isTranslating,
     startListening,
     stopListening,
     toggleListening,
