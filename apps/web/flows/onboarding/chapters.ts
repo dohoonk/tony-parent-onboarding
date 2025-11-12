@@ -6,6 +6,7 @@ export type QuestionType =
   | "email"
   | "date"
   | "phone"
+  | "password"
   | "address"
   | "choice"
   | "toggle"
@@ -107,6 +108,13 @@ export const CHAPTERS: ChapterConfig[] = [
         helperText: "We use this to send important onboarding updates. No spam, promise.",
         ctaLabel: "Continue",
         mapTo: { section: "parent", field: "email" },
+      },
+      {
+        id: "parent-password",
+        type: "password",
+        prompt: "Create a password you’ll remember.",
+        helperText: "You’ll use this to sign back in and manage your child’s care.",
+        ctaLabel: "Continue",
       },
       {
         id: "parent-dob",
@@ -478,9 +486,9 @@ export const CHAPTERS: ChapterConfig[] = [
       },
       {
         id: "schedule-confirm",
-        type: "intro",
-        prompt: "Perfect! We’ll share matches shortly.",
-        helperText: "Look for an email within one business day with next steps.",
+        type: "summary",
+        prompt: "You’re all set!",
+        helperText: "We’ve held your spot and sent the confirmation details. Here’s what to expect next.",
         ctaLabel: "Continue",
       },
     ],

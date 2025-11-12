@@ -285,8 +285,16 @@ export function TherapistMatchQuestion({
         throw new Error(errors[0].message);
       }
 
-      if (data?.matchTherapists?.errors && data.matchTherapists.errors.length > 0) {
-        throw new Error(data.matchTherapists.errors[0]);
+      const matchErrors = data?.matchTherapists?.errors ?? [];
+      if (matchErrors.length > 0) {
+        const errorMessage = matchErrors[0] ?? "We couldn’t load therapist matches. Please try again.";
+        setLocalError(
+          errorMessage === "Session not found"
+            ? "We’re still setting up your secure session. Please wait a moment and refresh matches."
+            : errorMessage,
+        );
+        setMatches([]);
+        return;
       }
 
       const rawMatches = data?.matchTherapists?.matches ?? [];
@@ -455,7 +463,7 @@ export function TherapistMatchQuestion({
                       isSelected ? "border-primary shadow-lg shadow-primary/20" : "border-transparent",
                     )}
                   >
-                    <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-0">
+                    <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-[30px]">
                       <Avatar className="h-16 w-16 border-2 border-muted">
                         <AvatarImage src={buildAvatarUrl(match.id)} alt={match.name} />
                         <AvatarFallback>{match.name.slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -487,7 +495,7 @@ export function TherapistMatchQuestion({
                           </Badge>
                         </div>
                         {match.bio && (
-                          <p className="text-sm leading-relaxed text-muted-foreground">{match.bio}</p>
+                          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{match.bio}</p>
                         )}
                       </div>
                     </CardHeader>

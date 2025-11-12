@@ -13,14 +13,16 @@ import { CREATE_INTAKE_MESSAGE } from '@/lib/graphql/mutations';
 
 interface AIIntakeStepProps {
   onNext: () => void;
-  onPrev: () => void;
+  onPrev?: () => void;
   sessionId?: string;
+  onChange?: (summary: any) => void;
 }
 
 export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
   onNext,
   onPrev,
-  sessionId
+  sessionId,
+  onChange
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -371,6 +373,10 @@ export const AIIntakeStep: React.FC<AIIntakeStepProps> = ({
 
   const handleContinue = () => {
     // Save summary data to context/store
+    // Pass summary to parent via onChange
+    if (onChange && summary) {
+      onChange(summary);
+    }
     // TODO: Save to backend via GraphQL mutation
     onNext();
   };

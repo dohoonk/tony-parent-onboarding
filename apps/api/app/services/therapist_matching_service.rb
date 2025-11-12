@@ -207,11 +207,23 @@ class TherapistMatchingService
 
     return { points: 0, rationale: nil, details: { applied: false } } unless desired_gender
 
-    therapist_gender = [
+    # Gender can be stored as numbers (1=female, 2=male) or strings
+    # Normalize all values to lowercase strings for comparison
+    therapist_gender_raw = [
       therapist.standardized_gender,
       therapist.legal_gender,
       therapist.self_gender
-    ].compact.map(&:downcase).find { |g| %w[female male].include?(g) }
+    ].compact.first
+
+    # Convert numeric codes to gender strings: 1 = female, 2 = male
+    therapist_gender = case therapist_gender_raw.to_s.downcase.strip
+                       when '1', 'female', 'f' then 'female'
+                       when '2', 'male', 'm' then 'male'
+                       else therapist_gender_raw.to_s.downcase.strip
+                       end
+
+    # Only match if we have a valid gender
+    return { points: 0, rationale: nil, details: { applied: false, therapist_gender: therapist_gender } } unless %w[female male].include?(therapist_gender)
 
     if therapist_gender == desired_gender
       {
@@ -289,17 +301,30 @@ class TherapistMatchingService
 
     if matches.any?
       match_count = matches.length
-      points = [match_count * 5, 30].min # 5 points per match, max 30
+      unique_days = matches.map { |m| m[:day] }.uniq
+      
+      # For single-day selections, score based on day availability (not number of time slots)
+      # This prevents inflated scores when therapists have multiple slots on the same day
+      if patient_days.length == 1
+        # 30 points if available on the requested day (regardless of how many slots)
+        points = 30
+        rationale = "Available on #{unique_days.first}"
+      else
+        # For multi-day selections, score proportionally
+        points = [unique_days.length * 10, 30].min # 10 points per day, max 30
+        rationale = "Available on #{unique_days.join(', ')} (#{unique_days.length} days)"
+      end
+      
       {
         points: points,
-        rationale: "Available on #{matches.map { |m| m[:day] }.uniq.join(', ')} (#{match_count} time slots)",
-        details: { matches: matches, match_count: match_count }
+        rationale: rationale,
+        details: { matches: matches, match_count: match_count, unique_days: unique_days }
       }
     else
       {
         points: 0,
         rationale: 'No overlapping availability',
-        details: { matches: [] }
+        details: { matches: [], match_count: 0, unique_days: [] }
       }
     end
   end

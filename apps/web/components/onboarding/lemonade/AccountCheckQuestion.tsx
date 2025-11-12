@@ -192,7 +192,7 @@ export function AccountCheckQuestion({
             onClick={() => handleSelect("yes")}
             variant="outline"
             className={cn(
-              "h-14 justify-start rounded-full px-7 text-base font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
+              "h-14 justify-center rounded-full px-7 text-base font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
               selection === "yes"
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:-translate-y-0.5 hover:shadow-xl"
                 : "border border-primary/10 bg-white text-foreground hover:border-primary/40 hover:bg-primary/5",
@@ -207,7 +207,7 @@ export function AccountCheckQuestion({
             onClick={() => handleSelect("no")}
             variant="outline"
             className={cn(
-              "h-14 justify-start rounded-full px-7 text-base font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
+              "h-14 justify-center rounded-full px-7 text-base font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
               selection === "no"
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:-translate-y-0.5 hover:shadow-xl"
                 : "border border-primary/10 bg-white text-foreground hover:border-primary/40 hover:bg-primary/5",
@@ -215,7 +215,7 @@ export function AccountCheckQuestion({
             )}
             disabled={disableControls}
           >
-            No, I’m new here
+            No, I'm new here
           </Button>
         </div>
 

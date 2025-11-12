@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { AIIntakeStep } from "@/components/onboarding/lemonade/chat/AIIntakeStep";
+import { AIIntakeStep } from "@/components/onboarding/steps/AIIntakeStep";
 import { TherapistMatchQuestion } from "@/components/onboarding/lemonade/TherapistMatchQuestion";
 import { AccountCheckQuestion } from "@/components/onboarding/lemonade/AccountCheckQuestion";
+import { TherapistConfirmationSummaryContent } from "@/components/onboarding/lemonade/TherapistConfirmationSummaryContent";
 
 interface QuestionRendererProps {
   question: QuestionConfig;
@@ -154,6 +155,84 @@ export function QuestionRenderer({
           preference={answers["schedule-therapist-preference"]}
         />
       );
+
+    case "summary":
+      return (
+        <QuestionFrame
+          title={question.prompt}
+          description={question.helperText}
+          errorMessage={errorMessage}
+          primaryAction={{
+            label: question.ctaLabel ?? "Continue",
+            onClick: () => void runAsync(onNext),
+            loading: isSubmitting,
+            disabled: isSubmitting,
+          }}
+        >
+          <TherapistConfirmationSummaryContent
+            therapistSelection={answers["schedule-therapist-match"]}
+            contactName={answers["schedule-contact-name"]}
+            contactEmail={answers["schedule-contact-email"]}
+            studentName={answers["student-first-name"]}
+          />
+        </QuestionFrame>
+      );
+
+    case "password": {
+      const accountCheck = answers["account-check"];
+
+      if (accountCheck?.hasAccount) {
+        return (
+          <QuestionFrame
+            title={question.prompt}
+            description={question.helperText}
+            errorMessage={errorMessage}
+            primaryAction={{
+              label: question.ctaLabel ?? "Continue",
+              onClick: () => void runAsync(onNext),
+              loading: isSubmitting,
+              disabled: isSubmitting,
+            }}
+          >
+            <div className="rounded-3xl border border-muted/60 bg-muted/30 px-6 py-5 text-sm text-muted-foreground">
+              You’re already signed in with{" "}
+              <span className="font-semibold text-foreground">
+                {accountCheck?.parent?.email ?? accountCheck?.email ?? "your account"}
+              </span>
+              . We’ll keep you logged in—just continue when you’re ready.
+            </div>
+          </QuestionFrame>
+        );
+      }
+
+      return (
+        <QuestionFrame
+          title={question.prompt}
+          description={question.helperText}
+          errorMessage={errorMessage}
+          primaryAction={{
+            label: question.ctaLabel ?? "Continue",
+            onClick: () => void handleContinue(),
+            disabled: (!question.optional && !internalValue) || !!isSubmitting,
+            loading: isSubmitting,
+          }}
+        >
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm text-muted-foreground">Create a password</Label>
+            <Input
+              type="password"
+              value={internalValue ?? ""}
+              placeholder="At least 8 characters"
+              autoComplete="new-password"
+              onChange={(event) => syncValue(event.target.value)}
+              disabled={!!isSubmitting}
+              className="h-12 rounded-2xl border-2 border-muted bg-white text-base"
+            />
+            <p className="text-xs text-muted-foreground">Tip: use at least 8 characters with a mix of letters and numbers.</p>
+          </div>
+        </QuestionFrame>
+      );
+    }
 
     case "account-check":
       return (
@@ -455,13 +534,12 @@ export function QuestionRenderer({
     case "chat":
       return (
         <AIIntakeStep
-          onComplete={async (summary) => {
+          sessionId={sessionId ?? undefined}
+          onChange={(summary) => {
             onChange(summary);
-            await runAsync(onNext);
           }}
-          onExit={async () => {
-            await runAsync(onNext);
-          }}
+          onNext={() => void runAsync(onNext)}
+          onPrev={onSkip ? () => void runAsync(onSkip) : undefined}
         />
       );
 

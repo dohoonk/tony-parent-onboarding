@@ -7,7 +7,7 @@ import { LemonadeLayout } from '@/components/onboarding/lemonade/LemonadeLayout'
 import { QuestionRenderer } from '@/components/onboarding/lemonade/QuestionRenderer';
 import { CHAPTERS, ChapterConfig, QuestionConfig } from '@/flows/onboarding/chapters';
 import type { StudentInfoData } from '@/components/onboarding/steps/StudentInfoStep';
-import { UPLOAD_INSURANCE_CARD } from '@/lib/graphql/mutations';
+import { SIGNUP, UPLOAD_INSURANCE_CARD } from '@/lib/graphql/mutations';
 
 type AnswerMap = Record<string, any>;
 
@@ -91,6 +91,7 @@ const useDerivedAnswers = (data: ReturnType<typeof useOnboarding>['data']): Answ
     'parent-first-name': parentInfo.firstName ?? '',
     'parent-last-name': parentInfo.lastName ?? '',
     'parent-email': parentInfo.email ?? '',
+    'parent-password': '',
     'parent-phone': parentInfo.phone ?? '',
     'parent-dob': parentInfo.dateOfBirth ?? '',
     'parent-relationship': parentInfo.relationship ?? '',
@@ -180,6 +181,7 @@ const OnboardingContent: React.FC = () => {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [inlineError, setInlineError] = useState<string | null>(null);
   const [uploadInsuranceCard] = useMutation(UPLOAD_INSURANCE_CARD);
+  const [signupMutation] = useMutation(SIGNUP);
 
   const activeChapter = CHAPTERS[chapterIndex];
   const activeQuestion: QuestionConfig | undefined = activeChapter?.questions[questionIndex];
@@ -361,6 +363,94 @@ const OnboardingContent: React.FC = () => {
         }
       }
 
+      if (activeQuestion.id === "parent-password") {
+        const accountCheckAnswer = answers["account-check"];
+        const alreadyAuthenticated =
+          accountCheckAnswer?.hasAccount && accountCheckAnswer?.authenticated;
+
+        if (!alreadyAuthenticated) {
+          const email = (answers["parent-email"] ?? "").trim();
+          const firstName = (answers["parent-first-name"] ?? "").trim();
+          const lastName = (answers["parent-last-name"] ?? "").trim();
+          const password = typeof currentValue === "string" ? currentValue : "";
+
+          if (!password) {
+            setInlineError("Please create a password so we can secure your account.");
+            return;
+          }
+
+          if (password.length < 8) {
+            setInlineError("Your password needs to be at least 8 characters.");
+            return;
+          }
+
+          if (!email) {
+            setInlineError("We need an email address to finish creating your account.");
+            return;
+          }
+
+          try {
+            const { data, errors } = await signupMutation({
+              variables: {
+                email,
+                password,
+                firstName,
+                lastName,
+              },
+            });
+
+            if (errors?.length) {
+              throw new Error(errors[0].message);
+            }
+
+            const signupErrors = data?.signup?.errors ?? [];
+            if (signupErrors.length > 0) {
+              setInlineError(signupErrors.join(", "));
+              return;
+            }
+
+            const token = data?.signup?.token ?? null;
+            const parent = data?.signup?.parent ?? null;
+
+            if (token) {
+              localStorage.setItem("auth_token", token);
+            }
+
+            setAnswers((prev) => ({
+              ...prev,
+              "account-check": {
+                hasAccount: true,
+                authenticated: true,
+                parent: {
+                  firstName: parent?.firstName ?? firstName,
+                  lastName: parent?.lastName ?? lastName,
+                  email: parent?.email ?? email,
+                },
+                email: parent?.email ?? email,
+              },
+              "parent-password": "",
+            }));
+
+            updateData({
+              parentInfo: {
+                ...(onboarding.data.parentInfo ?? {}),
+                firstName: parent?.firstName ?? firstName,
+                lastName: parent?.lastName ?? lastName,
+                email: parent?.email ?? email,
+              },
+            });
+
+            valueForContext = "";
+          } catch (signupError: any) {
+            console.error(signupError);
+            setInlineError(
+              signupError?.message ?? "We couldn’t create your account. Please try again or use a different email.",
+            );
+            return;
+          }
+        }
+      }
+
       if (activeChapter.id === 'insurance' && activeQuestion.type === 'upload') {
         const sessionId = onboarding.sessionId;
         if (!sessionId) {
@@ -395,7 +485,14 @@ const OnboardingContent: React.FC = () => {
 
         const mutationErrors = data?.uploadInsuranceCard?.errors ?? [];
         if (mutationErrors.length) {
-          throw new Error(mutationErrors.join(', '));
+          const combinedMessage = mutationErrors.join(', ');
+          if (mutationErrors.includes('Session not found')) {
+            setInlineError(
+              "We’re still creating your secure session. Please wait a moment, then refresh this step or try again.",
+            );
+            return;
+          }
+          throw new Error(combinedMessage);
         }
 
         const extracted = data?.uploadInsuranceCard?.insuranceCard?.extractedData ?? {};
@@ -516,6 +613,7 @@ const OnboardingContent: React.FC = () => {
     questionIndex,
     updateData,
     uploadInsuranceCard,
+    signupMutation,
   ]);
 
   const handleSkip = useCallback(async () => {
@@ -565,6 +663,7 @@ const OnboardingContent: React.FC = () => {
       personaTitle={activeChapter?.personaTitle}
       chapters={chaptersProgress}
       activeChapterId={activeChapter?.id ?? 'complete'}
+      activeQuestionId={activeQuestion?.id}
       onStepSelect={handleStepSelect}
     >
       {flowComplete ? (

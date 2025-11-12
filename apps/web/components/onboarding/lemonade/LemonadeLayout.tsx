@@ -12,6 +12,7 @@ interface LemonadeLayoutProps extends PropsWithChildren {
   avatarSrc?: string;
   chapters: ChapterProgress[];
   activeChapterId: string;
+  activeQuestionId?: string;
   className?: string;
   onStepSelect?: (stepId: string) => void;
 }
@@ -22,6 +23,7 @@ export function LemonadeLayout({
   avatarSrc,
   chapters,
   activeChapterId,
+  activeQuestionId,
   children,
   className,
   onStepSelect,
@@ -35,7 +37,12 @@ export function LemonadeLayout({
     >
       <PersonaHeader personaName={personaName} personaTitle={personaTitle} imageSrc={avatarSrc} />
       <div className="mt-6 w-full max-w-3xl">
-        <SegmentedProgress chapters={chapters} activeChapterId={activeChapterId} onStepSelect={onStepSelect} />
+        <SegmentedProgress 
+          chapters={chapters} 
+          activeChapterId={activeChapterId} 
+          activeQuestionId={activeQuestionId}
+          onStepSelect={onStepSelect} 
+        />
       </div>
       <section
         key={activeChapterId}

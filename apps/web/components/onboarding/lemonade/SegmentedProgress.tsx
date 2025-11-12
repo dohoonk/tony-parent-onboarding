@@ -12,6 +12,7 @@ export interface ChapterProgress {
 interface SegmentedProgressProps {
   chapters: ChapterProgress[];
   activeChapterId: string;
+  activeQuestionId?: string;
   onStepSelect?: (stepId: string) => void;
 }
 
@@ -23,7 +24,7 @@ export const STEP_GROUPS = [
   { id: "schedule", label: "Schedule", chapters: ["scheduling", "finish"] },
 ];
 
-export function SegmentedProgress({ chapters, activeChapterId, onStepSelect }: SegmentedProgressProps) {
+export function SegmentedProgress({ chapters, activeChapterId, activeQuestionId, onStepSelect }: SegmentedProgressProps) {
   const stepSummaries = STEP_GROUPS.map((step) => {
     const stepChapters = chapters.filter((chapter) => step.chapters.includes(chapter.id));
     const stepTotal = stepChapters.reduce((sum, chapter) => sum + chapter.totalQuestions, 0);
@@ -50,7 +51,10 @@ export function SegmentedProgress({ chapters, activeChapterId, onStepSelect }: S
 
   const currentStep = activeStepIndex + 1;
   const totalSteps = stepSummaries.length;
-  const overallPercent = Math.min((currentStep - 1) * 20, 100);
+  
+  // Show 100% completion on the final confirmation question
+  const isOnConfirmationPage = activeQuestionId === "schedule-confirm";
+  const overallPercent = isOnConfirmationPage ? 100 : Math.min((currentStep - 1) * 20, 100);
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
