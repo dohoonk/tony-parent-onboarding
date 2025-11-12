@@ -31,11 +31,12 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
 
-  // Voice input hook
+  // Voice input hook with Korean language and auto-translation
   const {
     isListening,
     isSupported: isVoiceSupported,
     transcript,
+    isTranslating,
     toggleListening,
     resetTranscript,
   } = useVoiceInput({
@@ -53,6 +54,9 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
     },
     continuous: false,
     interimResults: true,
+    language: "ko-KR", // Korean language
+    autoTranslate: true, // Enable automatic translation
+    targetLanguage: "en", // Translate to English
   });
 
   // Update input with interim transcript while listening
@@ -190,7 +194,12 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
         )}
         {isListening && !voiceError && (
           <p className="mt-2 text-xs text-primary" role="status">
-            🎤 Listening... Speak clearly into your microphone
+            🎤 Listening... Speak in Korean or English
+          </p>
+        )}
+        {isTranslating && (
+          <p className="mt-2 text-xs text-primary" role="status">
+            🌐 Translating to English...
           </p>
         )}
       </div>
