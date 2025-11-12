@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Loader2, AlertCircle } from 'lucide-react';
+import { Send, Loader2, AlertCircle, Mic, MicOff } from 'lucide-react';
 import { ChatMessage } from './AIIntakeChat';
 import { cn } from '@/lib/utils';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
 
 interface AIChatPanelProps {
   messages: ChatMessage[];
@@ -28,6 +29,45 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+
+  // Voice input hook
+  const {
+    isListening,
+    isSupported: isVoiceSupported,
+    transcript,
+    toggleListening,
+    resetTranscript,
+  } = useVoiceInput({
+    onResult: (finalTranscript) => {
+      // Append to existing input or replace if empty
+      setInput((prev) => {
+        const trimmedPrev = prev.trim();
+        return trimmedPrev ? `${trimmedPrev} ${finalTranscript}` : finalTranscript;
+      });
+      resetTranscript();
+    },
+    onError: (errorMessage) => {
+      setVoiceError(errorMessage);
+      setTimeout(() => setVoiceError(null), 5000); // Clear after 5 seconds
+    },
+    continuous: false,
+    interimResults: true,
+  });
+
+  // Update input with interim transcript while listening
+  useEffect(() => {
+    if (isListening && transcript) {
+      const trimmedInput = input.trim();
+      // Show interim transcript as placeholder/preview
+      if (trimmedInput) {
+        // Don't override typed text, just show we're listening
+      } else {
+        // Show interim transcript in input
+        setInput(transcript);
+      }
+    }
+  }, [transcript, isListening, input, setInput]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -102,12 +142,33 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder={isListening ? "Listening... Speak now" : "Type or speak your message..."}
             disabled={isLoading}
-            className="flex-1"
+            className={cn(
+              "flex-1",
+              isListening && "ring-2 ring-primary ring-offset-2"
+            )}
             aria-label="Chat input"
-            aria-describedby={error ? 'chat-error' : undefined}
+            aria-describedby={error || voiceError ? 'chat-error' : undefined}
           />
+          {isVoiceSupported && (
+            <Button
+              type="button"
+              onClick={toggleListening}
+              disabled={isLoading}
+              size="icon"
+              variant={isListening ? "destructive" : "outline"}
+              className="shrink-0"
+              aria-label={isListening ? "Stop voice input" : "Start voice input"}
+              title={isListening ? "Stop voice input" : "Start voice input"}
+            >
+              {isListening ? (
+                <MicOff className="h-4 w-4 animate-pulse" />
+              ) : (
+                <Mic className="h-4 w-4" />
+              )}
+            </Button>
+          )}
           <Button
             type="submit"
             disabled={!input.trim() || isLoading}
@@ -122,9 +183,14 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
             )}
           </Button>
         </form>
-        {error && (
+        {(error || voiceError) && (
           <p id="chat-error" className="mt-2 text-xs text-destructive" role="alert">
-            {error}
+            {voiceError || error}
+          </p>
+        )}
+        {isListening && !voiceError && (
+          <p className="mt-2 text-xs text-primary" role="status">
+            🎤 Listening... Speak clearly into your microphone
           </p>
         )}
       </div>
