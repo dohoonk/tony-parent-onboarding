@@ -20,6 +20,8 @@ export interface ParentInfoData {
   city: string;
   state: string;
   postalCode: string;
+  dateOfBirth?: string;
+  relationship?: string;
 }
 
 export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
@@ -35,7 +37,9 @@ export const ParentInfoStep: React.FC<ParentInfoStepProps> = ({
     street: initialData.street || '',
     city: initialData.city || '',
     state: initialData.state || '',
-    postalCode: initialData.postalCode || ''
+    postalCode: initialData.postalCode || '',
+    dateOfBirth: initialData.dateOfBirth || '',
+    relationship: initialData.relationship || ''
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof ParentInfoData, string>>>({});

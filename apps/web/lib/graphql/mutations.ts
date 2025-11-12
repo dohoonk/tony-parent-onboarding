@@ -35,11 +35,13 @@ export const MATCH_THERAPISTS = gql`
     $sessionId: ID!
     $availabilityWindowId: ID!
     $insurancePolicyId: ID
+    $preference: String
   ) {
     matchTherapists(
       sessionId: $sessionId
       availabilityWindowId: $availabilityWindowId
       insurancePolicyId: $insurancePolicyId
+      preference: $preference
     ) {
       matches {
         id

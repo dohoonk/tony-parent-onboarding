@@ -17,6 +17,10 @@ export interface OnboardingData {
   schedulingComplete?: boolean;
   onboardingComplete?: boolean;
   sessionId?: string;
+  intakeResponses?: Record<string, any>;
+  screenerResponses?: Record<string, any>;
+  insuranceInfo?: Record<string, any>;
+  schedulingPreferences?: Record<string, any>;
 }
 
 export interface Step {

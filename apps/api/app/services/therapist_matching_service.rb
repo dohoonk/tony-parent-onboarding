@@ -13,7 +13,7 @@ class TherapistMatchingService
   # @param insurance_policy [InsurancePolicy] Optional insurance policy for network matching
   # @param limit [Integer] Maximum number of matches to return
   # @return [Array<Hash>] Array of matched therapists with scores and rationale
-  def self.match(student:, availability_window:, insurance_policy: nil, limit: 4)
+  def self.match(student:, availability_window:, insurance_policy: nil, preference: nil, limit: 4)
     # Start with active therapists with capacity
     base_scope = Therapist.active.with_capacity
 
@@ -44,7 +44,9 @@ class TherapistMatchingService
         therapist: therapist,
         student: student,
         availability_window: availability_window,
-        insurance_policy: insurance_policy
+        insurance_policy: insurance_policy,
+        preference: preference,
+        student_language: student.language
       )
       availability_match_count = score[:details]&.dig(:availability_match, :match_count).to_i
       next nil if availability_match_count.zero?
@@ -84,10 +86,11 @@ class TherapistMatchingService
 
   private
 
-  def self.calculate_match_score(therapist:, student:, availability_window:, insurance_policy:)
+  def self.calculate_match_score(therapist:, student:, availability_window:, insurance_policy:, preference:, student_language:)
     score = 0
     rationale_parts = []
     details = {}
+    student_language ||= student&.language
 
     # Insurance network match (50 points max) - highest priority
     if insurance_policy&.insurance_company.present?
@@ -123,13 +126,14 @@ class TherapistMatchingService
     # Language match (10 points max)
     # Check if therapist speaks student's preferred language (if available)
     # For now, give points for English (most common)
-    if therapist.care_languages.include?('en') || therapist.care_languages.include?('eng')
-      score += 10
-      rationale_parts << "Language: English"
-      details[:language_match] = true
-    else
-      details[:language_match] = false
-    end
+    language_score = calculate_language_match(
+      therapist: therapist,
+      student_language: student_language,
+      preference: preference
+    )
+    score += language_score[:points]
+    rationale_parts << language_score[:rationale] if language_score[:rationale].present?
+    details[:language_match] = language_score[:details]
 
     # Capacity match (10 points max) - prefer therapists with more availability
     if therapist.has_capacity?
@@ -141,11 +145,87 @@ class TherapistMatchingService
       details[:capacity_available] = 0
     end
 
+    preference_score = calculate_preference_match(
+      therapist: therapist,
+      preference: preference
+    )
+    score += preference_score[:points]
+    rationale_parts << preference_score[:rationale] if preference_score[:rationale].present?
+    details[:preference_match] = preference_score[:details]
+
+    score = [[score, 0].max, 100].min
+
     {
       total: score,
       rationale: rationale_parts.join('; '),
       details: details
     }
+  end
+
+  def self.calculate_language_match(therapist:, student_language:, preference:)
+    normalized_languages = Array(therapist.care_languages).map { |lang| lang&.downcase }.compact
+    requested_language = student_language&.downcase
+    requested_language = nil if requested_language.blank? || requested_language == 'other'
+
+    prefers_specific_language = preference == 'language'
+
+    if requested_language && normalized_languages.include?(requested_language)
+      points = 10
+      rationale = "Speaks #{requested_language.titleize}"
+      details = { matched: true, requested: requested_language }
+    elsif prefers_specific_language
+      if requested_language.nil?
+        points = 0
+        rationale = nil
+        details = { matched: false, requested: requested_language }
+      else
+      points = -15
+      rationale = "Does not speak requested language"
+      details = { matched: false, requested: requested_language }
+      end
+    elsif normalized_languages.include?('en') || normalized_languages.include?('eng')
+      points = 8
+      rationale = "Language: English"
+      details = { matched: true, requested: 'english' }
+    else
+      points = 0
+      rationale = nil
+      details = { matched: false, requested: requested_language }
+    end
+
+    { points: points, rationale: rationale, details: details }
+  end
+
+  def self.calculate_preference_match(therapist:, preference:)
+    return { points: 0, rationale: nil, details: { applied: false } } if preference.blank? || preference == 'no-preference' || preference == 'language'
+
+    desired_gender = case preference
+                     when 'female' then 'female'
+                     when 'male' then 'male'
+                     else nil
+                     end
+
+    return { points: 0, rationale: nil, details: { applied: false } } unless desired_gender
+
+    therapist_gender = [
+      therapist.standardized_gender,
+      therapist.legal_gender,
+      therapist.self_gender
+    ].compact.map(&:downcase).find { |g| %w[female male].include?(g) }
+
+    if therapist_gender == desired_gender
+      {
+        points: 10,
+        rationale: "Matches #{desired_gender} preference",
+        details: { applied: true, requested: desired_gender, matched: true, therapist_gender: therapist_gender }
+      }
+    else
+      {
+        points: -15,
+        rationale: "Does not match #{desired_gender} preference",
+        details: { applied: true, requested: desired_gender, matched: false, therapist_gender: therapist_gender }
+      }
+    end
   end
 
   def self.calculate_availability_match(therapist, patient_availability_window)

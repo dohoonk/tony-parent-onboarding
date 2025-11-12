@@ -5,11 +5,12 @@ module Mutations
     argument :session_id, ID, required: true
     argument :availability_window_id, ID, required: true
     argument :insurance_policy_id, ID, required: false, description: "Optional insurance policy ID for network matching"
+    argument :preference, String, required: false, description: "Optional therapist preference (e.g., 'female', 'male', 'language')"
 
     field :matches, [Types::TherapistMatchType], null: false
     field :errors, [String], null: false
 
-    def resolve(session_id:, availability_window_id:, insurance_policy_id: nil)
+    def resolve(session_id:, availability_window_id:, insurance_policy_id: nil, preference: nil)
       require_authentication!
       
       session = current_user.onboarding_sessions.find_by(id: session_id)
@@ -37,6 +38,7 @@ module Mutations
         student: student,
         availability_window: availability_window,
         insurance_policy: insurance_policy,
+        preference: preference,
         limit: 4
       )
 
