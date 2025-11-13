@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, RefreshCcw, Check, Award } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Loader2, RefreshCcw, Check, Award, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const USER_TIMEZONE = "America/Los_Angeles";
@@ -559,6 +560,33 @@ export function TherapistMatchQuestion({
               );
             })}
             </div>
+            {selectedId && (
+              <Card className="border border-emerald-200 bg-emerald-50/80">
+                <CardHeader className="space-y-2">
+                  <div className="flex items-center gap-2 text-emerald-600">
+                    <CheckCircle2 className="h-5 w-5" />
+                    <span className="text-sm font-semibold tracking-tight">Last step to getting help</span>
+                  </div>
+                  <CardTitle className="text-lg font-semibold text-emerald-900">
+                    75% of families report huge improvement after a single session of therapy
+                  </CardTitle>
+                  <p className="text-sm text-emerald-800/80">
+                    {matches.find((match) => match.id === selectedId)?.name} is ready for your first session.
+                    We&apos;ll hold their availability while you pick a time.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between text-sm font-medium text-emerald-800/80">
+                    <span>Families see progress</span>
+                    <span className="text-base font-semibold text-emerald-700">75%</span>
+                  </div>
+                  <Progress value={75} aria-label="75 percent of families report huge improvement after therapy" />
+                  <p className="text-xs text-emerald-800/70">
+                    Most families notice meaningful changes after just <span className="font-semibold">one session</span>.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
       </div>
