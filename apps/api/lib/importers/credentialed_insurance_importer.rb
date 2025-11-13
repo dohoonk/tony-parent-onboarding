@@ -14,9 +14,6 @@ module Importers
       # Parse arrays
       legacy_names = parse_array_field(row, 'legacy_names', default: [])
       
-      # Parse JSONB fields
-      migration_details = parse_json_field(row, 'migration_details', default: {})
-      
       {
         id: row['id'],
         parent_credentialed_insurance_id: parent_credentialed_insurance_id,
@@ -28,7 +25,7 @@ module Importers
         network_status: parse_integer(row, 'network_status', default: 0),
         associates_allowed: parse_boolean(row, 'associates_allowed', default: false),
         open_pm_name: row['open_pm_name'].presence,
-        migration_details: migration_details,
+        legacy_id: row['legacy_id'].presence,
         created_at: parse_timestamp(row, 'created_at') || Time.current,
         updated_at: parse_timestamp(row, 'updated_at') || Time.current
       }

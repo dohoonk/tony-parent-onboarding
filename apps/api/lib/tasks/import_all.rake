@@ -26,7 +26,7 @@ namespace :import do
     Rake::Task['import:credentialed_insurances'].invoke
     
     puts "\nStep 1.5: Importing Therapists..."
-    Rake::Task['import:therapists'].invoke
+    Rake::Task['import:clinicians'].invoke
     
     puts "\nStep 1.6: Importing Clinician Credentialed Insurances..."
     Rake::Task['import:clinician_credentialed_insurances'].invoke
