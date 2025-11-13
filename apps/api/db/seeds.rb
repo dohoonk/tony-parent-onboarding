@@ -3,10 +3,19 @@
 
 puts "🌱 Starting seed process..."
 
-# Clean up existing demo data (optional - comment out if you want to keep existing data)
-puts "🧹 Cleaning up existing demo data..."
-Therapist.destroy_all
-CredentialedInsurance.destroy_all
+# Check if we should clean up existing data
+# Set CLEAN_SEED=true as an environment variable to wipe existing data
+clean_existing = ENV['CLEAN_SEED'] == 'true'
+
+if clean_existing
+  puts "🧹 Cleaning up existing demo data (CLEAN_SEED=true)..."
+  Therapist.destroy_all
+  CredentialedInsurance.destroy_all
+  puts "✅ Existing data cleared"
+else
+  puts "ℹ️  Preserving existing data (set CLEAN_SEED=true to wipe)"
+  puts "   Current counts: #{Therapist.count} therapists, #{CredentialedInsurance.count} insurance plans"
+end
 
 # Create Demo Therapists
 puts "👨‍⚕️ Creating demo therapists..."
