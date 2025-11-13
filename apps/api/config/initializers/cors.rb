@@ -7,12 +7,13 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # Allow Railway domains and localhost for development
+    # Allow Railway, Vercel domains and localhost for development
     origins(
       'http://localhost:3001',
       'http://localhost:3000',
       /https:\/\/.*\.railway\.app/,
       /https:\/\/.*\.up\.railway\.app/,
+      /https:\/\/.*\.vercel\.app/,
       'https://daybreakhealth.com',
       /https:\/\/.*\.daybreakhealth\.com/
     )
