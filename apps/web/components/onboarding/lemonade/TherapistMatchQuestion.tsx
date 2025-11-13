@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Loader2, RefreshCcw, Check, Award, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -575,13 +574,8 @@ export function TherapistMatchQuestion({
                     We&apos;ll hold their availability while you pick a time.
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm font-medium text-emerald-800/80">
-                    <span>Families see progress</span>
-                    <span className="text-base font-semibold text-emerald-700">75%</span>
-                  </div>
-                  <Progress value={75} aria-label="75 percent of families report huge improvement after therapy" />
-                  <p className="text-xs text-emerald-800/70">
+                <CardContent>
+                  <p className="text-sm text-emerald-800/70">
                     Most families notice meaningful changes after just <span className="font-semibold">one session</span>.
                   </p>
                 </CardContent>
