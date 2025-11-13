@@ -9,8 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Loader2, RefreshCcw, Check, Award, Sparkles, CheckCircle2 } from "lucide-react";
+import { Loader2, RefreshCcw, Check, Award, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const USER_TIMEZONE = "America/Los_Angeles";
@@ -500,15 +499,6 @@ export function TherapistMatchQuestion({
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {match.matchRationale && (
-                        <div className="rounded-xl border border-primary/10 bg-primary/5 px-4 py-3 text-xs text-muted-foreground">
-                          <p className="flex items-center gap-2 text-foreground">
-                            <Sparkles className="h-3 w-3 text-primary" />
-                            <span className="font-medium">Why this therapist</span>
-                          </p>
-                          <p className="mt-1">{match.matchRationale}</p>
-                        </div>
-                      )}
                       {match.specialties.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {match.specialties.slice(0, 3).map((specialty) => (
@@ -574,24 +564,19 @@ export function TherapistMatchQuestion({
                 <CardHeader className="space-y-2">
                   <div className="flex items-center gap-2 text-emerald-600">
                     <CheckCircle2 className="h-5 w-5" />
-                    <span className="text-sm font-semibold tracking-tight">Therapist secured</span>
+                    <span className="text-sm font-semibold tracking-tight">Last step to getting help</span>
                   </div>
                   <CardTitle className="text-lg font-semibold text-emerald-900">
-                    Families who reach this step complete scheduling.
+                    75% of families report huge improvement after a single session of therapy
                   </CardTitle>
                   <p className="text-sm text-emerald-800/80">
                     {matches.find((match) => match.id === selectedId)?.name} is ready for your first session.
                     We&apos;ll hold their availability while you pick a time.
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm font-medium text-emerald-800/80">
-                    <span>Completion rate</span>
-                    <span className="text-base font-semibold text-emerald-700">100%</span>
-                  </div>
-                  <Progress value={100} aria-label="Parents who reach this step complete onboarding 100 percent of the time" />
-                  <p className="text-xs text-emerald-800/70">
-                    Parents who meet their therapist now finish scheduling <span className="font-semibold">100%</span> of the time.
+                <CardContent>
+                  <p className="text-sm text-emerald-800/70">
+                    Most families notice meaningful changes after just <span className="font-semibold">one session</span>.
                   </p>
                 </CardContent>
               </Card>

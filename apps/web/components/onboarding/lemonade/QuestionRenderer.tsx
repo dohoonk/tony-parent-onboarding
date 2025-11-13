@@ -280,7 +280,7 @@ export function QuestionRenderer({
             </Label>
             <Input
               type={question.type === "email" ? "email" : question.type === "phone" ? "tel" : "text"}
-              value={internalValue}
+              value={internalValue ?? ""}
               placeholder={
                 question.type === "email"
                   ? "you@example.com"
