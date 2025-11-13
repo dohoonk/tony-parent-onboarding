@@ -80,12 +80,12 @@ const buildInitialAnswers = (existingAnswers: AnswerMap): AnswerMap => {
 };
 
 const useDerivedAnswers = (data: ReturnType<typeof useOnboarding>['data']): AnswerMap => {
-  const parentInfo = data.parentInfo ?? {};
-  const studentInfo = data.studentInfo ?? {};
-  const intakeResponses = data.intakeResponses ?? {};
-  const screenerResponses = data.screenerResponses ?? {};
-  const insuranceInfo = data.insuranceInfo ?? {};
-  const schedulingPreferences = data.schedulingPreferences ?? {};
+  const parentInfo = (data.parentInfo ?? {}) as any;
+  const studentInfo = (data.studentInfo ?? {}) as any;
+  const intakeResponses = (data.intakeResponses ?? {}) as any;
+  const screenerResponses = (data.screenerResponses ?? {}) as any;
+  const insuranceInfo = (data.insuranceInfo ?? {}) as any;
+  const schedulingPreferences = (data.schedulingPreferences ?? {}) as any;
 
   const initial: AnswerMap = {
     'parent-first-name': parentInfo.firstName ?? '',
