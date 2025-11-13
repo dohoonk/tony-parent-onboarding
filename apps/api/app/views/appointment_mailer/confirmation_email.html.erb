@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+    .header-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 8px 16px;
+      border-radius: 24px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .check-icon {
+      width: 16px;
+      height: 16px;
+      background: #10b981;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      margin: 24px 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-grid {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .info-row {
+      display: flex;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      flex: 0 0 140px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+    }
+    .info-value {
+      flex: 1;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .highlight-box {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+    .highlight-box p {
+      margin: 0;
+      font-size: 14px;
+      color: #065f46;
+    }
+    .next-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .next-steps li {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #374151;
+      display: flex;
+      gap: 12px;
+    }
+    .step-number {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .timeline {
+      border-left: 2px dashed #d1d5db;
+      padding-left: 20px;
+      margin-left: 12px;
+    }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 20px;
+    }
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -27px;
+      top: 0;
+      width: 12px;
+      height: 12px;
+      background: #10b981;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+    .timeline-label {
+      display: inline-block;
+      background: #e5e7eb;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+    .timeline-text {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 16px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 24px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+    .footer a {
+      color: #10b981;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">DAYBREAK HEALTH</div>
+      <div class="header-subtitle">Mental health support for every student</div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <div class="success-badge">
+        <span class="check-icon">✓</span>
+        You're confirmed
+      </div>
+
+      <h1>You're all set, <%= @parent_name %>!</h1>
+      <p class="subtitle">
+        We've held <%= @student_name %>'s first session with <strong><%= @therapist_name %></strong>.
+        Check this email for everything you need to know.
+      </p>
+
+      <!-- Session Details -->
+      <div class="section-title">
+        📅 First session snapshot
+      </div>
+      <div class="info-grid">
+        <div class="info-row">
+          <div class="info-label">Therapist</div>
+          <div class="info-value"><%= @therapist_name %><% if @therapist_credentials.present? %>, <%= @therapist_credentials %><% end %></div>
+        </div>
+        <% if @scheduled_date.present? %>
+        <div class="info-row">
+          <div class="info-label">Date</div>
+          <div class="info-value"><%= @scheduled_date %></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Time</div>
+          <div class="info-value"><%= @scheduled_time %></div>
+        </div>
+        <% end %>
+        <% if @therapist_languages.present? %>
+        <div class="info-row">
+          <div class="info-label">Languages</div>
+          <div class="info-value"><%= @therapist_languages %></div>
+        </div>
+        <% end %>
+        <% if @therapist_specialties.present? %>
+        <div class="info-row">
+          <div class="info-label">Focus areas</div>
+          <div class="info-value"><%= @therapist_specialties %></div>
+        </div>
+        <% end %>
+        <div class="info-row">
+          <div class="info-label">Estimated cost</div>
+          <div class="info-value"><%= @estimated_cost %></div>
+        </div>
+      </div>
+
+      <!-- Why This Match -->
+      <div class="highlight-box">
+        <p><strong>Why <%= @therapist_name %>?</strong></p>
+        <p style="margin-top: 8px;"><%= @therapist_bio&.truncate(200) || "#{@therapist_name} is a great fit based on your family's preferences and needs." %></p>
+      </div>
+    </div>
+
+    <!-- What Happens Next -->
+    <div class="card">
+      <div class="section-title">
+        ✨ What happens next
+      </div>
+      <p class="subtitle" style="margin-bottom: 16px;">We'll keep you looped in at every step.</p>
+
+      <ul class="next-steps">
+        <li>
+          <div class="step-number">1</div>
+          <div>
+            <strong>Confirmation sent</strong><br/>
+            We'll send you calendar invites and session details within 24 hours.
+          </div>
+        </li>
+        <li>
+          <div class="step-number">2</div>
+          <div>
+            <strong>Therapist intro</strong><br/>
+            <%= @therapist_name %> will reach out 2-3 days before your session with preparation tips.
+          </div>
+        </li>
+        <li>
+          <div class="step-number">3</div>
+          <div>
+            <strong>Final reminder</strong><br/>
+            You'll get a reminder 24 hours before with video call link and instructions.
+          </div>
+        </li>
+      </ul>
+
+      <!-- Timeline -->
+      <div style="margin-top: 32px;">
+        <div class="section-title">📍 Timeline overview</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">TODAY</div>
+            <p class="timeline-text">Confirmation email sent (you're reading it!)</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">24 HOURS</div>
+            <p class="timeline-text">Calendar invite and session details arrive</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">2-3 DAYS BEFORE</div>
+            <p class="timeline-text">Therapist introduction and preparation guidance</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">24 HOURS BEFORE</div>
+            <p class="timeline-text">Final reminder with video link</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">SESSION DAY</div>
+            <p class="timeline-text">Your first session begins!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reassurance Box -->
+    <div class="card" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
+      <h2 style="font-size: 16px; color: #065f46; margin: 0 0 8px 0;">
+        ✨ 75% of families report huge improvement
+      </h2>
+      <p style="margin: 0; font-size: 14px; color: #065f46;">
+        Most families notice meaningful changes after just <strong>one session</strong>. You're taking an important step toward helping <%= @student_name %>.
+      </p>
+    </div>
+
+    <!-- Support -->
+    <div class="card">
+      <div class="section-title">
+        💬 Need to change anything?
+      </div>
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">
+        Reply to this email or reach out to our care team:
+      </p>
+      <p style="font-size: 14px;">
+        <strong>Email:</strong> <a href="mailto:<%= @support_email %>" style="color: #10b981;"><%= @support_email %></a><br/>
+        <strong>Phone:</strong> <%= @support_phone %><br/>
+        <strong>Response time:</strong> Within one business day
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>
+        © <%= Time.current.year %> Daybreak Health<br/>
+        <a href="#">Unsubscribe</a> | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+      </p>
+      <p style="margin-top: 16px; color: #d1d5db;">
+        You're receiving this email because you scheduled an appointment with Daybreak Health.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+

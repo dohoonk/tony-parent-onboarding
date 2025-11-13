@@ -1,0 +1,56 @@
+YOU'RE ALL SET, <%= @parent_name.upcase %>!
+================================================================
+
+We've held <%= @student_name %>'s first session with <%= @therapist_name %>.
+
+FIRST SESSION SNAPSHOT
+----------------------
+Therapist: <%= @therapist_name %><% if @therapist_credentials.present? %>, <%= @therapist_credentials %><% end %>
+<% if @scheduled_date.present? %>Date: <%= @scheduled_date %>
+Time: <%= @scheduled_time %>
+<% end %><% if @therapist_languages.present? %>Languages: <%= @therapist_languages %>
+<% end %><% if @therapist_specialties.present? %>Focus areas: <%= @therapist_specialties %>
+<% end %>Estimated cost: <%= @estimated_cost %>
+
+WHY <%= @therapist_name.upcase %>?
+<%= @therapist_bio&.truncate(200) || "#{@therapist_name} is a great fit based on your family's preferences and needs." %>
+
+WHAT HAPPENS NEXT
+-----------------
+We'll keep you looped in at every step:
+
+1. CONFIRMATION SENT
+   We'll send you calendar invites and session details within 24 hours.
+
+2. THERAPIST INTRO
+   <%= @therapist_name %> will reach out 2-3 days before your session with 
+   preparation tips.
+
+3. FINAL REMINDER
+   You'll get a reminder 24 hours before with video call link and instructions.
+
+TIMELINE OVERVIEW
+-----------------
+→ TODAY: Confirmation email sent (you're reading it!)
+→ 24 HOURS: Calendar invite and session details arrive
+→ 2-3 DAYS BEFORE: Therapist introduction and preparation guidance
+→ 24 HOURS BEFORE: Final reminder with video link
+→ SESSION DAY: Your first session begins!
+
+✨ 75% OF FAMILIES REPORT HUGE IMPROVEMENT
+Most families notice meaningful changes after just ONE SESSION. 
+You're taking an important step toward helping <%= @student_name %>.
+
+NEED TO CHANGE ANYTHING?
+------------------------
+Reply to this email or reach out to our care team:
+
+Email: <%= @support_email %>
+Phone: <%= @support_phone %>
+Response time: Within one business day
+
+================================================================
+© <%= Time.current.year %> Daybreak Health
+You're receiving this email because you scheduled an appointment 
+with Daybreak Health.
+
