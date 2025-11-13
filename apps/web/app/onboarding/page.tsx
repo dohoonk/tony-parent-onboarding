@@ -555,6 +555,7 @@ const OnboardingContent: React.FC = () => {
 
       const isLastInChapter = questionIndex === activeChapter.questions.length - 1;
 
+      // Create session after student chapter completes (before AI intake)
       if (isLastInChapter && activeChapter.id === 'student') {
         const studentForSession: StudentInfoData = {
           firstName: answers['student-first-name'] ?? '',
@@ -564,6 +565,21 @@ const OnboardingContent: React.FC = () => {
           school: answers['student-school'] ?? '',
         };
         await onboarding.createSession(studentForSession);
+      }
+
+      // Also create session when entering AI intake if it doesn't exist yet
+      // This handles cases where user navigates backwards/forwards
+      if (activeChapter.id === 'intake' && questionIndex === 0 && !onboarding.sessionId) {
+        const studentForSession: StudentInfoData = {
+          firstName: answers['student-first-name'] ?? '',
+          lastName: answers['student-last-name'] ?? '',
+          dateOfBirth: answers['student-dob'] ?? '',
+          grade: answers['student-grade'] ?? '',
+          school: answers['student-school'] ?? '',
+        };
+        if (studentForSession.firstName && studentForSession.lastName && studentForSession.dateOfBirth) {
+          await onboarding.createSession(studentForSession);
+        }
       }
 
       if (isLastInChapter) {
