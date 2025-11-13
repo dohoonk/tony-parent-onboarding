@@ -83,7 +83,7 @@ export const CHAPTERS: ChapterConfig[] = [
       {
         id: "welcome-intro",
         type: "intro",
-        prompt: "Let's get started finding the right support for your child. This will take about 10 minutes.",
+        prompt: "Let's get started finding the right support for your child.",
         ctaLabel: "Let's start",
       },
       {
