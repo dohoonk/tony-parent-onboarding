@@ -45,7 +45,8 @@ Rails.application.configure do
     user_name: 'apikey',
     password: ENV['SENDGRID_API_KEY'],
     authentication: :plain,
-    enable_starttls_auto: true
+    enable_starttls_auto: true,
+    openssl_verify_mode: 'none' # Skip SSL verification in development
   }
 
   # Print deprecation notices to the Rails logger.

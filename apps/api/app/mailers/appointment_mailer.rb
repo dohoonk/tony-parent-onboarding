@@ -17,9 +17,8 @@ class AppointmentMailer < ApplicationMailer
     @therapist_name = @therapist.display_name
     @therapist_bio = @therapist.bio
     @therapist_specialties = @therapist.specialties&.take(3)&.join(', ')
-    @therapist_languages = @therapist.languages&.join(', ')
-    @therapist_credentials = extract_credential(@therapist.credentials&.first)
-    @therapist_experience = @therapist.years_of_experience
+    @therapist_languages = @therapist.care_languages&.join(', ')
+    @therapist_credentials = extract_credential(@therapist.licenses&.first)
 
     # Cost information
     @estimated_cost = format_estimated_cost(@session)
@@ -64,15 +63,9 @@ class AppointmentMailer < ApplicationMailer
   end
 
   def format_estimated_cost(session)
-    # Check if there's cost estimate data
-    if session.data.dig('insurance', 'estimatedCopay').present?
-      copay = session.data.dig('insurance', 'estimatedCopay')
-      "$#{copay} per session (estimated copay)"
-    elsif session.data.dig('insurance', 'carrierName').present?
-      "Covered by #{session.data.dig('insurance', 'carrierName')} (copay TBD)"
-    else
-      'Cost to be determined'
-    end
+    # For now, return a standard message
+    # TODO: Integrate with insurance cost estimation when available
+    'Covered by insurance (copay to be determined)'
   end
 end
 
