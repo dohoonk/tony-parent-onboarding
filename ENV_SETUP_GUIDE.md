@@ -463,14 +463,90 @@ node -e "console.log(process.env.NEXT_PUBLIC_API_URL || 'API URL missing')"
 
 ---
 
+### 9. `SENDGRID_API_KEY` (Email Service)
+
+**What it's for:** Sending appointment confirmation emails to parents
+
+**Where to get it:**
+1. Go to https://sendgrid.com/
+2. Sign up for a free account (100 emails/day free forever)
+3. Verify your email address
+4. Navigate to **Settings → API Keys**
+   - Or go to: https://app.sendgrid.com/settings/api_keys
+5. Click **"Create API Key"**
+   - Name: `Parent Onboarding Dev`
+   - API Key Permissions: **"Full Access"** or **"Mail Send"** (restricted)
+6. **IMPORTANT:** Copy the API key immediately - you won't be able to see it again!
+   - Format: `SG.XXXX...XXXX`
+
+**How to set it:**
+```bash
+# In apps/api/.env
+SENDGRID_API_KEY=SG.your-actual-key-here
+SENDGRID_FROM_EMAIL=hello@daybreakhealth.com
+```
+
+**Testing the API Key:**
+```bash
+# Test with curl
+curl --request POST \
+  --url https://api.sendgrid.com/v3/mail/send \
+  --header "Authorization: Bearer $SENDGRID_API_KEY" \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "personalizations": [{"to": [{"email": "test@example.com"}]}],
+    "from": {"email": "hello@daybreakhealth.com"},
+    "subject": "Test Email",
+    "content": [{"type": "text/plain", "value": "This is a test"}]
+  }'
+```
+
+**Sender Authentication (Recommended for Production):**
+1. In SendGrid, go to **Settings → Sender Authentication**
+2. Click **"Verify a Single Sender"**
+3. Fill in your details (use a real email you own)
+4. Click the verification link in the email SendGrid sends you
+5. Update `SENDGRID_FROM_EMAIL` to use this verified email
+
+**For Custom Domain (Production):**
+1. Go to **Settings → Sender Authentication → Authenticate Your Domain**
+2. Follow instructions to add DNS records to your domain
+3. Wait for verification (up to 48 hours)
+4. Use `hello@yourdomain.com` as `SENDGRID_FROM_EMAIL`
+
+**Free Tier Limits:**
+- 100 emails/day
+- Perfect for development and testing
+- Upgrade to paid plan for production
+
+**Cost:** Free tier available, paid plans start at $19.95/month for 50K emails
+
+---
+
+### 10. `SUPPORT_EMAIL` and `SUPPORT_PHONE` (Support Contact)
+
+**What it's for:** Contact information displayed in confirmation emails
+
+**How to set it:**
+```bash
+# In apps/api/.env
+SUPPORT_EMAIL=support@daybreakhealth.com
+SUPPORT_PHONE=1-800-DAYBREAK
+```
+
+**Note:** These can be any support contact you prefer. They appear in the email footer.
+
+---
+
 ## Need Help?
 
 - **OpenAI Issues:** https://help.openai.com/
 - **AWS Issues:** https://aws.amazon.com/support/
+- **SendGrid Issues:** https://docs.sendgrid.com/ or https://support.sendgrid.com/
 - **Rails Issues:** Check `apps/api/log/development.log`
 - **Next.js Issues:** Check browser console and terminal output
 
 ---
 
-**Last Updated:** 2025-11-10
+**Last Updated:** 2025-11-13
 

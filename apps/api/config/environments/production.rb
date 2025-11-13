@@ -52,13 +52,26 @@ Rails.application.configure do
   # Replace the default in-process and non-durable queuing backend for Active Job.
   # config.active_job.queue_adapter = :resque
 
-  # Disable caching for Action Mailer templates even if Action Controller
-  # caching is enabled.
+  # Action Mailer configuration
   config.action_mailer.perform_caching = false
-
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default_url_options = { 
+    host: ENV['APP_HOST'] || 'daybreakhealth.com',
+    protocol: 'https'
+  }
+  
+  # Use SendGrid for email delivery
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: ENV['SMTP_ADDRESS'] || 'smtp.sendgrid.net',
+    port: ENV['SMTP_PORT'] || 587,
+    domain: ENV['SMTP_DOMAIN'] || 'daybreakhealth.com',
+    user_name: ENV['SMTP_USERNAME'] || 'apikey',
+    password: ENV['SMTP_PASSWORD'] || ENV['SENDGRID_API_KEY'],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
