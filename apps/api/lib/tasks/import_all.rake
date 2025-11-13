@@ -76,10 +76,7 @@ namespace :import do
     puts "\n" + "=" * 80
     puts "PHASE 6: Insurance"
     puts "=" * 80
-    puts "\nStep 6.1: Importing Insurance Policies..."
-    Rake::Task['import:insurance_policies'].invoke
-    
-    puts "\nStep 6.2: Importing Insurance Coverages..."
+    puts "\nStep 6.1: Importing Insurance Coverages (Policies)..."
     Rake::Task['import:insurance_coverages'].invoke
     
     # Phase 7: Questionnaires (depends on students, parents)
