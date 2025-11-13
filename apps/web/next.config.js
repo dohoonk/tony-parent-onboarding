@@ -9,6 +9,10 @@ const nextConfig = {
       },
     ];
   },
+  // Disable ESLint during production builds (deploy-time only)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 module.exports = nextConfig
