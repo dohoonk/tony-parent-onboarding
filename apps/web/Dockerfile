@@ -21,11 +21,12 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install node modules
-COPY --link package.json package-lock.json ./
+# Railway builds from project root, so copy from apps/web/
+COPY --link apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --include=dev
 
 # Copy application code
-COPY --link . .
+COPY --link apps/web/. .
 
 # Build application
 RUN npm run build
